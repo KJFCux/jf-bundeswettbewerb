@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>BWB-Auswertung</id>
+    <title>JF-Bundeswettbewerb Auswertungsprogramm</title>
+    <version>0.0.0</version>
+    <authors>KJF-Cuxhaven</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">AGPL-3.0-or-later</license>
+    <!--<icon>icon.png</icon>-->
+    <projectUrl>https://github.com/KJFCux/jf-bundeswettbewerb</projectUrl>
+    <description>Auswertungssoftware für den Bundeswettbewerb der deutschen Jugendfeuerwehr</description>
+    <releaseNotes>V1</releaseNotes>
+    <copyright>$copyright$</copyright>
+    <tags>BWB-Auswertung Jugendfeuerwehr Bundeswettbewerb DJF KJF</tags>
+    <dependencies>
+      <group targetFramework="net8.0-windows10.0.19041.0" />
+    </dependencies>
+  </metadata>
+  <files>
+  <file src="bin\Release\net8.0-windows10.0.19041.0\win-x64\**" target="lib\net45"/>
+  <file src="Resources\Images\icon.ico" target="images\" />
+  <file src="..\readme.md" target="docs\" />
+  </files>
+</package>
