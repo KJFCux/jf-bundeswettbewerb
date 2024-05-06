@@ -1,6 +1,7 @@
 ﻿using BWB_Auswertung.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -170,14 +171,15 @@ namespace BWB_Auswertung.Views
                 string excelpath = System.IO.Path.Combine(exportPath, "Kontrolle-Check-Up-Zelt.xlsx");
                 WriteFile.ByteArrayToFile(excelpath, BWB_Auswertung.Properties.Resources.CheckUpZelt);
 
-                bool erfolgreichExcel = Excel.WriteCheckUpToEcxel(excelpath, einstellungen);
+                bool erfolgreichExcel = Excel.WriteCheckUpToExcel(excelpath, einstellungen);
                 if (!erfolgreichExcel)
                 {
                     MessageBox.Show($"Export der Kontrollblätter fehlgeschlagen!", "Fehler: Export Kontrollblätter", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
-                MessageBox.Show("Export der Kontrollblätter abgeschlossen!", "Export Kontrollblätter", MessageBoxButton.OK, MessageBoxImage.Information);
+                ShowExportMessageBox("Export der Kontrollblätter abgeschlossen!\nZielverzeichnis öffnen?",
+                    "Export Kontrollblätter", exportPath);
             }
             catch (Exception ex)
             {
@@ -270,7 +272,8 @@ namespace BWB_Auswertung.Views
 
                 pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"Geburtstagsliste.pdf"), true);
 
-                MessageBox.Show("Export der Geburtstagsliste abgeschlossen!", "Export Geburtstagsliste", MessageBoxButton.OK, MessageBoxImage.Information);
+                ShowExportMessageBox("Export der Geburtstagsliste abgeschlossen!\nZielverzeichnis öffnen?",
+                    "Export Geburtstagsliste", exportPath);
             }
             catch (Exception ex)
             {
@@ -288,7 +291,8 @@ namespace BWB_Auswertung.Views
                 helperExportPDFPlatzierungsliste(viewModel.Gruppen.OrderBy(x => x.Platz).ToList(), "Platzierungsliste");
                 helperExportPDFPlatzierungsliste(viewModel.Gruppen.OrderByDescending(x => x.Platz).ToList(), "PlatzierungslisteAbsteigend");
 
-                MessageBox.Show("Export der Platzierungslisten abgeschlossen!", "Export Platzierungslisten", MessageBoxButton.OK, MessageBoxImage.Information);
+                ShowExportMessageBox("Export der Platzierungslisten abgeschlossen!\nZielverzeichnis öffnen?",
+                    "Export Platzierungslisten", exportPath);
             }
             catch (Exception ex)
             {
@@ -396,14 +400,15 @@ namespace BWB_Auswertung.Views
             WriteFile.ByteArrayToFile(excelpath, BWB_Auswertung.Properties.Resources.PlatzierungslisteExcel);
 
             //Alles für die Excel Siegerliste
-            bool erfolgreichExcel = Excel.WritePlatzierungslisteToEcxel(excelpath, viewModel.Gruppen.OrderBy(x => x.Platz).ToList());
+            bool erfolgreichExcel = Excel.WritePlatzierungslisteToExcel(excelpath, viewModel.Gruppen.OrderBy(x => x.Platz).ToList());
             if (!erfolgreichExcel)
             {
                 MessageBox.Show($"Export der Platzierungsliste fehlgeschlagen!", "Fehler: Export Platzierungsliste", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            MessageBox.Show("Export der Platzierungsliste abgeschlossen!", "Export Platzierungsliste", MessageBoxButton.OK, MessageBoxImage.Information);
+            ShowExportMessageBox("Export der Platzierungsliste abgeschlossen!\nZielverzeichnis öffnen?",
+                "Export Platzierungsliste", exportPath);
 
         }
 
@@ -428,7 +433,7 @@ namespace BWB_Auswertung.Views
             }
 
             //Alles für die Excel Urkundenliste
-            bool erfolgreichExcel = Excel.WriteUrkundeToEcxel(excelpath, viewModel.Gruppen.OrderByDescending(x => x.Platz).ToList());
+            bool erfolgreichExcel = Excel.WriteUrkundeToExcel(excelpath, viewModel.Gruppen.OrderByDescending(x => x.Platz).ToList());
             if (!erfolgreichExcel)
             {
                 MessageBox.Show($"Export der Urkunden fehlgeschlagen!", "Fehler: Export Urkunde", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -472,7 +477,8 @@ namespace BWB_Auswertung.Views
             pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"UrkundenOverlay.pdf"), true);
 
 
-            MessageBox.Show("Export der Urkunden abgeschlossen!", "Export Urkunden", MessageBoxButton.OK, MessageBoxImage.Information);
+            ShowExportMessageBox("Export der Urkunden abgeschlossen!\nZielverzeichnis öffnen?",
+                "Export Urkunden", exportPath);
 
         }
 
@@ -483,7 +489,9 @@ namespace BWB_Auswertung.Views
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 Excel.ExportExcelGruppen(viewModel.Gruppen.OrderBy(x => x.Platz).ToList(), exportPath);
 
-                MessageBox.Show("Export der Gruppen abgeschlossen!", "Export Gruppendaten", MessageBoxButton.OK, MessageBoxImage.Information);
+                ShowExportMessageBox("Export der Gruppen abgeschlossen!\nZielverzeichnis öffnen?",
+                    "Export Gruppen", exportPath);
+
             }
             catch (Exception ex)
             {
@@ -502,7 +510,9 @@ namespace BWB_Auswertung.Views
             WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "Wettbewerbsinfo.pdf"), BWB_Auswertung.Properties.Resources.Wettbewerbsinfo);
             WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "Wettbewerbsrichtlinien.pdf"), BWB_Auswertung.Properties.Resources.Wettbewerbsrichtlinien);
 
-            MessageBox.Show("Export der Wettbewerbsordnung abgeschlossen!", "Export Wettbewerbsordnung", MessageBoxButton.OK, MessageBoxImage.Information);
+            ShowExportMessageBox("Export der Wettbewerbsordnung abgeschlossen!\nZielverzeichnis öffnen?",
+                "Export Wettbewerbsordnung", speicherordner);
+
         }
 
         private void ExportUrkundenvorlage_Click(object sender, RoutedEventArgs e)
@@ -514,13 +524,18 @@ namespace BWB_Auswertung.Views
             WriteFile.writeText(System.IO.Path.Combine(vorlagenPath, "UrkundeOverlayTheme1.html"), BWB_Auswertung.Properties.Resources.UrkundeOverlayTheme1);
             WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkundenpapier-Beispiel.pdf"), BWB_Auswertung.Properties.Resources.Urkundenpapier_BeispielDruck);
             WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkundenpapier-Beispiel.indd"), BWB_Auswertung.Properties.Resources.Urkundenpapier_BeispielIndesign);
-            MessageBox.Show("Export der Urkundenvorlage abgeschlossen!", "Export Urkundenvorlage", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            ShowExportMessageBox("Export der Urkundenvorlage abgeschlossen!\nZielverzeichnis öffnen?",
+                "Export Urkundenvorlage", vorlagenPath);
+
         }
 
         private void ExportMeldebogenBlanko_Click(object sender, RoutedEventArgs e)
         {
             WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Meldebogen-Blanko.xlsx"), BWB_Auswertung.Properties.Resources.Meldebogen_Blanko);
-            MessageBox.Show("Export der Meldebogen Vorlage abgeschlossen!", "Export Meldebogen Blanko", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            ShowExportMessageBox("Export der Meldebogen Vorlage abgeschlossen!\nZielverzeichnis öffnen?",
+                "Export Meldebogen Blanko", vorlagenPath);
         }
 
         private void ExportExcelWertungsbogen_Click(object sender, RoutedEventArgs e)
@@ -528,14 +543,27 @@ namespace BWB_Auswertung.Views
             MainViewModel viewModel = (MainViewModel)this.DataContext;
 
             _ = Directory.CreateDirectory(wertungsbogenPath);
-            bool erfolgreichExcel = Excel.WriteWertungsbogenToEcxel(wertungsbogenPath, viewModel.Gruppen.OrderByDescending(x => x.Platz).ToList(), viewModel.Einstellungen);
+            bool erfolgreichExcel = Excel.WriteWertungsbogenToExcel(wertungsbogenPath, viewModel.Gruppen.OrderByDescending(x => x.Platz).ToList(), viewModel.Einstellungen);
             if (!erfolgreichExcel)
             {
                 MessageBox.Show($"Export der Wertungsbögen fehlgeschlagen!", "Fehler: Export Wertungsbögen", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            MessageBox.Show("Export der Wertungsbögen abgeschlossen!", "Export Wertungsbögen", MessageBoxButton.OK, MessageBoxImage.Information);
 
+            ShowExportMessageBox("Export der Wertungsbögen abgeschlossen!\nZielverzeichnis öffnen?",
+                "Export Wertungsbögen", exportPath);
+
+        }
+
+        private void ShowExportMessageBox(string message, string title, string path)
+        {
+            if(MessageBox.Show(message, title,
+                MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+
+            {
+                Process.Start(Environment.GetEnvironmentVariable("WINDIR") +
+                              @"\explorer.exe", path);
+            }
         }
     }
 

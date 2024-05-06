@@ -197,7 +197,7 @@ namespace BWB_Auswertung.IO
             return cellValue;
         }
 
-        public static bool WriteUrkundeToEcxel(string filePath, List<Gruppe> gruppen)
+        public static bool WriteUrkundeToExcel(string filePath, List<Gruppe> gruppen)
         {
             try
             {
@@ -240,7 +240,7 @@ namespace BWB_Auswertung.IO
             }
         }
 
-        public static bool WriteCheckUpToEcxel(string filePath, Settings settings)
+        public static bool WriteCheckUpToExcel(string filePath, Settings settings)
         {
             try
             {
@@ -271,7 +271,7 @@ namespace BWB_Auswertung.IO
             }
         }
 
-        public static bool WritePlatzierungslisteToEcxel(string filePath, List<Gruppe> gruppen)
+        public static bool WritePlatzierungslisteToExcel(string filePath, List<Gruppe> gruppen)
         {
             try
             {
@@ -356,7 +356,7 @@ namespace BWB_Auswertung.IO
             }
         }
 
-        public static bool WriteWertungsbogenToEcxel(string filePath, List<Gruppe> gruppen, Settings settings)
+        public static bool WriteWertungsbogenToExcel(string filePath, List<Gruppe> gruppen, Settings settings)
         {
             try
             {
