@@ -9,6 +9,14 @@ namespace BWB_Auswertung.IO
 
         public static void Write(string message, string method, EventLogEntryType entryType = EventLogEntryType.Information)
         {
+            WriteLog(message, method, entryType);
+            WriteEvent(message, method, entryType);
+
+        }
+
+        private static void WriteLog(string message, string method,
+            EventLogEntryType entryType = EventLogEntryType.Information)
+        {
             try
             {
                 string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), System.AppDomain.CurrentDomain.FriendlyName, "log");
@@ -16,14 +24,28 @@ namespace BWB_Auswertung.IO
                 sw.WriteLine($"{DateTime.Now.ToString()} : {entryType.ToString()} : {message}");
                 sw.Flush();
                 sw.Close();
+            }
+            catch (Exception ex)
+            {
+                WriteEvent(message, method, entryType);
+            }
+        }
+
+        private static void WriteEvent(string message, string method,
+            EventLogEntryType entryType = EventLogEntryType.Information)
+        {
+            try
+            {
                 EventLog.WriteEntry(System.AppDomain.CurrentDomain.FriendlyName,
                     $"{DateTime.Now.ToString()} : {method} : {entryType.ToString()} : {message}", entryType, (int)entryType);
             }
             catch (Exception ex)
             {
-                EventLog.WriteEntry(System.AppDomain.CurrentDomain.FriendlyName,
+                //No Permission to Create Eventlog Source
+                EventLog.WriteEntry("Application",
                     $"{DateTime.Now.ToString()} : {method} : {entryType.ToString()} : {ex} & {message}", entryType, (int)entryType);
             }
         }
+
     }
 }
