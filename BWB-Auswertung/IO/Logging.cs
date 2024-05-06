@@ -43,7 +43,7 @@ namespace BWB_Auswertung.IO
             {
                 //No Permission to Create Eventlog Source
                 EventLog.WriteEntry("Application",
-                    $"{DateTime.Now.ToString()} : {method} : {entryType.ToString()} : {ex} & {message}", entryType, (int)entryType);
+                    $"{DateTime.Now.ToString()} : {method} : {entryType.ToString()} : {ex} & {message}", entryType);
             }
         }
 
