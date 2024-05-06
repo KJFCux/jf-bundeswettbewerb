@@ -54,6 +54,9 @@ namespace BWB_Auswertung
             dataPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ProgrammName, "Gruppendaten");
             _ = Directory.CreateDirectory(dataPath);
 
+            LOGGING.Write(dataPath, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+
+
             //Speicherort für Logdateien und evtl. Ordner erstellen
             _ = Directory.CreateDirectory(System.IO.Path.Combine(AppDataLocal, ProgrammName, "log"));
 

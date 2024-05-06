@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Content Include="Resources\Images\Deutsche_Jugendfeuerwehr.ico" />
-	  <None Include="Resources\Images\icon.png" Pack="true" PackagePath="icon.png"/>
   </ItemGroup>
 
   <ItemGroup>
