@@ -27,7 +27,7 @@ namespace BWB_Auswertung.IO
             }
             catch (Exception ex)
             {
-                WriteEvent(message, method, entryType);
+                WriteEvent($"{DateTime.Now.ToString()} : {method} : {entryType.ToString()} : {ex} & {message}", method, entryType);
             }
         }
 
