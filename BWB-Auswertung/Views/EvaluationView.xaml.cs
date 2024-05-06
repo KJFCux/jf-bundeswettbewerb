@@ -179,7 +179,7 @@ namespace BWB_Auswertung.Views
                 }
 
                 ShowExportMessageBox("Export der Kontrollblätter abgeschlossen!\nZielverzeichnis öffnen?",
-					"Export Kontrollblätter", exportPath);
+                    "Export Kontrollblätter", exportPath);
             }
             catch (Exception ex)
             {
@@ -273,8 +273,8 @@ namespace BWB_Auswertung.Views
                 pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"Geburtstagsliste.pdf"), true);
 
                 ShowExportMessageBox("Export der Geburtstagsliste abgeschlossen!\nZielverzeichnis öffnen?",
-					"Export Geburtstagsliste", exportPath);
-			}
+                    "Export Geburtstagsliste", exportPath);
+            }
             catch (Exception ex)
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
@@ -292,8 +292,8 @@ namespace BWB_Auswertung.Views
                 helperExportPDFPlatzierungsliste(viewModel.Gruppen.OrderByDescending(x => x.Platz).ToList(), "PlatzierungslisteAbsteigend");
 
                 ShowExportMessageBox("Export der Platzierungslisten abgeschlossen!\nZielverzeichnis öffnen?",
-	                "Export Platzierungslisten", exportPath);
-			}
+                    "Export Platzierungslisten", exportPath);
+            }
             catch (Exception ex)
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
@@ -408,9 +408,9 @@ namespace BWB_Auswertung.Views
             }
 
             ShowExportMessageBox("Export der Platzierungsliste abgeschlossen!\nZielverzeichnis öffnen?",
-				"Export Platzierungsliste", exportPath);
+                "Export Platzierungsliste", exportPath);
 
-		}
+        }
 
         private async void ExportUrkunden_Click(object sender, RoutedEventArgs e)
         {
@@ -478,9 +478,9 @@ namespace BWB_Auswertung.Views
 
 
             ShowExportMessageBox("Export der Urkunden abgeschlossen!\nZielverzeichnis öffnen?",
-				"Export Urkunden", exportPath);
+                "Export Urkunden", exportPath);
 
-		}
+        }
 
         private void ExportGruppenExcel_Click(object sender, RoutedEventArgs e)
         {
@@ -490,9 +490,9 @@ namespace BWB_Auswertung.Views
                 Excel.ExportExcelGruppen(viewModel.Gruppen.OrderBy(x => x.Platz).ToList(), exportPath);
 
                 ShowExportMessageBox("Export der Gruppen abgeschlossen!\nZielverzeichnis öffnen?",
-					"Export Gruppen", exportPath);
+                    "Export Gruppen", exportPath);
 
-			}
+            }
             catch (Exception ex)
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
@@ -511,11 +511,11 @@ namespace BWB_Auswertung.Views
             WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "Wettbewerbsrichtlinien.pdf"), BWB_Auswertung.Properties.Resources.Wettbewerbsrichtlinien);
 
             ShowExportMessageBox("Export der Wettbewerbsordnung abgeschlossen!\nZielverzeichnis öffnen?",
-				"Export Wettbewerbsordnung", speicherordner);
+                "Export Wettbewerbsordnung", speicherordner);
 
-		}
+        }
 
-		private void ExportUrkundenvorlage_Click(object sender, RoutedEventArgs e)
+        private void ExportUrkundenvorlage_Click(object sender, RoutedEventArgs e)
         {
             _ = Directory.CreateDirectory(vorlagenPath);
             WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkunde_Druckvorlage.pdf"), BWB_Auswertung.Properties.Resources.UrkundeDruckTheme1);
@@ -526,17 +526,17 @@ namespace BWB_Auswertung.Views
             WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkundenpapier-Beispiel.indd"), BWB_Auswertung.Properties.Resources.Urkundenpapier_BeispielIndesign);
 
             ShowExportMessageBox("Export der Urkundenvorlage abgeschlossen!\nZielverzeichnis öffnen?",
-				"Export Urkundenvorlage", vorlagenPath);
+                "Export Urkundenvorlage", vorlagenPath);
 
-		}
+        }
 
         private void ExportMeldebogenBlanko_Click(object sender, RoutedEventArgs e)
         {
             WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Meldebogen-Blanko.xlsx"), BWB_Auswertung.Properties.Resources.Meldebogen_Blanko);
 
             ShowExportMessageBox("Export der Meldebogen Vorlage abgeschlossen!\nZielverzeichnis öffnen?",
-				"Export Meldebogen Blanko", vorlagenPath);
-		}
+                "Export Meldebogen Blanko", vorlagenPath);
+        }
 
         private void ExportExcelWertungsbogen_Click(object sender, RoutedEventArgs e)
         {
@@ -551,20 +551,20 @@ namespace BWB_Auswertung.Views
             }
 
             ShowExportMessageBox("Export der Wertungsbögen abgeschlossen!\nZielverzeichnis öffnen?",
-	            "Export Wertungsbögen", exportPath);
+                "Export Wertungsbögen", exportPath);
 
-		}
+        }
 
         private void ShowExportMessageBox(string message, string title, string path)
         {
-	        if(MessageBox.Show(message, title,
-		        MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+            if(MessageBox.Show(message, title,
+                MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
 
-	        {
-		        Process.Start(Environment.GetEnvironmentVariable("WINDIR") +
-		                      @"\explorer.exe", path);
-	        }
-		}
+            {
+                Process.Start(Environment.GetEnvironmentVariable("WINDIR") +
+                              @"\explorer.exe", path);
+            }
+        }
     }
 
     public class WidthConverter : IValueConverter
