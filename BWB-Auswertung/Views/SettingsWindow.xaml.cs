@@ -42,21 +42,32 @@ namespace BWB_Auswertung.Views
 
         private void SaveAndClose_Click(object sender, RoutedEventArgs e)
         {
-            MainViewModel viewModel = (MainViewModel)this.DataContext;
-            WriteFile.writeText(System.IO.Path.Combine(settingsPath, "settings.xml"), SerializeXML<Gruppe>.Serialize(viewModel.Einstellungen));
-            this.Close();
+            try
+            {
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+                WriteFile.writeText(System.IO.Path.Combine(settingsPath, "settings.xml"), SerializeXML<Gruppe>.Serialize(viewModel.Einstellungen));
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim speichern von Einstellungen\n{ex}", "Fehler: Einstellungen", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void LoadSettings()
         {
-            //Settings.xml laden
-            string[] xmlFile = Directory.GetFiles(settingsPath, "settings.xml");
-            if (xmlFile.Length<1) {
-                return;
-            }
+            try
+            {
+                //Settings.xml laden
+                string[] xmlFile = Directory.GetFiles(settingsPath, "settings.xml");
+                if (xmlFile.Length < 1)
+                {
+                    return;
+                }
 
 
-            MainViewModel viewModel = (MainViewModel)this.DataContext;
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
 
                 // Deserialisieren der XML-Datei und Hinzufügen der deserialisierten Gruppen zum ViewModel
                 Settings einstellungen = DeserializeXML<Settings>.Deserialize<Settings>(xmlFile[0]);
@@ -64,55 +75,85 @@ namespace BWB_Auswertung.Views
                 {
                     viewModel.OverrideSettings(einstellungen);
                 }
-            
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim laden der Einstellungen\n{ex}", "Fehler: Einstellungen", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
         }
 
 
         private void SelectLogoButton_Click(object sender, RoutedEventArgs e)
         {
-            // Erstellen und Konfigurieren des OpenFileDialog
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Bilddateien (*.jpg; *.jpeg; *.png; *.gif)|*.jpg; *.jpeg; *.png; *.gif|Alle Dateien (*.*)|*.*";
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-            openFileDialog.Title = "Logo auswählen";
-
-            // Öffnen des Dialogs und Überprüfen, ob der Benutzer eine Datei ausgewählt hat
-            if (openFileDialog.ShowDialog() == true)
+            try
             {
-                // Der ausgewählte Dateipfad wird in der TextBox angezeigt
-                SelectedLogoPathTextBox.Text = openFileDialog.FileName;
+                // Erstellen und Konfigurieren des OpenFileDialog
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "Bilddateien (*.jpg; *.jpeg; *.png; *.gif)|*.jpg; *.jpeg; *.png; *.gif|Alle Dateien (*.*)|*.*";
+                openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                openFileDialog.Title = "Logo auswählen";
+
+                // Öffnen des Dialogs und Überprüfen, ob der Benutzer eine Datei ausgewählt hat
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    // Der ausgewählte Dateipfad wird in der TextBox angezeigt
+                    SelectedLogoPathTextBox.Text = openFileDialog.FileName;
+                }
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim Festlegen von Einstellungen\n{ex}", "Fehler: Einstellungen", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void SelectUnterschriftrechtsButton_Click(object sender, RoutedEventArgs e)
         {
-            // Erstellen und Konfigurieren des OpenFileDialog
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Bilddateien (*.jpg; *.jpeg; *.png; *.gif)|*.jpg; *.jpeg; *.png; *.gif|Alle Dateien (*.*)|*.*";
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-            openFileDialog.Title = "Unterschrift 2 auswählen";
-
-            // Öffnen des Dialogs und Überprüfen, ob der Benutzer eine Datei ausgewählt hat
-            if (openFileDialog.ShowDialog() == true)
+            try
             {
-                // Der ausgewählte Dateipfad wird in der TextBox angezeigt
-                SelectedUnterschriftrechtsPathTextBox.Text = openFileDialog.FileName;
+                // Erstellen und Konfigurieren des OpenFileDialog
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "Bilddateien (*.jpg; *.jpeg; *.png; *.gif)|*.jpg; *.jpeg; *.png; *.gif|Alle Dateien (*.*)|*.*";
+                openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                openFileDialog.Title = "Unterschrift 2 auswählen";
+
+                // Öffnen des Dialogs und Überprüfen, ob der Benutzer eine Datei ausgewählt hat
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    // Der ausgewählte Dateipfad wird in der TextBox angezeigt
+                    SelectedUnterschriftrechtsPathTextBox.Text = openFileDialog.FileName;
+                }
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim Festlegen von Einstellungen\n{ex}", "Fehler: Einstellungen", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void SelectUnterschriftlinksButton_Click(object sender, RoutedEventArgs e)
         {
-            // Erstellen und Konfigurieren des OpenFileDialog
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Bilddateien (*.jpg; *.jpeg; *.png; *.gif)|*.jpg; *.jpeg; *.png; *.gif|Alle Dateien (*.*)|*.*";
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-            openFileDialog.Title = "Unterschrift 1 auswählen";
-
-            // Öffnen des Dialogs und Überprüfen, ob der Benutzer eine Datei ausgewählt hat
-            if (openFileDialog.ShowDialog() == true)
+            try
             {
-                // Der ausgewählte Dateipfad wird in der TextBox angezeigt
-                SelectedUnterschriftlinksPathTextBox.Text = openFileDialog.FileName;
+                // Erstellen und Konfigurieren des OpenFileDialog
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "Bilddateien (*.jpg; *.jpeg; *.png; *.gif)|*.jpg; *.jpeg; *.png; *.gif|Alle Dateien (*.*)|*.*";
+                openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                openFileDialog.Title = "Unterschrift 1 auswählen";
+
+                // Öffnen des Dialogs und Überprüfen, ob der Benutzer eine Datei ausgewählt hat
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    // Der ausgewählte Dateipfad wird in der TextBox angezeigt
+                    SelectedUnterschriftlinksPathTextBox.Text = openFileDialog.FileName;
+                }
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim Festlegen von Einstellungen\n{ex}", "Fehler: Einstellungen", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
