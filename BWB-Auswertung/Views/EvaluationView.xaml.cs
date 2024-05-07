@@ -27,13 +27,14 @@ namespace BWB_Auswertung.Views
             {
                 InitializeComponent();
                 DataContext = mainViewModel;
-
+              
                 //Setzen der Statusbar auf aktuellen Prozentwert der Anzahl an fertigen Gruppen
                 double grundwert = mainViewModel.Gruppen.Count();
                 double prozentwert = mainViewModel.Gruppen.Where(x => (x.ATeilGesamteindruck > 0)
                 && (x.BTeilGesamteindruck > 0)
-                && (x.DurchschnittszeitKnotenATeil > 0)
+                && (x.PunkteBTeil > 0)
                 && (x.DurchschnittszeitBTeil > 0)
+                && (x.DurchschnittszeitATeil > 0)
                 && (x.DurchschnittszeitKnotenATeil > 0)
                 && (x.SollZeitBTeilInSekunden > 0)
                 ).ToList().Count();
