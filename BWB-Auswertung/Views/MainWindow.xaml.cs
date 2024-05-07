@@ -18,7 +18,9 @@ using System.ComponentModel;
 using System.IO;
 using Microsoft.Win32;
 using BWB_Auswertung.Views;
-using Squirrel;
+using System.Text.Json;
+using System.Net.Http;
+using ControlzEx.Standard;
 
 namespace BWB_Auswertung
 {
@@ -31,6 +33,7 @@ namespace BWB_Auswertung
         private readonly string ProgrammName = System.AppDomain.CurrentDomain.FriendlyName;
         private string dataPath;
         private string settingsPath;
+        private string currentVersion = "";
 
         public MainWindow()
         {
@@ -67,22 +70,60 @@ namespace BWB_Auswertung
             settingsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ProgrammName, "Einstellungen");
             _ = Directory.CreateDirectory(settingsPath);
             LoadSettings();
-            _ = CheckForUpdates();
+
+            //Prüfe auf Updates
+            _ = CheckForUpdate();
         }
 
-        private async Task CheckForUpdates()
+        public async Task<bool> CheckForUpdate()
         {
-            using (var manager = new UpdateManager(BWB_Auswertung.Properties.Settings.Default.GithubURL))
+            try
             {
-                await manager.UpdateApp();
+                //Aktuelle Version nach Start des Programms setzen und auf Updates prüfen
+                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                System.Version versionInfo = assembly.GetName().Version;
+                currentVersion = $"v{versionInfo.Major}.{versionInfo.MajorRevision}.{versionInfo.Build}";
+
+                // HTTP Client erstellen und den aktuellen ReleaseTag von Github abfragen
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Add("User-Agent", "UpdateChecker");
+
+                    HttpResponseMessage response = await client.GetAsync(BWB_Auswertung.Properties.Settings.Default.GithubReleaseURL);
+                    response.EnsureSuccessStatusCode();
+
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    List<GitHub> releases = JsonSerializer.Deserialize<List<GitHub>>(responseBody);
+
+                    // Letzten release ermitteln
+                    GitHub latestRelease = releases[0];
+
+                    // Mit lokaler Version vergleichen
+                    if (latestRelease.tag_name.CompareTo($"BWB-Auswertung/{currentVersion}") > 0)
+                    {
+                        // Eine neue Version ist verfügbar. Fragen ob die Datei heruntergeladen werden soll
+                        var result = MessageBox.Show($"Es gibt eine neue Version des Auswertungsprogramms!\nMöchtest du die neue Version herunterladen?", "Update verfügbar!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            Process.Start(new ProcessStartInfo(BWB_Auswertung.Properties.Settings.Default.GithubDownloadURL.Replace("{release}",latestRelease.tag_name)) { UseShellExecute = true });
+                        }
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+            }
+
+            return false;
         }
 
         private void LaunchWebsite_Click(object sender, EventArgs e)
         {
             try
             {
-                Process.Start(new ProcessStartInfo("https://www.jf-bundeswettbewerb.de") { UseShellExecute = true });
+                Process.Start(new ProcessStartInfo(BWB_Auswertung.Properties.Settings.Default.BWBURL) { UseShellExecute = true });
             }
             catch (Exception ex)
             {
@@ -108,7 +149,7 @@ namespace BWB_Auswertung
         {
             try
             {
-                Process.Start(new ProcessStartInfo("https://www.jf-bundeswettbewerb.de") { UseShellExecute = true });
+                Process.Start(new ProcessStartInfo(BWB_Auswertung.Properties.Settings.Default.BWBURL) { UseShellExecute = true });
             }
             catch (Exception ex)
             {
@@ -120,7 +161,7 @@ namespace BWB_Auswertung
         {
             try
             {
-                Process.Start(new ProcessStartInfo("https://www.jf-bundeswettbewerb.de") { UseShellExecute = true });
+                Process.Start(new ProcessStartInfo(BWB_Auswertung.Properties.Settings.Default.BWBURL) { UseShellExecute = true });
             }
             catch (Exception ex)
             {
@@ -197,14 +238,11 @@ namespace BWB_Auswertung
             }
         }
 
-
         private void version_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-                System.Version versionInfo = assembly.GetName().Version;
-                string message = $"{ProgrammName} v.{versionInfo}";
+                string message = $"{ProgrammName} {currentVersion}";
                 MessageBox.Show(message, "Version", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
