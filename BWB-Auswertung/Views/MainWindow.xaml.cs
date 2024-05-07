@@ -69,6 +69,7 @@ namespace BWB_Auswertung
             LoadSettings();
             _ = CheckForUpdates();
         }
+
         private async Task CheckForUpdates()
         {
             using (var manager = new UpdateManager(BWB_Auswertung.Properties.Settings.Default.GithubURL))
