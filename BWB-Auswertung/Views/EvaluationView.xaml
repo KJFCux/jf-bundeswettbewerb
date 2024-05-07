@@ -351,7 +351,8 @@
                         <Button Content="Kontrollblätter"
                                 ToolTip="Export der Kontrollbläter für jede Gruppe in eine PDF"
                                 Margin="10,10,10,10"
-                                Click="ExportKontrollblaetter_Click">
+                                Click="ExportKontrollblaetter_Click"
+                                x:Name="ExportKontrollblaetter_Button">
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -369,7 +370,8 @@
                         <Button Content="Platzierungsliste"
                                 ToolTip="Exportiert eine Liste der Platzierungen in absteigender und aufsteigender Reihenfolge"
                                 Margin="10,10,10,10"
-                                Click="ExportPDFPlatzierungsliste_Click">
+                                Click="ExportPDFPlatzierungsliste_Click"
+                                x:Name="ExportPDFPlatzierungsliste_Button">
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -387,7 +389,8 @@
                         <Button Content="Excel Platzierungsliste"
                                 ToolTip="Exportiert eine Ausführliche Liste in eine Excel-Datei"
                                 Margin="10,10,10,10"
-                                Click="ExportExcelPlatzierungsliste_Click">
+                                Click="ExportExcelPlatzierungsliste_Click"
+                                x:Name="ExportExcelPlatzierungsliste_Button">
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -405,7 +408,8 @@
                         <Button Content="Excel Wertungsbögen"
                                 ToolTip="Exportiert alle Wertungsbögen in Excel-Dateien. Je nach derzeitigen Eintragungen, sind diese vorausgefüllt"
                                 Margin="10,10,10,10"
-                                Click="ExportExcelWertungsbogen_Click">
+                                Click="ExportExcelWertungsbogen_Click"
+                                x:Uid="ExportExcelWertungsbogen_Button">
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -423,7 +427,8 @@
                         <Button Content="Urkunden"
                                 ToolTip="Speichert das Overlay für alle Urkunden als PDF und erzeugt eine Excel Liste für evtl. Serienbriefe"
                                 Margin="10,10,10,10"
-                                Click="ExportUrkunden_Click">
+                                Click="ExportUrkunden_Click"
+                                x:Name="ExportUrkunden_Button">
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -441,7 +446,8 @@
                         <Button Content="Gruppen als Excel"
                                 ToolTip="Exportiert alle Gruppendaten in eine Excel Datei"
                                 Margin="10,10,10,10"
-                                Click="ExportGruppenExcel_Click">
+                                Click="ExportGruppenExcel_Click"
+                                x:Name="ExportGruppenExcel_Button">
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -459,14 +465,16 @@
                         <Button Content="Geburtstagsliste"
                                 ToolTip="Exportiert alle Geburtstagskinder in eine Liste"
                                 Margin="10,10,10,10"
-                                Click="ExportPDFPGeburtstagsliste_Click">
+                                Click="ExportPDFPGeburtstagsliste_Click"
+                                x:Name="ExportPDFPGeburtstagsliste_Button">
+
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconMaterial Width="22"
-                                                                  Height="22"
-                                                                  VerticalAlignment="Center"
-                                                                  Kind="CakeVariant" />
+                                                                    Height="22"
+                                                                    VerticalAlignment="Center"
+                                                                    Kind="CakeVariant" />
                                         <TextBlock Margin="4 0 0 0"
                                                    VerticalAlignment="Center"
                                                    Text="{Binding}" />
@@ -483,7 +491,8 @@
                         <Button Content="Wettbewerbsordnung"
                                 ToolTip="Speichert die aktuelle Wettbewerbsordnung im Dokumente Ordner"
                                 Margin="10,10,10,10"
-                                Click="ExportWettbewerbsordnung_Click">
+                                Click="ExportWettbewerbsordnung_Click"
+                                x:Name="ExportWettbewerbsordnung_Button">
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -501,6 +510,7 @@
                         <Button Content="Urkunden Vorlage"
                                 ToolTip="Laden der Urkundenvorlage um diese anzupassen. Der Name der Urkunde darf nicht geändert werden."
                                 Click="ExportUrkundenvorlage_Click"
+                                x:Name="ExportUrkundenvorlage_Button"
                                 Margin="10,10,10,10">
                             <Button.ContentTemplate>
                                 <DataTemplate>
@@ -519,6 +529,7 @@
                         <Button Content="Meldebogen Blanko"
                                 ToolTip="Speichert einen Blanko Meldebogen, zum Manuellen ausfüllen"
                                 Click="ExportMeldebogenBlanko_Click"
+                                x:Name="ExportMeldebogenBlanko_Button"
                                 Margin="10,10,10,10">
                             <Button.ContentTemplate>
                                 <DataTemplate>
