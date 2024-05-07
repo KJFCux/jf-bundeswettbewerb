@@ -203,8 +203,8 @@ namespace BWB_Auswertung
             try
             {
                 System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-                FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-                string message = $"{ProgrammName} v.{versionInfo.FileVersion}";
+                System.Version versionInfo = assembly.GetName().Version;
+                string message = $"{ProgrammName} v.{versionInfo}";
                 MessageBox.Show(message, "Version", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
