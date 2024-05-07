@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using BWB_Auswertung.IO;
+using System.Windows.Controls;
 
 namespace BWB_Auswertung.Views
 {
@@ -16,83 +17,92 @@ namespace BWB_Auswertung.Views
     /// </summary>
     public partial class EvaluationView : Window
     {
-        private string exportPath;
-        private string vorlagenPath;
-        private string wertungsbogenPath;
+        private string exportPath = "";
+        private string vorlagenPath = "";
+        private string wertungsbogenPath = "";
 
         public EvaluationView(MainViewModel mainViewModel)
         {
-            InitializeComponent();
-            DataContext = mainViewModel;
+            try
+            {
+                InitializeComponent();
+                DataContext = mainViewModel;
 
-            //Setzen der Statusbar auf aktuellen Prozentwert der Anzahl an fertigen Gruppen
-            double grundwert = mainViewModel.Gruppen.Count();
-            double prozentwert = mainViewModel.Gruppen.Where(x => (x.ATeilGesamteindruck > 0)
-            && (x.BTeilGesamteindruck > 0)
-            && (x.DurchschnittszeitKnotenATeil > 0)
-            && (x.DurchschnittszeitBTeil > 0)
-            && (x.DurchschnittszeitKnotenATeil > 0)
-            && (x.SollZeitBTeilInSekunden > 0)
-            ).ToList().Count();
-            double prozentsatz = prozentwert / grundwert * 100d;
-            Wettbewerbsfortschritt.Value = prozentsatz;
-            AnzahlFehlenderGruppen.Content = grundwert - prozentwert;
-            GesamtanzahlGruppen.Content = grundwert;
+                //Setzen der Statusbar auf aktuellen Prozentwert der Anzahl an fertigen Gruppen
+                double grundwert = mainViewModel.Gruppen.Count();
+                double prozentwert = mainViewModel.Gruppen.Where(x => (x.ATeilGesamteindruck > 0)
+                && (x.BTeilGesamteindruck > 0)
+                && (x.DurchschnittszeitKnotenATeil > 0)
+                && (x.DurchschnittszeitBTeil > 0)
+                && (x.DurchschnittszeitKnotenATeil > 0)
+                && (x.SollZeitBTeilInSekunden > 0)
+                ).ToList().Count();
+                double prozentsatz = prozentwert / grundwert * 100d;
+                Wettbewerbsfortschritt.Value = prozentsatz;
+                AnzahlFehlenderGruppen.Content = grundwert - prozentwert;
+                GesamtanzahlGruppen.Content = grundwert;
 
-            //Jüngste Gruppe
-            var juengsteGruppe = mainViewModel.Gruppen.OrderBy(x => x.GesamtAlter).First();
-            JuengsteGruppe.Content = juengsteGruppe.GruppenName;
-            JuengsteGruppeAlter.Content = juengsteGruppe.GesamtAlter;
+                //Jüngste Gruppe
+                var juengsteGruppe = mainViewModel.Gruppen.OrderBy(x => x.GesamtAlter).First();
+                JuengsteGruppe.Content = juengsteGruppe.GruppenName;
+                JuengsteGruppeAlter.Content = juengsteGruppe.GesamtAlter;
 
-            //Älteste Gruppe
-            var aeltesteGruppe = mainViewModel.Gruppen.OrderByDescending(x => x.GesamtAlter).First();
-            AeltesteGruppe.Content = aeltesteGruppe.GruppenName;
-            AeltesteGruppeAlter.Content = aeltesteGruppe.GesamtAlter;
+                //Älteste Gruppe
+                var aeltesteGruppe = mainViewModel.Gruppen.OrderByDescending(x => x.GesamtAlter).First();
+                AeltesteGruppe.Content = aeltesteGruppe.GruppenName;
+                AeltesteGruppeAlter.Content = aeltesteGruppe.GesamtAlter;
 
-            //Bester A-Teil
-            var besterATeilGruppe = mainViewModel.Gruppen.OrderByDescending(x => x.PunkteATeil).First();
-            BesterATeilGruppe.Content = besterATeilGruppe.GruppenName;
-            BesterATeilGruppePunkte.Content = besterATeilGruppe.PunkteATeil;
+                //Bester A-Teil
+                var besterATeilGruppe = mainViewModel.Gruppen.OrderByDescending(x => x.PunkteATeil).First();
+                BesterATeilGruppe.Content = besterATeilGruppe.GruppenName;
+                BesterATeilGruppePunkte.Content = besterATeilGruppe.PunkteATeil;
 
-            //Schnellster A-Teil
-            var schnellsterATeilGruppe = mainViewModel.Gruppen.Where(x => x.DurchschnittszeitATeil > 0).OrderBy(x => x.DurchschnittszeitATeil).First();
-            SchnellsterATeilGruppe.Content = schnellsterATeilGruppe.GruppenName;
-            TimeSpan ateil = new TimeSpan(0, 0, Convert.ToInt32(schnellsterATeilGruppe.DurchschnittszeitATeil));
-            SchnellsterATeilGruppeZeit.Content = $"{ateil.Minutes}:{ateil.Seconds}";
+                //Schnellster A-Teil
+                var schnellsterATeilGruppe = mainViewModel.Gruppen.Where(x => x.DurchschnittszeitATeil > 0).OrderBy(x => x.DurchschnittszeitATeil).First();
+                SchnellsterATeilGruppe.Content = schnellsterATeilGruppe.GruppenName;
+                TimeSpan ateil = new TimeSpan(0, 0, Convert.ToInt32(schnellsterATeilGruppe.DurchschnittszeitATeil));
+                SchnellsterATeilGruppeZeit.Content = $"{ateil.Minutes}:{ateil.Seconds}";
 
-            //Schnellste Knotenzeit
-            var schnellsteKnotenZeitGruppe = mainViewModel.Gruppen.Where(x => x.DurchschnittszeitKnotenATeil > 0).OrderBy(x => x.DurchschnittszeitKnotenATeil).First();
-            SchnellsteKnotenZeitGruppe.Content = schnellsteKnotenZeitGruppe.GruppenName;
-            SchnellsteKnotenZeitGruppeZeit.Content = schnellsteKnotenZeitGruppe.DurchschnittszeitKnotenATeil;
+                //Schnellste Knotenzeit
+                var schnellsteKnotenZeitGruppe = mainViewModel.Gruppen.Where(x => x.DurchschnittszeitKnotenATeil > 0).OrderBy(x => x.DurchschnittszeitKnotenATeil).First();
+                SchnellsteKnotenZeitGruppe.Content = schnellsteKnotenZeitGruppe.GruppenName;
+                SchnellsteKnotenZeitGruppeZeit.Content = schnellsteKnotenZeitGruppe.DurchschnittszeitKnotenATeil;
 
-            //Bester B-Teil
-            var besterBTeilGruppe = mainViewModel.Gruppen.OrderByDescending(x => x.PunkteBTeil).First();
-            BesterBTeilGruppe.Content = besterBTeilGruppe.GruppenName;
-            BesterBTeilGruppePunkte.Content = besterBTeilGruppe.PunkteBTeil;
+                //Bester B-Teil
+                var besterBTeilGruppe = mainViewModel.Gruppen.OrderByDescending(x => x.PunkteBTeil).First();
+                BesterBTeilGruppe.Content = besterBTeilGruppe.GruppenName;
+                BesterBTeilGruppePunkte.Content = besterBTeilGruppe.PunkteBTeil;
 
-            //Schnellster B-Teil
-            var schnellsterBTeilGruppe = mainViewModel.Gruppen.Where(x => x.DurchschnittszeitBTeil > 0).OrderBy(x => x.DurchschnittszeitBTeil).First();
-            SchnellsterBTeilGruppe.Content = schnellsterBTeilGruppe.GruppenName;
-            TimeSpan bteil = new TimeSpan(0, 0, Convert.ToInt32(schnellsterBTeilGruppe.DurchschnittszeitBTeil));
-            SchnellsterBTeilGruppeZeit.Content = $"{bteil.Minutes}:{bteil.Seconds}";
+                //Schnellster B-Teil
+                var schnellsterBTeilGruppe = mainViewModel.Gruppen.Where(x => x.DurchschnittszeitBTeil > 0).OrderBy(x => x.DurchschnittszeitBTeil).First();
+                SchnellsterBTeilGruppe.Content = schnellsterBTeilGruppe.GruppenName;
+                TimeSpan bteil = new TimeSpan(0, 0, Convert.ToInt32(schnellsterBTeilGruppe.DurchschnittszeitBTeil));
+                SchnellsterBTeilGruppeZeit.Content = $"{bteil.Minutes}:{bteil.Seconds}";
 
 
-            //Speicherort für Exporte festlegen und evtl. Ordner erstellen
-            exportPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), System.AppDomain.CurrentDomain.FriendlyName);
-            _ = Directory.CreateDirectory(exportPath);
+                //Speicherort für Exporte festlegen und evtl. Ordner erstellen
+                exportPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), System.AppDomain.CurrentDomain.FriendlyName);
+                _ = Directory.CreateDirectory(exportPath);
 
-            //Speicherort für die Vorlagen
-            vorlagenPath = System.IO.Path.Combine(exportPath, "Vorlagen");
+                //Speicherort für die Vorlagen
+                vorlagenPath = System.IO.Path.Combine(exportPath, "Vorlagen");
 
-            //Speicherort für die Wertungsbögen
-            wertungsbogenPath = System.IO.Path.Combine(exportPath, "Wertungsbögen");
+                //Speicherort für die Wertungsbögen
+                wertungsbogenPath = System.IO.Path.Combine(exportPath, "Wertungsbögen");
 
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Auswertung konnte nicht geladen werden\n{ex}", "Fehler: Auswertung", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private async void ExportKontrollblaetter_Click(object sender, RoutedEventArgs e)
         {
             try
             {
+                ((Button)sender).IsEnabled = false;
                 string htmlKontrollblaetter_Vorlage = BWB_Auswertung.Properties.Resources.Kontrollblatt;
                 string htmlKontrollblaetterTabellenzeile_Vorlage = BWB_Auswertung.Properties.Resources.KontrollblattTabellenzeile;
                 PDF pDF = new PDF();
@@ -180,9 +190,11 @@ namespace BWB_Auswertung.Views
 
                 ShowExportMessageBox("Export der Kontrollblätter abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Kontrollblätter", exportPath);
+                ((Button)sender).IsEnabled = true;
             }
             catch (Exception ex)
             {
+                ((Button)sender).IsEnabled = true;
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Kontrollblätter fehlgeschlagen!\n{ex}", "Fehler: Export Kontrollblätter", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -192,6 +204,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
+                ((Button)sender).IsEnabled = false;
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 List<PersonTeilnehmendenliste> personenMitGeburtstag = viewModel.personenMitGeburtstagBeimWettbewerb();
                 string htmlGeburtstagsliste_Vorlage = BWB_Auswertung.Properties.Resources.GeburtstagsListe;
@@ -274,9 +287,11 @@ namespace BWB_Auswertung.Views
 
                 ShowExportMessageBox("Export der Geburtstagsliste abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Geburtstagsliste", exportPath);
+                ((Button)sender).IsEnabled = true;
             }
             catch (Exception ex)
             {
+                ((Button)sender).IsEnabled = true;
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Geburtstagsliste fehlgeschlagen!\n{ex}", "Fehler: Export Geburtstagsliste", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -286,6 +301,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
+                ((Button)sender).IsEnabled = false;
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
 
                 helperExportPDFPlatzierungsliste(viewModel.Gruppen.OrderBy(x => x.Platz).ToList(), "Platzierungsliste");
@@ -293,9 +309,11 @@ namespace BWB_Auswertung.Views
 
                 ShowExportMessageBox("Export der Platzierungslisten abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Platzierungslisten", exportPath);
+                ((Button)sender).IsEnabled = true;
             }
             catch (Exception ex)
             {
+                ((Button)sender).IsEnabled = true;
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Platzierungslisten fehlgeschlagen!\n{ex}", "Fehler: Export Platzierungslisten", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -306,7 +324,6 @@ namespace BWB_Auswertung.Views
 
             try
             {
-
                 string htmlPlatzierungsliste_Vorlage = BWB_Auswertung.Properties.Resources.PlatzierungsListe;
                 string htmlPlatzierungslisteTabellenzeile_Vorlage = BWB_Auswertung.Properties.Resources.PlatzierungsListeTabellenzeile;
                 PDF pDF = new PDF();
@@ -396,6 +413,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
+                ((Button)sender).IsEnabled = false;
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 string excelpath = System.IO.Path.Combine(exportPath, "Platzierungsliste.xlsx");
                 WriteFile.ByteArrayToFile(excelpath, BWB_Auswertung.Properties.Resources.PlatzierungslisteExcel);
@@ -410,9 +428,11 @@ namespace BWB_Auswertung.Views
 
                 ShowExportMessageBox("Export der Platzierungsliste abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Platzierungsliste", exportPath);
+                ((Button)sender).IsEnabled = true;
             }
             catch (Exception ex)
             {
+                ((Button)sender).IsEnabled = true;
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Excel Platzierungsliste fehlgeschlagen!\n{ex}", "Fehler: Export Platzierungslisten", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -422,6 +442,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
+                ((Button)sender).IsEnabled = false;
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 PDF pDF = new PDF();
                 //Für die Excel Liste die Leere Datei erstellen
@@ -487,9 +508,11 @@ namespace BWB_Auswertung.Views
 
                 ShowExportMessageBox("Export der Urkunden abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Urkunden", exportPath);
+                ((Button)sender).IsEnabled = true;
             }
             catch (Exception ex)
             {
+                ((Button)sender).IsEnabled = true;
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Urkunden fehlgeschlagen!\n{ex}", "Fehler: Export Urkunden", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -499,15 +522,17 @@ namespace BWB_Auswertung.Views
         {
             try
             {
+                ((Button)sender).IsEnabled = false;
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 Excel.ExportExcelGruppen(viewModel.Gruppen.OrderBy(x => x.Platz).ToList(), exportPath);
 
                 ShowExportMessageBox("Export der Gruppen abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Gruppen", exportPath);
-
+                ((Button)sender).IsEnabled = true;
             }
             catch (Exception ex)
             {
+                ((Button)sender).IsEnabled = true;
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Gruppen fehlgeschlagen!\n{ex}", "Fehler: Export Gruppendaten", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -517,6 +542,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
+                ((Button)sender).IsEnabled = false;
                 string speicherordner = System.IO.Path.Combine(exportPath, "Wettbewerbsordnung");
                 _ = Directory.CreateDirectory(speicherordner);
                 WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "DJF_Wettbewerbsordnung_BWB_2013.pdf"), BWB_Auswertung.Properties.Resources.DJF_Wettbewerbsordnung_BWB_2013);
@@ -526,9 +552,11 @@ namespace BWB_Auswertung.Views
 
                 ShowExportMessageBox("Export der Wettbewerbsordnung abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Wettbewerbsordnung", speicherordner);
+                ((Button)sender).IsEnabled = true;
             }
             catch (Exception ex)
             {
+                ((Button)sender).IsEnabled = true;
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Wettbewerbsordnung fehlgeschlagen!\n{ex}", "Fehler: Export Wettbewerbsordnung", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -538,6 +566,8 @@ namespace BWB_Auswertung.Views
         {
             try
             {
+                ((Button)sender).IsEnabled = false;
+
                 _ = Directory.CreateDirectory(vorlagenPath);
                 WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkunde_Druckvorlage.pdf"), BWB_Auswertung.Properties.Resources.UrkundeDruckTheme1);
                 WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkunde_Original.indd"), BWB_Auswertung.Properties.Resources.UrkundeOriginalTheme1);
@@ -548,9 +578,13 @@ namespace BWB_Auswertung.Views
 
                 ShowExportMessageBox("Export der Urkundenvorlage abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Urkundenvorlage", vorlagenPath);
+                ((Button)sender).IsEnabled = true;
+
             }
             catch (Exception ex)
             {
+                ((Button)sender).IsEnabled = true;
+
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Urkundenvorlage fehlgeschlagen!\n{ex}", "Fehler: Export Urkundenvorlage", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -560,13 +594,17 @@ namespace BWB_Auswertung.Views
         {
             try
             {
+                ((Button)sender).IsEnabled = false;
+
                 WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Meldebogen-Blanko.xlsx"), BWB_Auswertung.Properties.Resources.Meldebogen_Blanko);
 
                 ShowExportMessageBox("Export der Meldebogen Vorlage abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Meldebogen Blanko", vorlagenPath);
+                ((Button)sender).IsEnabled = true;
             }
             catch (Exception ex)
             {
+                ((Button)sender).IsEnabled = true;
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Meldebogenvorlage fehlgeschlagen!\n{ex}", "Fehler: Export Meldebogenvorlage", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -576,6 +614,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
+                ((Button)sender).IsEnabled = false;
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
 
                 _ = Directory.CreateDirectory(wertungsbogenPath);
@@ -588,9 +627,12 @@ namespace BWB_Auswertung.Views
 
                 ShowExportMessageBox("Export der Wertungsbögen abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Wertungsbögen", exportPath);
+                ((Button)sender).IsEnabled = true;
+
             }
             catch (Exception ex)
             {
+                ((Button)sender).IsEnabled = true;
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Wertungsbögen fehlgeschlagen!\n{ex}", "Fehler: Export Wertungsbögen", MessageBoxButton.OK, MessageBoxImage.Error);
             }
