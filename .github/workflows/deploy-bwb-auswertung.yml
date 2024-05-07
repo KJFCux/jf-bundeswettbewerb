@@ -21,7 +21,7 @@ jobs:
 
             - run: dotnet build ${{ env.PROJECT_PATH }} -c Release
             
-            - run: dotnet publish ${{ env.PROJECT_PATH }} -c Release --self-contained -r win-x64 -p:PublishSingleFile=true
+            - run: dotnet publish ${{ env.PROJECT_PATH }} -c Release --self-contained -r win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
 
             - uses: actions/create-release@v1
               id: create_release

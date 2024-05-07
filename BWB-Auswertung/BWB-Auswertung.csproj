@@ -11,8 +11,8 @@
 	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 	<NeutralLanguage>de-DE</NeutralLanguage>
 	<StartupObject>BWB_Auswertung.App</StartupObject>
-	<AssemblyVersion>1.0.0</AssemblyVersion>
-	<FileVersion>1.0.0</FileVersion>
+	<AssemblyVersion>1.0.2</AssemblyVersion>
+	<FileVersion>1.0.2</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -80,14 +80,13 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="squirrel.windows" Version="1.9.0" />
 	</ItemGroup>
 
 	<PropertyGroup>
 		<NugetTools>$(PkgNuGet_CommandLine)\tools</NugetTools>
 		<SquirrelTools>$(Pkgsquirrel_windows)\tools</SquirrelTools>
 
-		<Version>1.0.0</Version>
+		<Version>1.0.2</Version>
 
 		<NuspecFile>$(ProjectDir)ReleaseSpec.nuspec</NuspecFile>
 	</PropertyGroup>
