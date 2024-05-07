@@ -11,7 +11,6 @@ namespace BWB_Auswertung.IO
         {
             WriteLog(message, method, entryType);
             WriteEvent(message, method, entryType);
-
         }
 
         private static void WriteLog(string message, string method,

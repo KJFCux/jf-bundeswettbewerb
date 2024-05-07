@@ -383,7 +383,6 @@ namespace BWB_Auswertung.Views
                 }
                 pfade.Add(pfad);
                 //Alle Platzierungslisten in eine Datei speichern und die anderen Dateien löschen
-
                 pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"{dateiname}.pdf"), true);
             }
             catch (Exception ex)
@@ -395,91 +394,105 @@ namespace BWB_Auswertung.Views
 
         private void ExportExcelPlatzierungsliste_Click(object sender, RoutedEventArgs e)
         {
-            MainViewModel viewModel = (MainViewModel)this.DataContext;
-            string excelpath = System.IO.Path.Combine(exportPath, "Platzierungsliste.xlsx");
-            WriteFile.ByteArrayToFile(excelpath, BWB_Auswertung.Properties.Resources.PlatzierungslisteExcel);
-
-            //Alles für die Excel Siegerliste
-            bool erfolgreichExcel = Excel.WritePlatzierungslisteToExcel(excelpath, viewModel.Gruppen.OrderBy(x => x.Platz).ToList());
-            if (!erfolgreichExcel)
+            try
             {
-                MessageBox.Show($"Export der Platzierungsliste fehlgeschlagen!", "Fehler: Export Platzierungsliste", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+                string excelpath = System.IO.Path.Combine(exportPath, "Platzierungsliste.xlsx");
+                WriteFile.ByteArrayToFile(excelpath, BWB_Auswertung.Properties.Resources.PlatzierungslisteExcel);
+
+                //Alles für die Excel Siegerliste
+                bool erfolgreichExcel = Excel.WritePlatzierungslisteToExcel(excelpath, viewModel.Gruppen.OrderBy(x => x.Platz).ToList());
+                if (!erfolgreichExcel)
+                {
+                    MessageBox.Show($"Export der Platzierungsliste fehlgeschlagen!", "Fehler: Export Platzierungsliste", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                ShowExportMessageBox("Export der Platzierungsliste abgeschlossen!\nZielverzeichnis öffnen?",
+                    "Export Platzierungsliste", exportPath);
             }
-
-            ShowExportMessageBox("Export der Platzierungsliste abgeschlossen!\nZielverzeichnis öffnen?",
-                "Export Platzierungsliste", exportPath);
-
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Export der Excel Platzierungsliste fehlgeschlagen!\n{ex}", "Fehler: Export Platzierungslisten", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private async void ExportUrkunden_Click(object sender, RoutedEventArgs e)
         {
-            MainViewModel viewModel = (MainViewModel)this.DataContext;
-            PDF pDF = new PDF();
-            //Für die Excel Liste die Leere Datei erstellen
-            string excelpath = System.IO.Path.Combine(exportPath, "Urkundenliste.xlsx");
-            WriteFile.ByteArrayToFile(excelpath, BWB_Auswertung.Properties.Resources.Urkundenliste);
-
-            string urkundeOverlayPfad = System.IO.Path.Combine(vorlagenPath, "UrkundeOverlay.html");
-            string urkundeOverlay = string.Empty;
-            if (File.Exists(urkundeOverlayPfad))
+            try
             {
-                urkundeOverlay = File.ReadAllText(urkundeOverlayPfad);
-            }
-            else
-            {
-                urkundeOverlay = BWB_Auswertung.Properties.Resources.UrkundeOverlay; //default
-                MessageBox.Show("Die Vorlage für die Urkunde wurde nicht gefunden. Es wird der Standard benutzt.", "Export Urkunde", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+                PDF pDF = new PDF();
+                //Für die Excel Liste die Leere Datei erstellen
+                string excelpath = System.IO.Path.Combine(exportPath, "Urkundenliste.xlsx");
+                WriteFile.ByteArrayToFile(excelpath, BWB_Auswertung.Properties.Resources.Urkundenliste);
 
-            //Alles für die Excel Urkundenliste
-            bool erfolgreichExcel = Excel.WriteUrkundeToExcel(excelpath, viewModel.Gruppen.OrderByDescending(x => x.Platz).ToList());
-            if (!erfolgreichExcel)
-            {
-                MessageBox.Show($"Export der Urkunden fehlgeschlagen!", "Fehler: Export Urkunde", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+                string urkundeOverlayPfad = System.IO.Path.Combine(vorlagenPath, "UrkundeOverlay.html");
+                string urkundeOverlay = string.Empty;
+                if (File.Exists(urkundeOverlayPfad))
+                {
+                    urkundeOverlay = File.ReadAllText(urkundeOverlayPfad);
+                }
+                else
+                {
+                    urkundeOverlay = BWB_Auswertung.Properties.Resources.UrkundeOverlay; //default
+                    MessageBox.Show("Die Vorlage für die Urkunde wurde nicht gefunden. Es wird der Standard benutzt.", "Export Urkunde", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
 
-            //Allgemeines ersetzen
-            urkundeOverlay = urkundeOverlay.Replace("{veranstaltungstitel}", viewModel.Einstellungen.Veranstaltungstitel);
-            urkundeOverlay = urkundeOverlay.Replace("{veranstaltungsort}", viewModel.Einstellungen.Veranstaltungsort);
-            urkundeOverlay = urkundeOverlay.Replace("{veranstaltungsleitung}", viewModel.Einstellungen.Veranstaltungsleitung);
-            urkundeOverlay = urkundeOverlay.Replace("{veranstaltungsdatum}", viewModel.Einstellungen.Veranstaltungsdatum.ToString("d"));
-            urkundeOverlay = urkundeOverlay.Replace("{namelinks}", viewModel.Einstellungen.Namelinks);
-            urkundeOverlay = urkundeOverlay.Replace("{namerechts}", viewModel.Einstellungen.Namerechts);
-            urkundeOverlay = urkundeOverlay.Replace("{funktionlinks}", viewModel.Einstellungen.Funktionlinks);
-            urkundeOverlay = urkundeOverlay.Replace("{funktionrechts}", viewModel.Einstellungen.Funktionrechts);
-
-            if (File.Exists(viewModel.Einstellungen.Unterschriftlinks))
-            {
-                urkundeOverlay = urkundeOverlay.Replace("{unterschriftlinks}", $"data:image/jpeg;base64,{Bilder.readBase64(viewModel.Einstellungen.Unterschriftlinks)}");
-                urkundeOverlay = urkundeOverlay.Replace("{unterschriftrechts}", $"data:image/jpeg;base64,{Bilder.readBase64(viewModel.Einstellungen.Unterschriftrechts)}");
-            }
-
-            List<string> pfade = new List<string>();
-            foreach (Gruppe gruppe in viewModel.Gruppen.OrderByDescending(x => x.Platz))
-            {
-                string aktuelleUrkunde = urkundeOverlay;
-
-                aktuelleUrkunde = aktuelleUrkunde.Replace("{jugendfeuerwehr}", gruppe.GruppenName);
-                aktuelleUrkunde = aktuelleUrkunde.Replace("{platz}", gruppe.Platz.ToString());
-
-                string pfad = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
-                bool erfolgreich = await pDF.ConvertHtmlFileToPdf(aktuelleUrkunde, pfad);
-                if (!erfolgreich)
+                //Alles für die Excel Urkundenliste
+                bool erfolgreichExcel = Excel.WriteUrkundeToExcel(excelpath, viewModel.Gruppen.OrderByDescending(x => x.Platz).ToList());
+                if (!erfolgreichExcel)
                 {
                     MessageBox.Show($"Export der Urkunden fehlgeschlagen!", "Fehler: Export Urkunde", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-                pfade.Add(pfad);
 
+                //Allgemeines ersetzen
+                urkundeOverlay = urkundeOverlay.Replace("{veranstaltungstitel}", viewModel.Einstellungen.Veranstaltungstitel);
+                urkundeOverlay = urkundeOverlay.Replace("{veranstaltungsort}", viewModel.Einstellungen.Veranstaltungsort);
+                urkundeOverlay = urkundeOverlay.Replace("{veranstaltungsleitung}", viewModel.Einstellungen.Veranstaltungsleitung);
+                urkundeOverlay = urkundeOverlay.Replace("{veranstaltungsdatum}", viewModel.Einstellungen.Veranstaltungsdatum.ToString("d"));
+                urkundeOverlay = urkundeOverlay.Replace("{namelinks}", viewModel.Einstellungen.Namelinks);
+                urkundeOverlay = urkundeOverlay.Replace("{namerechts}", viewModel.Einstellungen.Namerechts);
+                urkundeOverlay = urkundeOverlay.Replace("{funktionlinks}", viewModel.Einstellungen.Funktionlinks);
+                urkundeOverlay = urkundeOverlay.Replace("{funktionrechts}", viewModel.Einstellungen.Funktionrechts);
+
+                if (File.Exists(viewModel.Einstellungen.Unterschriftlinks))
+                {
+                    urkundeOverlay = urkundeOverlay.Replace("{unterschriftlinks}", $"data:image/jpeg;base64,{Bilder.readBase64(viewModel.Einstellungen.Unterschriftlinks)}");
+                    urkundeOverlay = urkundeOverlay.Replace("{unterschriftrechts}", $"data:image/jpeg;base64,{Bilder.readBase64(viewModel.Einstellungen.Unterschriftrechts)}");
+                }
+
+                List<string> pfade = new List<string>();
+                foreach (Gruppe gruppe in viewModel.Gruppen.OrderByDescending(x => x.Platz))
+                {
+                    string aktuelleUrkunde = urkundeOverlay;
+
+                    aktuelleUrkunde = aktuelleUrkunde.Replace("{jugendfeuerwehr}", gruppe.GruppenName);
+                    aktuelleUrkunde = aktuelleUrkunde.Replace("{platz}", gruppe.Platz.ToString());
+
+                    string pfad = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
+                    bool erfolgreich = await pDF.ConvertHtmlFileToPdf(aktuelleUrkunde, pfad);
+                    if (!erfolgreich)
+                    {
+                        MessageBox.Show($"Export der Urkunden fehlgeschlagen!", "Fehler: Export Urkunde", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                    pfade.Add(pfad);
+
+                }
+                pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"UrkundenOverlay.pdf"), true);
+
+
+                ShowExportMessageBox("Export der Urkunden abgeschlossen!\nZielverzeichnis öffnen?",
+                    "Export Urkunden", exportPath);
             }
-            pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"UrkundenOverlay.pdf"), true);
-
-
-            ShowExportMessageBox("Export der Urkunden abgeschlossen!\nZielverzeichnis öffnen?",
-                "Export Urkunden", exportPath);
-
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Export der Urkunden fehlgeschlagen!\n{ex}", "Fehler: Export Urkunden", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void ExportGruppenExcel_Click(object sender, RoutedEventArgs e)
@@ -502,67 +515,102 @@ namespace BWB_Auswertung.Views
 
         private void ExportWettbewerbsordnung_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                string speicherordner = System.IO.Path.Combine(exportPath, "Wettbewerbsordnung");
+                _ = Directory.CreateDirectory(speicherordner);
+                WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "DJF_Wettbewerbsordnung_BWB_2013.pdf"), BWB_Auswertung.Properties.Resources.DJF_Wettbewerbsordnung_BWB_2013);
+                WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "Aktuelles_BWB_2016.pdf"), BWB_Auswertung.Properties.Resources.Aktuelles_BWB_2016);
+                WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "Wettbewerbsinfo.pdf"), BWB_Auswertung.Properties.Resources.Wettbewerbsinfo);
+                WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "Wettbewerbsrichtlinien.pdf"), BWB_Auswertung.Properties.Resources.Wettbewerbsrichtlinien);
 
-            string speicherordner = System.IO.Path.Combine(exportPath, "Wettbewerbsordnung");
-            _ = Directory.CreateDirectory(speicherordner);
-            WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "DJF_Wettbewerbsordnung_BWB_2013.pdf"), BWB_Auswertung.Properties.Resources.DJF_Wettbewerbsordnung_BWB_2013);
-            WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "Aktuelles_BWB_2016.pdf"), BWB_Auswertung.Properties.Resources.Aktuelles_BWB_2016);
-            WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "Wettbewerbsinfo.pdf"), BWB_Auswertung.Properties.Resources.Wettbewerbsinfo);
-            WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "Wettbewerbsrichtlinien.pdf"), BWB_Auswertung.Properties.Resources.Wettbewerbsrichtlinien);
-
-            ShowExportMessageBox("Export der Wettbewerbsordnung abgeschlossen!\nZielverzeichnis öffnen?",
-                "Export Wettbewerbsordnung", speicherordner);
-
+                ShowExportMessageBox("Export der Wettbewerbsordnung abgeschlossen!\nZielverzeichnis öffnen?",
+                    "Export Wettbewerbsordnung", speicherordner);
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Export der Wettbewerbsordnung fehlgeschlagen!\n{ex}", "Fehler: Export Wettbewerbsordnung", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void ExportUrkundenvorlage_Click(object sender, RoutedEventArgs e)
         {
-            _ = Directory.CreateDirectory(vorlagenPath);
-            WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkunde_Druckvorlage.pdf"), BWB_Auswertung.Properties.Resources.UrkundeDruckTheme1);
-            WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkunde_Original.indd"), BWB_Auswertung.Properties.Resources.UrkundeOriginalTheme1);
-            WriteFile.writeText(System.IO.Path.Combine(vorlagenPath, "UrkundeOverlay.html"), BWB_Auswertung.Properties.Resources.UrkundeOverlay);
-            WriteFile.writeText(System.IO.Path.Combine(vorlagenPath, "UrkundeOverlayTheme1.html"), BWB_Auswertung.Properties.Resources.UrkundeOverlayTheme1);
-            WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkundenpapier-Beispiel.pdf"), BWB_Auswertung.Properties.Resources.Urkundenpapier_BeispielDruck);
-            WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkundenpapier-Beispiel.indd"), BWB_Auswertung.Properties.Resources.Urkundenpapier_BeispielIndesign);
+            try
+            {
+                _ = Directory.CreateDirectory(vorlagenPath);
+                WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkunde_Druckvorlage.pdf"), BWB_Auswertung.Properties.Resources.UrkundeDruckTheme1);
+                WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkunde_Original.indd"), BWB_Auswertung.Properties.Resources.UrkundeOriginalTheme1);
+                WriteFile.writeText(System.IO.Path.Combine(vorlagenPath, "UrkundeOverlay.html"), BWB_Auswertung.Properties.Resources.UrkundeOverlay);
+                WriteFile.writeText(System.IO.Path.Combine(vorlagenPath, "UrkundeOverlayTheme1.html"), BWB_Auswertung.Properties.Resources.UrkundeOverlayTheme1);
+                WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkundenpapier-Beispiel.pdf"), BWB_Auswertung.Properties.Resources.Urkundenpapier_BeispielDruck);
+                WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkundenpapier-Beispiel.indd"), BWB_Auswertung.Properties.Resources.Urkundenpapier_BeispielIndesign);
 
-            ShowExportMessageBox("Export der Urkundenvorlage abgeschlossen!\nZielverzeichnis öffnen?",
-                "Export Urkundenvorlage", vorlagenPath);
-
+                ShowExportMessageBox("Export der Urkundenvorlage abgeschlossen!\nZielverzeichnis öffnen?",
+                    "Export Urkundenvorlage", vorlagenPath);
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Export der Urkundenvorlage fehlgeschlagen!\n{ex}", "Fehler: Export Urkundenvorlage", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void ExportMeldebogenBlanko_Click(object sender, RoutedEventArgs e)
         {
-            WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Meldebogen-Blanko.xlsx"), BWB_Auswertung.Properties.Resources.Meldebogen_Blanko);
+            try
+            {
+                WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Meldebogen-Blanko.xlsx"), BWB_Auswertung.Properties.Resources.Meldebogen_Blanko);
 
-            ShowExportMessageBox("Export der Meldebogen Vorlage abgeschlossen!\nZielverzeichnis öffnen?",
-                "Export Meldebogen Blanko", vorlagenPath);
+                ShowExportMessageBox("Export der Meldebogen Vorlage abgeschlossen!\nZielverzeichnis öffnen?",
+                    "Export Meldebogen Blanko", vorlagenPath);
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Export der Meldebogenvorlage fehlgeschlagen!\n{ex}", "Fehler: Export Meldebogenvorlage", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void ExportExcelWertungsbogen_Click(object sender, RoutedEventArgs e)
         {
-            MainViewModel viewModel = (MainViewModel)this.DataContext;
-
-            _ = Directory.CreateDirectory(wertungsbogenPath);
-            bool erfolgreichExcel = Excel.WriteWertungsbogenToExcel(wertungsbogenPath, viewModel.Gruppen.OrderByDescending(x => x.Platz).ToList(), viewModel.Einstellungen);
-            if (!erfolgreichExcel)
+            try
             {
-                MessageBox.Show($"Export der Wertungsbögen fehlgeschlagen!", "Fehler: Export Wertungsbögen", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+
+                _ = Directory.CreateDirectory(wertungsbogenPath);
+                bool erfolgreichExcel = Excel.WriteWertungsbogenToExcel(wertungsbogenPath, viewModel.Gruppen.OrderByDescending(x => x.Platz).ToList(), viewModel.Einstellungen);
+                if (!erfolgreichExcel)
+                {
+                    MessageBox.Show($"Export der Wertungsbögen fehlgeschlagen!", "Fehler: Export Wertungsbögen", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                ShowExportMessageBox("Export der Wertungsbögen abgeschlossen!\nZielverzeichnis öffnen?",
+                    "Export Wertungsbögen", exportPath);
             }
-
-            ShowExportMessageBox("Export der Wertungsbögen abgeschlossen!\nZielverzeichnis öffnen?",
-                "Export Wertungsbögen", exportPath);
-
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Export der Wertungsbögen fehlgeschlagen!\n{ex}", "Fehler: Export Wertungsbögen", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void ShowExportMessageBox(string message, string title, string path)
         {
-            if(MessageBox.Show(message, title,
-                MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
-
+            try
             {
-                Process.Start(Environment.GetEnvironmentVariable("WINDIR") +
-                              @"\explorer.exe", path);
+                if (MessageBox.Show(message, title,
+                    MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+
+                {
+                    Process.Start(Environment.GetEnvironmentVariable("WINDIR") +
+                                  @"\explorer.exe", path);
+                }
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
             }
         }
     }
