@@ -145,6 +145,10 @@ namespace BWB_Auswertung
                     }
                 }
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
+                //Filterung entfernen
+                FertigeGruppenAusblenden_Checkbox.IsChecked = false;
+
+                //Importiertes einsortieren
                 viewModel.Sort(sortComboBox.SelectedIndex);
             }
             catch (Exception ex)
@@ -178,6 +182,8 @@ namespace BWB_Auswertung
                     MessageBox.Show("Keine Gruppen vorhanden", "Auswertung kann nicht geöffnet werden", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
+                //Filterung entfernen
+                FertigeGruppenAusblenden_Checkbox.IsChecked = false;
                 //Vor dem öffnen der Auswertung die Liste neu sortieren um evtl.
                 //Platz Änderungen korrekt zu setzen
                 viewModel.Sort(sortComboBox.SelectedIndex);
@@ -227,6 +233,7 @@ namespace BWB_Auswertung
                 //Beim Durchklicken durch die Gruppen alle Daten speichern
                 //Beim Durchklicken sind evtl. Bearbeitungen abgeschlossen. Daher alles speichern
                 SaveData(dataPath, true);
+                FertigeGruppenAusblendenHelper();
             }
             catch (Exception ex)
             {
@@ -247,6 +254,7 @@ namespace BWB_Auswertung
                     }
                     MainViewModel viewModel = (MainViewModel)this.DataContext;
                     viewModel.Sort(sortComboBox.SelectedIndex);
+                    FertigeGruppenAusblendenHelper();
                 }
             }
             catch (Exception ex)
@@ -324,6 +332,11 @@ namespace BWB_Auswertung
 
                     }
                 }
+
+                //Filterung entfernen
+                FertigeGruppenAusblenden_Checkbox.IsChecked = false;
+
+                //Hinzugefügtes einsortieren
                 viewModel.Sort(sortComboBox.SelectedIndex);
 
             }
@@ -497,12 +510,47 @@ namespace BWB_Auswertung
                         MainViewModel viewModel = (MainViewModel)this.DataContext;
                         viewModel.switchBoxTeilnehmer(ersatzComboBox.SelectedIndex, selectedGruppe);
                         ersatzComboBox.SelectedIndex = 0;
+                        FertigeGruppenAusblendenHelper();
                     }
                 }
             }
             catch (Exception ex)
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+            }
+        }
+
+        private void FertigeGruppenAusblenden(object sender, RoutedEventArgs e)
+        {
+            FertigeGruppenAusblendenHelper();
+        }
+
+        private void FertigeGruppenAusblendenHelper()
+        {
+            if (FertigeGruppenAusblenden_Checkbox.IsChecked == true)
+            {
+                // Filter aktivieren, um Gruppen die alle Felder ausgefüllt haben auszublenden
+                ICollectionView view = CollectionViewSource.GetDefaultView(gruppenListBox.ItemsSource);
+                view.Filter = item =>
+                {
+                    if (item is Gruppe gruppe)
+                    {
+                        return ((gruppe.ATeilGesamteindruck < 1)
+                                 && (gruppe.BTeilGesamteindruck < 1)
+                                 && (gruppe.PunkteBTeil < 1)
+                                 && (gruppe.DurchschnittszeitKnotenATeil < 1)
+                                 && (gruppe.DurchschnittszeitBTeil < 1)
+                                 && (gruppe.DurchschnittszeitATeil < 1)
+                                 );
+                    }
+                    return false;
+                };
+            }
+            else
+            {
+                // Filter deaktivieren, um alle Gruppen anzuzeigen
+                ICollectionView view = CollectionViewSource.GetDefaultView(gruppenListBox.ItemsSource);
+                view.Filter = null;
             }
         }
     }

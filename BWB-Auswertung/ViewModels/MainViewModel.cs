@@ -14,7 +14,6 @@ public class MainViewModel : INotifyPropertyChanged
     private Settings einstellungen;
     private ObservableCollection<Art> artList;
 
-
     public ObservableCollection<Art> ArtList
     {
         get { return artList; }
@@ -24,7 +23,6 @@ public class MainViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(ArtList));
         }
     }
-
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

@@ -2165,6 +2165,27 @@
                                 HorizontalAlignment="Center">
                         <Label Grid.Row="0"
                                Grid.Column="0"
+                               Content="Fertige Gruppen ausblenden: "
+                               ToolTip="Bei Auswahl werden alle Gruppen ausgeblendet die bereits vollständig ausgefüllt sind."
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="16" />
+                        <CheckBox ToolTip="Bei Auswahl werden alle Gruppen ausgeblendet die bereits vollständig ausgefüllt sind."
+                                  Checked="FertigeGruppenAusblenden"
+                                  Unchecked="FertigeGruppenAusblenden"
+                                  x:Name="FertigeGruppenAusblenden_Checkbox"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  Margin="0,0,0,0" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                HorizontalAlignment="Center">
+                        <Label Grid.Row="0"
+                               Grid.Column="0"
                                Content="Sortieren nach:"
                                HorizontalAlignment="Center"
                                Margin="0,0,0,0"
@@ -2184,6 +2205,7 @@
                             <ComboBoxItem Content="Gesamt Alter" />
                         </ComboBox>
                     </StackPanel>
+
                 </StackPanel>
 
                 <Separator Grid.Row="1"
