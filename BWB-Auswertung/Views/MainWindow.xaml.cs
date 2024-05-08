@@ -591,6 +591,7 @@ namespace BWB_Auswertung
                 view.Filter = null;
             }
         }
+
     }
 
     public class AgeToColorConverter : IValueConverter

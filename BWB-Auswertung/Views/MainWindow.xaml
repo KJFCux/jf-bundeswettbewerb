@@ -205,14 +205,6 @@
                                                VerticalAlignment="Top"
                                                ToolTip="Die Startnummer wird nach Reihenfolge der Startzeit für den A-Teil automatisch vergeben. Vergabe erfolgt aufsteigend in dieser Reihenfolge: Startzeit A-Teil, Startbahn A-Teil, Gruppenname"
                                                FontSize="24" />
-                                        <!--<TextBox TextWrapping="Wrap"
-                                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.StartNr,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                 Margin="0,10,40,10"
-                                                 Width="120"
-                                                 HorizontalAlignment="Center"
-                                                 VerticalAlignment="Center"
-                                                 FontSize="20"
-                                                 TextChanged="TextBox_TextChanged" />-->
                                         <Label Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.StartNr,Mode=OneWay}"
                                                Margin="0,10,40,10"
                                                HorizontalAlignment="Center"
@@ -375,14 +367,6 @@
                                                FontSize="24"
                                                FontWeight="Bold" />
 
-                                        <!--<TextBox TextWrapping="Wrap"
-                         Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.StartNr,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         Margin="0,10,40,10"
-                         Width="120"
-                         HorizontalAlignment="Center"
-                         VerticalAlignment="Center"
-                         FontSize="20"
-                         TextChanged="TextBox_TextChanged" />-->
                                         <Label Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.Platz,Mode=OneWay, TargetNullValue=0}"
                                                Margin="0,10,40,10"
                                                ToolTip="Die Platzierung wird entsprechend der Wettbewerbsregeln für den Bundeswettbewerb automatisch berechnet"
@@ -685,6 +669,7 @@
                         <!--Vornamen-->
                         <TextBox Grid.Column="1"
                                  Grid.Row="1"
+                                 TabIndex="1"
                                  HorizontalAlignment="Center"
                                  TextWrapping="Wrap"
                                  Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[0].Vorname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -695,6 +680,7 @@
                                  FontSize="30" />
                         <TextBox Grid.Column="1"
                                  Grid.Row="2"
+                                 TabIndex="5"
                                  HorizontalAlignment="Center"
                                  TextWrapping="Wrap"
                                  Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[1].Vorname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -712,7 +698,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="13" />
                         <TextBox Grid.Column="1"
                                  Grid.Row="4"
                                  HorizontalAlignment="Center"
@@ -722,7 +709,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="17" />
                         <TextBox Grid.Column="1"
                                  Grid.Row="5"
                                  HorizontalAlignment="Center"
@@ -732,7 +720,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="21" />
                         <TextBox Grid.Column="1"
                                  Grid.Row="6"
                                  HorizontalAlignment="Center"
@@ -742,7 +731,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="25" />
                         <TextBox Grid.Column="1"
                                  Grid.Row="7"
                                  HorizontalAlignment="Center"
@@ -752,7 +742,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="29" />
                         <TextBox Grid.Column="1"
                                  Grid.Row="8"
                                  HorizontalAlignment="Center"
@@ -762,7 +753,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="33" />
                         <TextBox Grid.Column="1"
                                  Grid.Row="9"
                                  HorizontalAlignment="Center"
@@ -772,7 +764,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="37" />
                         <TextBox Grid.Column="1"
                                  Grid.Row="10"
                                  HorizontalAlignment="Center"
@@ -782,7 +775,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="41" />
 
                         <!--NACHNAMEN-->
                         <TextBox Grid.Column="2"
@@ -794,7 +788,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="2" />
                         <TextBox Grid.Column="2"
                                  Grid.Row="2"
                                  HorizontalAlignment="Center"
@@ -804,7 +799,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="6" />
                         <TextBox Grid.Column="2"
                                  Grid.Row="3"
                                  HorizontalAlignment="Center"
@@ -814,7 +810,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="14" />
                         <TextBox Grid.Column="2"
                                  Grid.Row="4"
                                  HorizontalAlignment="Center"
@@ -824,7 +821,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="18" />
                         <TextBox Grid.Column="2"
                                  Grid.Row="5"
                                  HorizontalAlignment="Center"
@@ -834,7 +832,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="22" />
                         <TextBox Grid.Column="2"
                                  Grid.Row="6"
                                  HorizontalAlignment="Center"
@@ -844,7 +843,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="26" />
                         <TextBox Grid.Column="2"
                                  Grid.Row="7"
                                  HorizontalAlignment="Center"
@@ -854,7 +854,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="30" />
                         <TextBox Grid.Column="2"
                                  Grid.Row="8"
                                  HorizontalAlignment="Center"
@@ -864,7 +865,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="34" />
                         <TextBox Grid.Column="2"
                                  Grid.Row="9"
                                  HorizontalAlignment="Center"
@@ -874,7 +876,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="38" />
                         <TextBox Grid.Column="2"
                                  Grid.Row="10"
                                  HorizontalAlignment="Center"
@@ -884,7 +887,8 @@
                                  Height="60"
                                  MinWidth="300"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="42" />
                         <!--Geschlecht-->
                         <TextBox Grid.Column="3"
                                  Grid.Row="1"
@@ -895,7 +899,8 @@
                                  Height="60"
                                  MinWidth="80"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="3" />
                         <TextBox Grid.Column="3"
                                  Grid.Row="2"
                                  HorizontalAlignment="Center"
@@ -905,7 +910,8 @@
                                  Height="60"
                                  MinWidth="80"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="7" />
                         <TextBox Grid.Column="3"
                                  Grid.Row="3"
                                  HorizontalAlignment="Center"
@@ -915,7 +921,8 @@
                                  Height="60"
                                  MinWidth="80"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="15" />
                         <TextBox Grid.Column="3"
                                  Grid.Row="4"
                                  HorizontalAlignment="Center"
@@ -925,7 +932,8 @@
                                  Height="60"
                                  MinWidth="80"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="19" />
                         <TextBox Grid.Column="3"
                                  Grid.Row="5"
                                  HorizontalAlignment="Center"
@@ -935,7 +943,8 @@
                                  Height="60"
                                  MinWidth="80"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="23" />
                         <TextBox Grid.Column="3"
                                  Grid.Row="6"
                                  HorizontalAlignment="Center"
@@ -945,7 +954,8 @@
                                  Height="60"
                                  MinWidth="80"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="27" />
                         <TextBox Grid.Column="3"
                                  Grid.Row="7"
                                  HorizontalAlignment="Center"
@@ -955,7 +965,8 @@
                                  Height="60"
                                  MinWidth="80"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="31" />
                         <TextBox Grid.Column="3"
                                  Grid.Row="8"
                                  HorizontalAlignment="Center"
@@ -965,7 +976,8 @@
                                  Height="60"
                                  MinWidth="80"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="35" />
                         <TextBox Grid.Column="3"
                                  Grid.Row="9"
                                  HorizontalAlignment="Center"
@@ -975,7 +987,8 @@
                                  Height="60"
                                  MinWidth="80"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="39" />
                         <TextBox Grid.Column="3"
                                  Grid.Row="10"
                                  HorizontalAlignment="Center"
@@ -985,7 +998,8 @@
                                  Height="60"
                                  MinWidth="80"
                                  Width="Auto"
-                                 FontSize="30" />
+                                 FontSize="30"
+                                 TabIndex="43" />
 
                         <TextBox Grid.Column="4"
                                  Grid.Row="1"
@@ -997,7 +1011,8 @@
                                  MinWidth="180"
                                  Width="Auto"
                                  FontSize="30"
-                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[0].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}" />
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[0].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="4" />
                         <TextBox Grid.Column="4"
                                  Grid.Row="2"
                                  HorizontalAlignment="Center"
@@ -1008,7 +1023,8 @@
                                  MinWidth="180"
                                  Width="Auto"
                                  FontSize="30"
-                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[1].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}" />
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[1].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="8" />
                         <TextBox Grid.Column="4"
                                  Grid.Row="3"
                                  HorizontalAlignment="Center"
@@ -1019,7 +1035,8 @@
                                  MinWidth="180"
                                  Width="Auto"
                                  FontSize="30"
-                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[2].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}" />
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[2].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="16" />
                         <TextBox Grid.Column="4"
                                  Grid.Row="4"
                                  HorizontalAlignment="Center"
@@ -1030,7 +1047,8 @@
                                  MinWidth="180"
                                  Width="Auto"
                                  FontSize="30"
-                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[3].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}" />
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[3].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="20" />
                         <TextBox Grid.Column="4"
                                  Grid.Row="5"
                                  HorizontalAlignment="Center"
@@ -1041,7 +1059,8 @@
                                  MinWidth="180"
                                  Width="Auto"
                                  FontSize="30"
-                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[4].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}" />
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[4].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="24" />
                         <TextBox Grid.Column="4"
                                  Grid.Row="6"
                                  HorizontalAlignment="Center"
@@ -1052,7 +1071,8 @@
                                  MinWidth="180"
                                  Width="Auto"
                                  FontSize="30"
-                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[5].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}" />
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[5].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="28" />
                         <TextBox Grid.Column="4"
                                  Grid.Row="7"
                                  HorizontalAlignment="Center"
@@ -1063,7 +1083,8 @@
                                  MinWidth="180"
                                  Width="Auto"
                                  FontSize="30"
-                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[6].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}" />
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[6].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="32" />
                         <TextBox Grid.Column="4"
                                  Grid.Row="8"
                                  HorizontalAlignment="Center"
@@ -1074,7 +1095,8 @@
                                  MinWidth="180"
                                  Width="Auto"
                                  FontSize="30"
-                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[7].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}" />
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[7].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="36" />
                         <TextBox Grid.Column="4"
                                  Grid.Row="9"
                                  HorizontalAlignment="Center"
@@ -1085,7 +1107,8 @@
                                  MinWidth="180"
                                  Width="Auto"
                                  FontSize="30"
-                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[8].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}" />
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[8].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="40" />
                         <TextBox Grid.Column="4"
                                  Grid.Row="10"
                                  HorizontalAlignment="Center"
@@ -1096,7 +1119,8 @@
                                  MinWidth="180"
                                  Width="Auto"
                                  FontSize="30"
-                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[9].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}" />
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[9].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="44" />
                         <!--Alter-->
                         <Label Grid.Row="1"
                                Grid.Column="5"
