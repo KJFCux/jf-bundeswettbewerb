@@ -473,6 +473,7 @@ namespace BWB_Auswertung
 
                 // Deserialisieren der XML-Datei und Hinzufügen der deserialisierten Gruppen zum ViewModel
                 Gruppe gruppe = DeserializeXML<Gruppe>.Deserialize<Gruppe>(file);
+
                 if (gruppe != null)
                 {
                     //Schauen ob bereits vorhanden und alten Eintrag löschen
@@ -487,6 +488,7 @@ namespace BWB_Auswertung
                             if (gruppe.StartzeitBTeil == DateTime.MinValue) gruppe.StartzeitBTeil = gefundeneGruppe.StartzeitBTeil;
                             if (gruppe.WettbewerbsbahnATeil == null) gruppe.WettbewerbsbahnATeil = gefundeneGruppe.WettbewerbsbahnATeil;
                             if (gruppe.WettbewerbsbahnBTeil == null) gruppe.WettbewerbsbahnBTeil = gefundeneGruppe.WettbewerbsbahnBTeil;
+
 
                             // Alte Gruppe löschen
                             viewModel.RemoveSelectedGroup(gefundeneGruppe, false);
@@ -565,30 +567,37 @@ namespace BWB_Auswertung
 
         private void FertigeGruppenAusblendenHelper()
         {
-            if (FertigeGruppenAusblenden_Checkbox.IsChecked == true)
+            try
             {
-                // Filter aktivieren, um Gruppen die alle Felder ausgefüllt haben auszublenden
-                ICollectionView view = CollectionViewSource.GetDefaultView(gruppenListBox.ItemsSource);
-                view.Filter = item =>
+                if (FertigeGruppenAusblenden_Checkbox.IsChecked == true)
                 {
-                    if (item is Gruppe gruppe)
+                    // Filter aktivieren, um Gruppen die alle Felder ausgefüllt haben auszublenden
+                    ICollectionView view = CollectionViewSource.GetDefaultView(gruppenListBox.ItemsSource);
+                    view.Filter = item =>
                     {
-                        return ((gruppe.ATeilGesamteindruck < 1)
-                                 && (gruppe.BTeilGesamteindruck < 1)
-                                 && (gruppe.PunkteBTeil < 1)
-                                 && (gruppe.DurchschnittszeitKnotenATeil < 1)
-                                 && (gruppe.DurchschnittszeitBTeil < 1)
-                                 && (gruppe.DurchschnittszeitATeil < 1)
-                                 );
-                    }
-                    return false;
-                };
+                        if (item is Gruppe gruppe)
+                        {
+                            return ((gruppe.ATeilGesamteindruck < 1)
+                                     && (gruppe.BTeilGesamteindruck < 1)
+                                     && (gruppe.PunkteBTeil < 1)
+                                     && (gruppe.DurchschnittszeitKnotenATeil < 1)
+                                     && (gruppe.DurchschnittszeitBTeil < 1)
+                                     && (gruppe.DurchschnittszeitATeil < 1)
+                                     );
+                        }
+                        return false;
+                    };
+                }
+                else
+                {
+                    // Filter deaktivieren, um alle Gruppen anzuzeigen
+                    ICollectionView view = CollectionViewSource.GetDefaultView(gruppenListBox.ItemsSource);
+                    view.Filter = null;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                // Filter deaktivieren, um alle Gruppen anzuzeigen
-                ICollectionView view = CollectionViewSource.GetDefaultView(gruppenListBox.ItemsSource);
-                view.Filter = null;
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
             }
         }
 
@@ -596,18 +605,38 @@ namespace BWB_Auswertung
         //Fenster Skalieren
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            MainViewModel viewModel = (MainViewModel)this.DataContext;
+            try
+            {
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
 
-            // Annahme: Mindestgröße für die Skalierung festlegen
-            double minWindowSize = 1600; // Minimale Fensterbreite
+                // Annahme: Mindestgröße für die Skalierung festlegen
+                double minWindowSize = 1600; // Minimale Fensterbreite
 
-            // Berechne den Skalierungsfaktor basierend auf der aktuellen Fensterbreite
-            double scaleFactor = Math.Min(1, ActualWidth / minWindowSize);
+                // Berechne den Skalierungsfaktor basierend auf der aktuellen Fensterbreite
+                double scaleFactor = Math.Min(1, ActualWidth / minWindowSize);
 
-            // Setze den Skalierungsfaktor im ViewModel
-            viewModel.ScaleFactor = scaleFactor;
+                // Setze den Skalierungsfaktor im ViewModel
+                viewModel.ScaleFactor = scaleFactor;
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+            }
         }
 
+        private void AnmeldeURLKopieren_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string? urlderAnmeldung = UrlderAnmeldung.Text?.ToString();
+                if (urlderAnmeldung != null) Clipboard.SetText(urlderAnmeldung);
+
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+            }
+        }
     }
 
     public class AgeToColorConverter : IValueConverter

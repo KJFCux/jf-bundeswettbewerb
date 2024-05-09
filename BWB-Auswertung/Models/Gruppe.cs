@@ -26,7 +26,11 @@ namespace BWB_Auswertung.Models
         public int? WettbewerbsbahnBTeil { get; set; }
         public DateTime StartzeitATeil { get; set; }
         public DateTime StartzeitBTeil { get; set; }
+        
+        public string? UrlderAnmeldung { get; set; }
 
+        public DateTime? TimeStampAnmeldung { get; set; }
+        public DateTime? TimeStampAenderung { get; set; }
 
         //AUSWERTUNG
         public bool? DisqualifikationA { get; set; }
@@ -682,6 +686,7 @@ namespace BWB_Auswertung.Models
 
         protected void OnPropertyChanged()
         {
+            this.TimeStampAenderung = DateTime.Now;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
         }
     }
