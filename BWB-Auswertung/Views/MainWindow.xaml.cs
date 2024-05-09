@@ -106,7 +106,7 @@ namespace BWB_Auswertung
                         var result = MessageBox.Show($"Es gibt eine neue Version des Auswertungsprogramms!\nMöchtest du die neue Version herunterladen?", "Update verfügbar!", MessageBoxButton.YesNo, MessageBoxImage.Question);
                         if (result == MessageBoxResult.Yes)
                         {
-                            Process.Start(new ProcessStartInfo(BWB_Auswertung.Properties.Settings.Default.GithubDownloadURL.Replace("{release}",latestRelease.tag_name)) { UseShellExecute = true });
+                            Process.Start(new ProcessStartInfo(BWB_Auswertung.Properties.Settings.Default.GithubDownloadURL.Replace("{release}", latestRelease.tag_name)) { UseShellExecute = true });
                         }
                     }
                 }
@@ -592,6 +592,22 @@ namespace BWB_Auswertung
             }
         }
 
+
+        //Fenster Skalieren
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            MainViewModel viewModel = (MainViewModel)this.DataContext;
+
+            // Annahme: Mindestgröße für die Skalierung festlegen
+            double minWindowSize = 1600; // Minimale Fensterbreite
+
+            // Berechne den Skalierungsfaktor basierend auf der aktuellen Fensterbreite
+            double scaleFactor = Math.Min(1, ActualWidth / minWindowSize);
+
+            // Setze den Skalierungsfaktor im ViewModel
+            viewModel.ScaleFactor = scaleFactor;
+        }
+
     }
 
     public class AgeToColorConverter : IValueConverter
@@ -612,6 +628,7 @@ namespace BWB_Auswertung
         {
             throw new NotImplementedException();
         }
+
 
     }
 
