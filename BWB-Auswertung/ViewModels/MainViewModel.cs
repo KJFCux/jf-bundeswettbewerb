@@ -7,6 +7,7 @@ using System.Windows.Input;
 using BWB_Auswertung.IO;
 using System.Linq;
 using System.Windows;
+using System.IO;
 
 public class MainViewModel : INotifyPropertyChanged
 {
@@ -51,10 +52,12 @@ public class MainViewModel : INotifyPropertyChanged
             gruppen = value;
             OnPropertyChanged(nameof(Gruppen));
             //Bei jeder größeren Veränderung von Daten, alles direkt in die XML-Dateien sichern
-            foreach (var gruppe in gruppen)
-            {
-                WriteFile.writeText($"{gruppe.Feuerwehr} - {gruppe.GruppenName}.xml", SerializeXML<Gruppe>.Serialize(gruppe));
-            }
+            //foreach (var gruppe in gruppen)
+            //{    
+            // TODO Erstmal deaktiviert, da sich die Frage stellt ob wirklich bei jedem Tastenanschlag gespeichert werden muss
+                // Vielleicht reicht auch immer beim durchklicken der Listen
+                // WriteFile.writeText(Path.Combine("TODOPFAD",$"{gruppe.Feuerwehr} - {gruppe.GruppenName}.xml"), SerializeXML<Gruppe>.Serialize(gruppe));
+            //}
         }
     }
 
@@ -110,7 +113,9 @@ public class MainViewModel : INotifyPropertyChanged
         {
             Feuerwehr = feuerwehr,
             GruppenName = gruppenName,
-            Persons = persons
+            Persons = persons,
+            TimeStampAnmeldung = DateTime.Now,
+            TimeStampAenderung = DateTime.Now
         };
 
         Gruppen.Add(newGruppe);

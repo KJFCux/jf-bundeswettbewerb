@@ -294,76 +294,6 @@
                                 </StackPanel>
 
                             </GroupBox>
-
-                        </StackPanel>
-                        <!--Group Box, Alles für die Bahn-->
-                        <StackPanel Orientation="Vertical"
-                                    Grid.Column="1"
-                                    Grid.Row="0"
-                                    Grid.RowSpan="3">
-                            <GroupBox Header="Wettbewerbsbahnen">
-                                <StackPanel Orientation="Vertical">
-                                    <StackPanel Orientation="Vertical"
-                                                Margin="10,10,10,10">
-                                        <Label Content="Bahnnummer A-Teil:"
-                                               HorizontalAlignment="Left"
-                                               Margin="20,10,20,10"
-                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
-                                               VerticalAlignment="Top"
-                                               FontSize="24" />
-                                        <mah:NumericUpDown Minimum="1"
-                                                           Interval="1"
-                                                           Width="100"
-                                                           FontSize="20"
-                                                           Value="{Binding ElementName=gruppenListBox, Path=SelectedItem.WettbewerbsbahnATeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        <Label Content="Startzeit A-Teil:"
-                                               HorizontalAlignment="Left"
-                                               Margin="60,10,20,10"
-                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
-                                               VerticalAlignment="Top"
-                                               FontSize="24" />
-                                        <mah:TimePicker SelectedDateTime="{Binding ElementName=gruppenListBox, Path=SelectedItem.StartzeitATeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                        Culture="de-DE"
-                                                        FontSize="20"
-                                                        SelectedTimeFormat="Short" />
-                                    </StackPanel>
-                                    <StackPanel Orientation="Vertical"
-                                                Margin="10,10,10,10">
-
-                                        <Label Content="Bahnnummer B-Teil:"
-                                               HorizontalAlignment="Left"
-                                               Margin="20,10,20,10"
-                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
-                                               VerticalAlignment="Top"
-                                               FontSize="24" />
-
-                                        <mah:NumericUpDown Minimum="1"
-                                                           Interval="1"
-                                                           Width="100"
-                                                           FontSize="20"
-                                                           Value="{Binding ElementName=gruppenListBox, Path=SelectedItem.WettbewerbsbahnBTeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        <Label Content="Startzeit B-Teil:"
-                                               HorizontalAlignment="Left"
-                                               Margin="60,10,20,10"
-                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
-                                               VerticalAlignment="Top"
-                                               FontSize="24" />
-                                        <mah:TimePicker SelectedDateTime="{Binding ElementName=gruppenListBox, Path=SelectedItem.StartzeitBTeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                        Culture="de-DE"
-                                                        FontSize="20"
-                                                        SelectedTimeFormat="Short" />
-                                    </StackPanel>
-
-                                </StackPanel>
-
-                            </GroupBox>
-
-                        </StackPanel>
-
-                        <!--Group Box für die Auswertung-->
-                        <StackPanel Orientation="Vertical"
-                                    Grid.Column="0"
-                                    Grid.Row="2">
                             <GroupBox Header="Auswertung">
                                 <StackPanel Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
@@ -495,8 +425,131 @@
                                 </StackPanel>
 
                             </GroupBox>
-
                         </StackPanel>
+                        <!--Group Box, Alles für die Bahn-->
+                        <StackPanel Orientation="Vertical"
+                                    Grid.Column="1"
+                                    Grid.Row="0"
+                                    Grid.RowSpan="3">
+                            <GroupBox Header="Wettbewerbsbahnen">
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Vertical"
+                                                Margin="10,10,10,10">
+                                        <Label Content="Bahnnummer A-Teil:"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,10,0,10"
+                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+                                        <mah:NumericUpDown Minimum="1"
+                                                           Interval="1"
+                                                           Width="100"
+                                                           FontSize="20"
+                                                           Value="{Binding ElementName=gruppenListBox, Path=SelectedItem.WettbewerbsbahnATeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Label Content="Startzeit A-Teil:"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,10,0,10"
+                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+                                        <mah:TimePicker SelectedDateTime="{Binding ElementName=gruppenListBox, Path=SelectedItem.StartzeitATeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                        Culture="de-DE"
+                                                        FontSize="20"
+                                                        SelectedTimeFormat="Short" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical"
+                                                Margin="10,10,10,10">
+
+                                        <Label Content="Bahnnummer B-Teil:"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,10,0,10"
+                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+
+                                        <mah:NumericUpDown Minimum="1"
+                                                           Interval="1"
+                                                           Width="100"
+                                                           FontSize="20"
+                                                           Value="{Binding ElementName=gruppenListBox, Path=SelectedItem.WettbewerbsbahnBTeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Label Content="Startzeit B-Teil:"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,10,0,10"
+                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+                                        <mah:TimePicker SelectedDateTime="{Binding ElementName=gruppenListBox, Path=SelectedItem.StartzeitBTeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                        Culture="de-DE"
+                                                        FontSize="20"
+                                                        SelectedTimeFormat="Short" />
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                            </GroupBox>
+                            <GroupBox Header="Anmeldeinformationen">
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Vertical"
+                                                Margin="10,10,10,10">
+                                        <Label Content="Zeitpunkt der Anmeldung:"
+                                               HorizontalAlignment="center"
+                                               Margin="0,10,0,0"
+                                               ToolTip="Datum und Uhrzeit wann die Gruppe angemeldet oder angelegt wurde"
+                                               VerticalAlignment="Top"
+                                               FontSize="20" />
+
+                                        <Label Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.TimeStampAnmeldung,Mode=OneWay,FallbackValue=NN,TargetNullValue=NN}"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,10"
+                                               ToolTip="Datum und Uhrzeit wann die Gruppe angemeldet oder angelegt wurde"
+                                               VerticalAlignment="Top"
+                                               FontSize="16" />
+
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical"
+                                                Margin="10,0,10,10">
+                                        <Label Content="URL dieser Anmeldung:"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,0"
+                                               ToolTip="Mit der URL kann auch nachträglich noch eine Anmeldung bearbeitet werden."
+                                               VerticalAlignment="Top"
+                                               FontSize="20" />
+                                        <TextBlock HorizontalAlignment="Center"
+                                                   Margin="0,0,0,0"
+                                                   Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.UrlderAnmeldung,Mode=OneWay,FallbackValue=NN,TargetNullValue=NN}"
+                                                   TextWrapping="Wrap"
+                                                   x:Name="UrlderAnmeldung"
+                                                   ToolTip="Anhand des Dateinamens kann die URL für die Bearbeitung einer Anmeldung ermittelt werden."
+                                                   VerticalAlignment="Top"
+                                                   FontSize="12" />
+
+                                        <Button Content=""
+                                                Width="40"
+                                                Height="40"
+                                                ToolTip="Anmelde URL kopieren"
+                                                Click="AnmeldeURLKopieren_Click">
+                                            <Button.ContentTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <iconPacks:PackIconModern Width="22"
+                                                                                  Height="22"
+                                                                                  VerticalAlignment="Center"
+                                                                                  Kind="PageCopy" />
+                                                        <TextBlock Margin="0 0 0 0"
+                                                                   VerticalAlignment="Center"
+                                                                   Text="{Binding}" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </Button.ContentTemplate>
+                                        </Button>
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                            </GroupBox>
+                        </StackPanel>
+
+
 
                     </Grid>
                 </TabItem>
