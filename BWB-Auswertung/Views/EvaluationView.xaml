@@ -87,7 +87,7 @@
                                    VerticalAlignment="Top"
                                    FontSize="16"
                                    FontWeight="Bold" />
-                            <Label Content="Gruppenname"
+                            <Label Content="NN"
                                    x:Name="JuengsteGruppe"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"
@@ -98,7 +98,7 @@
                                    Margin="0,10,10,10"
                                    FontSize="16"
                                    VerticalAlignment="Top" />
-                            <Label Content="Gruppenalter"
+                            <Label Content="NN"
                                    x:Name="JuengsteGruppeAlter"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"
@@ -118,7 +118,7 @@
                                    VerticalAlignment="Top"
                                    FontSize="16"
                                    FontWeight="Bold" />
-                            <Label Content="Gruppenname"
+                            <Label Content="NN"
                                    x:Name="AeltesteGruppe"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"
@@ -129,7 +129,7 @@
                                    Margin="0,10,10,10"
                                    FontSize="16"
                                    VerticalAlignment="Top" />
-                            <Label Content="Gruppenalter"
+                            <Label Content="NN"
                                    x:Name="AeltesteGruppeAlter"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"
@@ -149,7 +149,7 @@
                                    VerticalAlignment="Top"
                                    FontSize="16"
                                    FontWeight="Bold" />
-                            <Label Content="Gruppenname"
+                            <Label Content="NN"
                                    x:Name="BesterATeilGruppe"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"
@@ -160,7 +160,7 @@
                                    Margin="0,10,10,10"
                                    FontSize="16"
                                    VerticalAlignment="Top" />
-                            <Label Content="Gruppenpunkte"
+                            <Label Content="NN"
                                    x:Name="BesterATeilGruppePunkte"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"
@@ -180,7 +180,7 @@
                                    VerticalAlignment="Top"
                                    FontSize="16"
                                    FontWeight="Bold" />
-                            <Label Content="Gruppenname"
+                            <Label Content="NN"
                                    x:Name="SchnellsterATeilGruppe"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"
@@ -191,7 +191,7 @@
                                    Margin="0,10,10,10"
                                    FontSize="16"
                                    VerticalAlignment="Top" />
-                            <Label Content="Schnellster A-Teil"
+                            <Label Content="NN"
                                    x:Name="SchnellsterATeilGruppeZeit"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"
@@ -211,7 +211,7 @@
                                    VerticalAlignment="Top"
                                    FontSize="16"
                                    FontWeight="Bold" />
-                            <Label Content="Gruppenname"
+                            <Label Content="NN"
                                    x:Name="SchnellsteKnotenZeitGruppe"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"
@@ -222,7 +222,7 @@
                                    Margin="0,10,10,10"
                                    FontSize="16"
                                    VerticalAlignment="Top" />
-                            <Label Content="Knotenzeit"
+                            <Label Content="NN"
                                    x:Name="SchnellsteKnotenZeitGruppeZeit"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"
@@ -242,7 +242,7 @@
                                    VerticalAlignment="Top"
                                    FontSize="16"
                                    FontWeight="Bold" />
-                            <Label Content="Gruppenname"
+                            <Label Content="NN"
                                    x:Name="BesterBTeilGruppe"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"
@@ -253,7 +253,7 @@
                                    Margin="0,10,10,10"
                                    FontSize="16"
                                    VerticalAlignment="Top" />
-                            <Label Content="B-Teil Punkte"
+                            <Label Content="NN"
                                    x:Name="BesterBTeilGruppePunkte"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"
@@ -273,7 +273,7 @@
                                    VerticalAlignment="Top"
                                    FontSize="16"
                                    FontWeight="Bold" />
-                            <Label Content="Gruppenname"
+                            <Label Content="NN"
                                    x:Name="SchnellsterBTeilGruppe"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"
@@ -284,7 +284,7 @@
                                    Margin="0,10,10,10"
                                    FontSize="16"
                                    VerticalAlignment="Top" />
-                            <Label Content="B-Teil Zeit"
+                            <Label Content="NN"
                                    x:Name="SchnellsterBTeilGruppeZeit"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"

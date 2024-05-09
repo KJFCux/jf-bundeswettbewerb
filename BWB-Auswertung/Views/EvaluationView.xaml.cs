@@ -27,59 +27,78 @@ namespace BWB_Auswertung.Views
             {
                 InitializeComponent();
                 DataContext = mainViewModel;
-              
+
                 //Setzen der Statusbar auf aktuellen Prozentwert der Anzahl an fertigen Gruppen
                 double grundwert = mainViewModel.Gruppen.Count();
-                double prozentwert = mainViewModel.Gruppen.Where(x => (x.ATeilGesamteindruck > 0)
-                && (x.BTeilGesamteindruck > 0)
-                && (x.PunkteBTeil > 0)
-                && (x.DurchschnittszeitBTeil > 0)
-                && (x.DurchschnittszeitATeil > 0)
-                && (x.DurchschnittszeitKnotenATeil > 0)
-                && (x.SollZeitBTeilInSekunden > 0)
-                ).ToList().Count();
-                double prozentsatz = prozentwert / grundwert * 100d;
-                Wettbewerbsfortschritt.Value = prozentsatz;
-                AnzahlFehlenderGruppen.Content = grundwert - prozentwert;
-                GesamtanzahlGruppen.Content = grundwert;
+                try
+                {
+                    double prozentwert = mainViewModel.Gruppen.Where(x => (x.ATeilGesamteindruck > 0)
+                    && (x.BTeilGesamteindruck > 0)
+                    && (x.PunkteBTeil > 0)
+                    && (x.DurchschnittszeitBTeil > 0)
+                    && (x.DurchschnittszeitATeil > 0)
+                    && (x.DurchschnittszeitKnotenATeil > 0)
+                    && (x.SollZeitBTeilInSekunden > 0)
+                    ).ToList().Count();
+                    double prozentsatz = prozentwert / grundwert * 100d;
+                    Wettbewerbsfortschritt.Value = prozentsatz;
+                    AnzahlFehlenderGruppen.Content = grundwert - prozentwert;
+                    GesamtanzahlGruppen.Content = grundwert;
+                }
+                catch (Exception ex)
+                {
+                    //Noch keine Daten zum auswerten vorhanden
+                    Wettbewerbsfortschritt.Value = 0;
+                    AnzahlFehlenderGruppen.Content = grundwert;
+                    GesamtanzahlGruppen.Content = grundwert;
+                    LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Warning);
+                }
+                try
+                {
 
-                //Jüngste Gruppe
-                var juengsteGruppe = mainViewModel.Gruppen.OrderBy(x => x.GesamtAlter).First();
-                JuengsteGruppe.Content = juengsteGruppe.GruppenName;
-                JuengsteGruppeAlter.Content = juengsteGruppe.GesamtAlter;
+                    //Jüngste Gruppe
+                    var juengsteGruppe = mainViewModel.Gruppen.OrderBy(x => x.GesamtAlter).First();
+                    JuengsteGruppe.Content = juengsteGruppe.GruppenName;
+                    JuengsteGruppeAlter.Content = juengsteGruppe.GesamtAlter;
 
-                //Älteste Gruppe
-                var aeltesteGruppe = mainViewModel.Gruppen.OrderByDescending(x => x.GesamtAlter).First();
-                AeltesteGruppe.Content = aeltesteGruppe.GruppenName;
-                AeltesteGruppeAlter.Content = aeltesteGruppe.GesamtAlter;
+                    //Älteste Gruppe
+                    var aeltesteGruppe = mainViewModel.Gruppen.OrderByDescending(x => x.GesamtAlter).First();
+                    AeltesteGruppe.Content = aeltesteGruppe.GruppenName;
+                    AeltesteGruppeAlter.Content = aeltesteGruppe.GesamtAlter;
 
-                //Bester A-Teil
-                var besterATeilGruppe = mainViewModel.Gruppen.OrderByDescending(x => x.PunkteATeil).First();
-                BesterATeilGruppe.Content = besterATeilGruppe.GruppenName;
-                BesterATeilGruppePunkte.Content = besterATeilGruppe.PunkteATeil;
 
-                //Schnellster A-Teil
-                var schnellsterATeilGruppe = mainViewModel.Gruppen.Where(x => x.DurchschnittszeitATeil > 0).OrderBy(x => x.DurchschnittszeitATeil).First();
-                SchnellsterATeilGruppe.Content = schnellsterATeilGruppe.GruppenName;
-                TimeSpan ateil = new TimeSpan(0, 0, Convert.ToInt32(schnellsterATeilGruppe.DurchschnittszeitATeil));
-                SchnellsterATeilGruppeZeit.Content = $"{ateil.Minutes}:{ateil.Seconds}";
+                    //Bester A-Teil
+                    var besterATeilGruppe = mainViewModel.Gruppen.OrderByDescending(x => x.PunkteATeil).First();
+                    BesterATeilGruppe.Content = besterATeilGruppe.GruppenName;
+                    BesterATeilGruppePunkte.Content = besterATeilGruppe.PunkteATeil;
 
-                //Schnellste Knotenzeit
-                var schnellsteKnotenZeitGruppe = mainViewModel.Gruppen.Where(x => x.DurchschnittszeitKnotenATeil > 0).OrderBy(x => x.DurchschnittszeitKnotenATeil).First();
-                SchnellsteKnotenZeitGruppe.Content = schnellsteKnotenZeitGruppe.GruppenName;
-                SchnellsteKnotenZeitGruppeZeit.Content = schnellsteKnotenZeitGruppe.DurchschnittszeitKnotenATeil;
+                    //Schnellster A-Teil
+                    var schnellsterATeilGruppe = mainViewModel.Gruppen.Where(x => x.DurchschnittszeitATeil > 0).OrderBy(x => x.DurchschnittszeitATeil).First();
+                    SchnellsterATeilGruppe.Content = schnellsterATeilGruppe.GruppenName;
+                    TimeSpan ateil = new TimeSpan(0, 0, Convert.ToInt32(schnellsterATeilGruppe.DurchschnittszeitATeil));
+                    SchnellsterATeilGruppeZeit.Content = $"{ateil.Minutes}:{ateil.Seconds}";
 
-                //Bester B-Teil
-                var besterBTeilGruppe = mainViewModel.Gruppen.OrderByDescending(x => x.PunkteBTeil).First();
-                BesterBTeilGruppe.Content = besterBTeilGruppe.GruppenName;
-                BesterBTeilGruppePunkte.Content = besterBTeilGruppe.PunkteBTeil;
+                    //Schnellste Knotenzeit
+                    var schnellsteKnotenZeitGruppe = mainViewModel.Gruppen.Where(x => x.DurchschnittszeitKnotenATeil > 0).OrderBy(x => x.DurchschnittszeitKnotenATeil).First();
+                    SchnellsteKnotenZeitGruppe.Content = schnellsteKnotenZeitGruppe.GruppenName;
+                    SchnellsteKnotenZeitGruppeZeit.Content = schnellsteKnotenZeitGruppe.DurchschnittszeitKnotenATeil;
 
-                //Schnellster B-Teil
-                var schnellsterBTeilGruppe = mainViewModel.Gruppen.Where(x => x.DurchschnittszeitBTeil > 0).OrderBy(x => x.DurchschnittszeitBTeil).First();
-                SchnellsterBTeilGruppe.Content = schnellsterBTeilGruppe.GruppenName;
-                TimeSpan bteil = new TimeSpan(0, 0, Convert.ToInt32(schnellsterBTeilGruppe.DurchschnittszeitBTeil));
-                SchnellsterBTeilGruppeZeit.Content = $"{bteil.Minutes}:{bteil.Seconds}";
+                    //Bester B-Teil
+                    var besterBTeilGruppe = mainViewModel.Gruppen.OrderByDescending(x => x.PunkteBTeil).First();
+                    BesterBTeilGruppe.Content = besterBTeilGruppe.GruppenName;
+                    BesterBTeilGruppePunkte.Content = besterBTeilGruppe.PunkteBTeil;
 
+                    //Schnellster B-Teil
+                    var schnellsterBTeilGruppe = mainViewModel.Gruppen.Where(x => x.DurchschnittszeitBTeil > 0).OrderBy(x => x.DurchschnittszeitBTeil).First();
+                    SchnellsterBTeilGruppe.Content = schnellsterBTeilGruppe.GruppenName;
+                    TimeSpan bteil = new TimeSpan(0, 0, Convert.ToInt32(schnellsterBTeilGruppe.DurchschnittszeitBTeil));
+                    SchnellsterBTeilGruppeZeit.Content = $"{bteil.Minutes}:{bteil.Seconds}";
+                }
+                catch (Exception ex)
+                {
+                    //Noch keine Daten zum Auswerten vorhanden
+                    LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Warning);
+                }
 
                 //Speicherort für Exporte festlegen und evtl. Ordner erstellen
                 exportPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), System.AppDomain.CurrentDomain.FriendlyName);
