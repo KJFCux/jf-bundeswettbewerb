@@ -24,6 +24,20 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
+    private double _scaleFactor = 1.0;
+    public double ScaleFactor
+    {
+        get { return _scaleFactor; }
+        set
+        {
+            if (_scaleFactor != value)
+            {
+                _scaleFactor = value;
+                OnPropertyChanged(nameof(ScaleFactor));
+            }
+        }
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public ObservableCollection<Gruppe> Gruppen
