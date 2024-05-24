@@ -10,11 +10,48 @@ namespace BWB_Auswertung.Models
     {
         public int? StartNr { get; set; }
 
-        public required string Feuerwehr { get; set; }
+        private string _feuerwehr = string.Empty;
+        private string _gruppenName = string.Empty;
+        private string? _organisationseinheit;
 
-        public required string GruppenName { get; set; }
+        public required string Feuerwehr
+        {
+            get { return _feuerwehr; }
+            set
+            {
+                if (_feuerwehr != value?.Trim())
+                {
+                    _feuerwehr = value.Trim();
+                    OnPropertyChanged();
+                }
+            }
+        }
 
-        public string? Organisationseinheit { get; set; }
+        public required string GruppenName
+        {
+            get { return _gruppenName; }
+            set
+            {
+                if (_gruppenName != value?.Trim())
+                {
+                    _gruppenName = value.Trim();
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string? Organisationseinheit
+        {
+            get { return _organisationseinheit; }
+            set
+            {
+                if (_organisationseinheit != value?.Trim())
+                {
+                    _organisationseinheit = value?.Trim();
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public int? Platz { get; set; }
         public bool? OhneWertung { get; set; }
