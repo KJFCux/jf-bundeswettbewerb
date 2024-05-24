@@ -277,6 +277,11 @@ public class MainViewModel : INotifyPropertyChanged
 
     internal void AddGroup(Gruppe gruppe)
     {
+        // Falls Personen nicht gesetzt, werden leere Personen hinzugefügt bis 10 erreicht
+        while (gruppe.Persons.Count < 10)
+        {
+            gruppe.Persons.Add(new Person());
+        }
         gruppen.Add(gruppe);
     }
 
