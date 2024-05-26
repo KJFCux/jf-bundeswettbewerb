@@ -675,6 +675,28 @@ namespace BWB_Auswertung.Views
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
             }
         }
+
+        //Fenster Skalieren
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            try
+            {
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+
+                // Annahme: Mindestgröße für die Skalierung festlegen
+                double minWindowSize = 1020; // Minimale Fensterbreite
+
+                // Berechne den Skalierungsfaktor basierend auf der aktuellen Fensterbreite
+                double scaleFactor = Math.Min(1, ActualWidth / minWindowSize);
+
+                // Setze den Skalierungsfaktor im ViewModel
+                viewModel.ScaleFactorEvaluation = scaleFactor;
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+            }
+        }
     }
 
     public class WidthConverter : IValueConverter

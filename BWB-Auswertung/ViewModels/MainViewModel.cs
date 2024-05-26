@@ -39,6 +39,34 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
+    private double _scaleFactorEvaluation = 0.6;
+    public double ScaleFactorEvaluation
+    {
+        get { return _scaleFactorEvaluation; }
+        set
+        {
+            if (_scaleFactorEvaluation != value)
+            {
+                _scaleFactorEvaluation = value;
+                OnPropertyChanged(nameof(ScaleFactorEvaluation));
+            }
+        }
+    }
+
+    private double _scaleFactorSettings = 1.0;
+    public double ScaleFactorSettings
+    {
+        get { return _scaleFactorSettings; }
+        set
+        {
+            if (_scaleFactorSettings != value)
+            {
+                _scaleFactorSettings = value;
+                OnPropertyChanged(nameof(ScaleFactorSettings));
+            }
+        }
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public ObservableCollection<Gruppe> Gruppen
@@ -55,8 +83,8 @@ public class MainViewModel : INotifyPropertyChanged
             //foreach (var gruppe in gruppen)
             //{    
             // TODO Erstmal deaktiviert, da sich die Frage stellt ob wirklich bei jedem Tastenanschlag gespeichert werden muss
-                // Vielleicht reicht auch immer beim durchklicken der Listen
-                // WriteFile.writeText(Path.Combine("TODOPFAD",$"{gruppe.Feuerwehr} - {gruppe.GruppenName}.xml"), SerializeXML<Gruppe>.Serialize(gruppe));
+            // Vielleicht reicht auch immer beim durchklicken der Listen
+            // WriteFile.writeText(Path.Combine("TODOPFAD",$"{gruppe.Feuerwehr} - {gruppe.GruppenName}.xml"), SerializeXML<Gruppe>.Serialize(gruppe));
             //}
         }
     }
