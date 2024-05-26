@@ -26,7 +26,6 @@ namespace BWB_Auswertung.IO
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 return false;
-
             }
         }
 

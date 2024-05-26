@@ -2302,7 +2302,9 @@
                          Grid.Row="2"
                          ItemsSource="{Binding Gruppen}"
                          SelectionChanged="gruppenListBox_SelectionChanged"
-                         x:Name="gruppenListBox">
+                         x:Name="gruppenListBox"
+                         PreviewKeyDown="gruppenListBox_KeyDown"
+                         Loaded="gruppenListBox_Loaded">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding GruppenName}" />

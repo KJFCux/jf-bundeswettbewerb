@@ -74,6 +74,8 @@ namespace BWB_Auswertung
 
             //Prüfe auf Updates
             _ = CheckForUpdate();
+            gruppenListBox.SelectedIndex = 0;
+            gruppenListBox.Focus();
         }
 
         public async Task<bool> CheckForUpdate()
@@ -273,6 +275,7 @@ namespace BWB_Auswertung
                 //Beim Durchklicken sind evtl. Bearbeitungen abgeschlossen. Daher alles speichern
                 SaveData(dataPath, true);
                 FertigeGruppenAusblendenHelper();
+                gruppenListBox.Focus();
             }
             catch (Exception ex)
             {
@@ -294,20 +297,50 @@ namespace BWB_Auswertung
                     MainViewModel viewModel = (MainViewModel)this.DataContext;
                     viewModel.Sort(sortComboBox.SelectedIndex);
                     FertigeGruppenAusblendenHelper();
+                    gruppenListBox.Focus();
                 }
             }
             catch (Exception ex)
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-                MessageBox.Show($"Fehler beim sortieren der Gruppen\n{ex}", "Fehler: Grupensortierung", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Fehler beim sortieren der Gruppen\n{ex}", "Fehler: Gruppensortierung", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private void gruppenListBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                if (gruppenListBox.SelectedIndex == -1) return;
+
+                switch (e.Key)
+                {
+                    case Key.Up:
+                        if (gruppenListBox.SelectedIndex > 0)
+                        {
+                            gruppenListBox.SelectedIndex--;
+                            e.Handled = true; // Verhindert das Standardverhalten der ListBox
+                        }
+                        break;
+                    case Key.Down:
+                        if (gruppenListBox.SelectedIndex < gruppenListBox.Items.Count - 1)
+                        {
+                            gruppenListBox.SelectedIndex++;
+                            e.Handled = true; // Verhindert das Standardverhalten der ListBox
+                        }
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim durschalten der Gruppen\n{ex}", "Fehler: Gruppen", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void gruppenListBox_Loaded(object sender, RoutedEventArgs e)
         {
-
+            gruppenListBox.Focus();
         }
-
 
         //Hinzufügen einer leeren neuen Gruppe
         private void ButtonAddGroup_Click(object sender, RoutedEventArgs e)
@@ -428,7 +461,7 @@ namespace BWB_Auswertung
             {
                 List<string> aktuelleDateien = new List<string>();
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
-                
+
                 Regex rgx = new Regex("[^a-zA-Z0-9öäüÄÜÖß ]");
 
                 foreach (var gruppe in viewModel.Gruppen)
