@@ -1354,15 +1354,16 @@
                             <ColumnDefinition Width="10" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Row="0"
-                               Grid.Column="0"
-                               Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.GruppenName, Mode=OneWay, FallbackValue='Keine Gruppe gewählt'}"
-                               HorizontalAlignment="Center"
-                               Margin="0,0,0,0"
-                               VerticalAlignment="Center"
-                               FontSize="24"
-                               FontWeight="Bold"
-                               Foreground="{DynamicResource MahApps.Brushes.Highlight}" />
+                        <TextBlock Grid.Row="0"
+                                   Grid.Column="0"
+                                   TextWrapping="WrapWithOverflow"
+                                   Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.GruppenName, Mode=OneWay, FallbackValue='Keine Gruppe gewählt'}"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource MahApps.Brushes.Highlight}" />
                         <Label Grid.Row="1"
                                Grid.Column="0"
                                Content="Gruppenführer/Me"
@@ -1742,15 +1743,16 @@
                             <ColumnDefinition Width="10" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Row="0"
-                               Grid.Column="0"
-                               Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.GruppenName, Mode=OneWay, FallbackValue='Keine Gruppe gewählt'}"
-                               HorizontalAlignment="Center"
-                               Margin="0,0,0,0"
-                               VerticalAlignment="Center"
-                               FontSize="20"
-                               FontWeight="Bold"
-                               Foreground="{DynamicResource MahApps.Brushes.Highlight}" />
+                        <TextBlock Grid.Row="0"
+                                   Grid.Column="0"
+                                   TextWrapping="WrapWithOverflow"
+                                   Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.GruppenName, Mode=OneWay, FallbackValue='Keine Gruppe gewählt'}"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource MahApps.Brushes.Highlight}" />
                         <Label Grid.Row="1"
                                Grid.Column="0"
                                Content="Läufer 1"
