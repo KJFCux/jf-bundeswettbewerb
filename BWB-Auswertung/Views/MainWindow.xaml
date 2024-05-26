@@ -12,6 +12,7 @@
                  GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
                  ResizeMode="CanResizeWithGrip"
                  WindowStartupLocation="CenterScreen"
+                 WindowState="Maximized"
                  mc:Ignorable="d"
                  DataContext="{Binding RelativeSource={RelativeSource Self}}"
                  Closing="Window_Closing"
