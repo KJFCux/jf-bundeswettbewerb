@@ -235,7 +235,7 @@
                                                  MaxWidth="800"
                                                  FontSize="24"
                                                  Margin="105,0,0,0"
-                                                 Height="40" />
+                                                 Height="44" />
                                     </StackPanel>
                                     <!--Organisationseinheit-->
                                     <StackPanel Orientation="Horizontal">
@@ -252,7 +252,7 @@
                                                  MinWidth="600"
                                                  MaxWidth="800"
                                                  FontSize="24"
-                                                 Height="40" />
+                                                 Height="44" />
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <StackPanel Orientation="Vertical">
@@ -276,7 +276,7 @@
                                                  MinWidth="600"
                                                  MaxWidth="800"
                                                  FontSize="24"
-                                                 Height="40" />
+                                                 Height="44" />
                                     </StackPanel>
 
                                     <StackPanel Orientation="Horizontal">
