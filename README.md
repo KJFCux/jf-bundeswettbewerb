@@ -1,3 +1,4 @@
+
 # Auswertungsprogramm JF-Bundeswettbewerb
 Auswertungssoftware für den Bundeswettbewerb der deutschen Jugendfeuerwehr.
 **Einfach und schnell den Bundeswettbewerb auswerten.**
@@ -6,11 +7,18 @@ Auswertungssoftware für den Bundeswettbewerb der deutschen Jugendfeuerwehr.
 ## Wichtigste Features
 
  - Einfacher Anmeldeprozess für Gruppen
+	 - Unser digitaler Meldebogen kann auf jedem Webserver gehostet werden.  
+Einfach in einen Ordner auf dem Webspace hochladen, eure Daten eintragen und schon können sich eure Gruppen anmelden.
  - Viele Import und Exportfunktionen
+	 - Das Auswertungsprogramm bietet zahlreiche Import- und Export Funktionen. Meldebögen, Auswertungen, Platzierungen, Urkunden und vieles mehr.
  - Einfache Eingabe der Wertungsbögen
+	 - Superschnelle und leichte Eingabe der Wertungsbögen zu jeder Gruppe.
  - Automatische Auswertung und Berechnung der Platzierungen
+	 - Die Auswertung wird automatisch durchgeführt. Ihr seid immer auf dem Laufenden welche Gruppen gerade wo stehen und welche Gruppen noch fehlen. Perfekte Übersichtlichkeit!
  - Vollständige Gruppen und Teilnehmenden Verwaltung
+	 - Kinderleichte Eingabe von neuen Gruppen und teilnehmenden mit automatischer Datenvalidierung
  - Schneller Export von Urkunden, Platzierungslisten, Wertungsbögen und vieles mehr
+	 - Schnelle Erstellung von druckfertigen Urkunden und verschiedenen Platzierungslisten. Ausgefüllte Wertungsbögen direkt aus dem Programm heraus als Excel Export.
 
 
 ## Systemanforderungen
@@ -19,14 +27,20 @@ Auswertungssoftware für den Bundeswettbewerb der deutschen Jugendfeuerwehr.
 	 - Microsoft Windows 10 Anniversary Update 64-bit (1604 oder höher)
 (Home, Professional, Enterprise)
  - 8 GB Ram
+ - Beim ersten Start ist Internet erforderlich
 
 ## Installation
-
+Für ausführliche Installationsanweisungen lese gerne die Anleitungen auf unserer Webseite
+[Mehr erfahren](https://jf-bundeswettbewerb.de/2024/05/22/installation-des-auswertungsprogramms/)
 ## Screenshots
-
-![image](https://github.com/KJFCux/jf-bundeswettbewerb/assets/1337304/d6ed0623-9d21-41b9-900e-afefa9c130bf)
-![image](https://github.com/KJFCux/jf-bundeswettbewerb/assets/1337304/6e790faa-d952-4a64-b772-884cab003ede)
-![image](https://github.com/KJFCux/jf-bundeswettbewerb/assets/1337304/df95eb86-ec77-47a2-a6cb-1c8701816fe7)
-![image](https://github.com/KJFCux/jf-bundeswettbewerb/assets/1337304/6b2c3167-b27c-4e4b-9bfd-8a7b453c2153)
-![image](https://github.com/KJFCux/jf-bundeswettbewerb/assets/1337304/e9f315a8-88d9-4373-8055-f649892865df)
-![image](https://github.com/KJFCux/jf-bundeswettbewerb/assets/1337304/8dff03ef-7b39-4c77-b5a6-e6919b642445)
+Hier ein paar erste Eindrücke des Auswertungsprogramms
+### Gruppenverwaltung
+![enter image description here](https://github.com/KJFCux/jf-bundeswettbewerb/blob/main/BWB-Auswertung/Resources/Images/Screenshots/Gruppenverwaltung.png?raw=true)
+### Teilnehmende
+![enter image description here](https://github.com/KJFCux/jf-bundeswettbewerb/blob/main/BWB-Auswertung/Resources/Images/Screenshots/Teilnehmende.png?raw=true)
+### A-Teil
+![enter image description here](https://github.com/KJFCux/jf-bundeswettbewerb/blob/main/BWB-Auswertung/Resources/Images/Screenshots/A-Teil.png?raw=true)
+### B-Teil
+![enter image description here](https://github.com/KJFCux/jf-bundeswettbewerb/blob/main/BWB-Auswertung/Resources/Images/Screenshots/B-Teil.png?raw=true)
+### Auswertung
+![enter image description here](https://github.com/KJFCux/jf-bundeswettbewerb/blob/main/BWB-Auswertung/Resources/Images/Screenshots/Auswertung.png?raw=true)
