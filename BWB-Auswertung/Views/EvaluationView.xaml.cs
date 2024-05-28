@@ -57,12 +57,12 @@ namespace BWB_Auswertung.Views
                 {
 
                     //Jüngste Gruppe
-                    var juengsteGruppe = mainViewModel.Gruppen.OrderBy(x => x.GesamtAlter).First();
+                    var juengsteGruppe = mainViewModel.Gruppen.OrderBy(x => x.GesamtAlterinTagen).First();
                     JuengsteGruppe.Content = juengsteGruppe.GruppenName;
                     JuengsteGruppeAlter.Content = juengsteGruppe.GesamtAlter;
 
                     //Älteste Gruppe
-                    var aeltesteGruppe = mainViewModel.Gruppen.OrderByDescending(x => x.GesamtAlter).First();
+                    var aeltesteGruppe = mainViewModel.Gruppen.OrderByDescending(x => x.GesamtAlterinTagen).First();
                     AeltesteGruppe.Content = aeltesteGruppe.GruppenName;
                     AeltesteGruppeAlter.Content = aeltesteGruppe.GesamtAlter;
 
