@@ -10,48 +10,11 @@ namespace BWB_Auswertung.Models
     {
         public int? StartNr { get; set; }
 
-        private string _feuerwehr = string.Empty;
-        private string _gruppenName = string.Empty;
-        private string? _organisationseinheit;
+        public required string Feuerwehr { get; set; }
 
-        public required string Feuerwehr
-        {
-            get { return _feuerwehr; }
-            set
-            {
-                if (_feuerwehr != value?.Trim())
-                {
-                    _feuerwehr = value.Trim();
-                    OnPropertyChanged();
-                }
-            }
-        }
+        public required string GruppenName { get; set; }
 
-        public required string GruppenName
-        {
-            get { return _gruppenName; }
-            set
-            {
-                if (_gruppenName != value?.Trim())
-                {
-                    _gruppenName = value.Trim();
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public string? Organisationseinheit
-        {
-            get { return _organisationseinheit; }
-            set
-            {
-                if (_organisationseinheit != value?.Trim())
-                {
-                    _organisationseinheit = value?.Trim();
-                    OnPropertyChanged();
-                }
-            }
-        }
+        public string? Organisationseinheit { get; set; }
 
         public int? Platz { get; set; }
         public bool? OhneWertung { get; set; }
@@ -63,7 +26,7 @@ namespace BWB_Auswertung.Models
         public int? WettbewerbsbahnBTeil { get; set; }
         public DateTime StartzeitATeil { get; set; }
         public DateTime StartzeitBTeil { get; set; }
-        
+
         public string? UrlderAnmeldung { get; set; }
 
         public DateTime? TimeStampAnmeldung { get; set; }
@@ -550,6 +513,21 @@ namespace BWB_Auswertung.Models
                 for (int i = 0; i < 9; i++)
                 {
                     gesamtAlter += Persons[i].Alter;
+                }
+                return gesamtAlter;
+            }
+        }
+        public int GesamtAlterinTagen
+        {
+            get
+            {
+                int gesamtAlter = 0;
+                for (int i = 0; i < 9; i++)
+                {
+                    long elapsedTicks = Globals.VERANSTALTUNGSDATUM.Ticks - Persons[i].Geburtsdatum.Ticks;
+                    TimeSpan elapsedSpan = new TimeSpan(elapsedTicks);
+
+                    gesamtAlter += elapsedSpan.Days;
                 }
                 return gesamtAlter;
             }
