@@ -462,11 +462,9 @@ namespace BWB_Auswertung
                 List<string> aktuelleDateien = new List<string>();
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
 
-                Regex rgx = new Regex("[^a-zA-Z0-9öäüÄÜÖß ]");
-
                 foreach (var gruppe in viewModel.Gruppen)
                 {
-                    string datei = System.IO.Path.Combine($"{rgx.Replace(gruppe.Feuerwehr, "")} - {rgx.Replace(gruppe.GruppenName, "")}.xml");
+                    string datei = System.IO.Path.Combine($"{gruppe.FeuerwehrOhneSonderzeichen} - {gruppe.GruppennameOhneSonderzeichen}.xml");
                     WriteFile.writeText(System.IO.Path.Combine(savePath, datei), SerializeXML<Gruppe>.Serialize(gruppe));
 
                     //Dateinamen merken um alte löschen zu können

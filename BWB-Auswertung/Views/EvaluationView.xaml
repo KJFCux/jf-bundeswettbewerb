@@ -119,6 +119,25 @@
                                    Margin="-15,10,10,10"
                                    FontSize="16"
                                    VerticalAlignment="Top" />
+                            <Button Content="Export Jüngste Gruppe"
+                                    ToolTip="Erstellt eine Urkunde für die Jüngste Gruppe als PDF"
+                                    Margin="10,10,10,10"
+                                    Click="ExportUrkundeJuengsteGruppe_Click"
+                                    x:Name="ExportJuengsteGruppe_Button">
+                                <Button.ContentTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconFontAwesome  Width="22"
+                                                                         Height="22"
+                                                                         VerticalAlignment="Center"
+                                                                         Kind="BabyCarriageSolid" />
+                                            <TextBlock Margin="4 0 0 0"
+                                                       VerticalAlignment="Center"
+                                                       Text="{Binding}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </Button.ContentTemplate>
+                            </Button>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal"
                                     Margin="0,-10,0,0">

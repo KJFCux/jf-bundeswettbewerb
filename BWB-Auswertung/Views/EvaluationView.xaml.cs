@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Data;
 using BWB_Auswertung.IO;
 using System.Windows.Controls;
+using System.Text.RegularExpressions;
 
 namespace BWB_Auswertung.Views
 {
@@ -538,6 +539,68 @@ namespace BWB_Auswertung.Views
             }
         }
 
+        private async void ExportUrkundeJuengsteGruppe_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                ((Button)sender).IsEnabled = false;
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+                PDF pDF = new PDF();
+
+                string urkundeOverlayPfad = System.IO.Path.Combine(vorlagenPath, "UrkundeOverlayJuengsteGruppe.html");
+                string urkundeOverlay = string.Empty;
+                if (File.Exists(urkundeOverlayPfad))
+                {
+                    urkundeOverlay = File.ReadAllText(urkundeOverlayPfad);
+                }
+                else
+                {
+                    urkundeOverlay = BWB_Auswertung.Properties.Resources.UrkundeOverlayJuengsteGruppe; //default
+                    MessageBox.Show("Die Vorlage für die Urkunde(Jüngste Gruppe) wurde nicht gefunden. Es wird der Standard benutzt.", "Export Urkunde", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+
+                //Allgemeines ersetzen
+                urkundeOverlay = urkundeOverlay.Replace("{veranstaltungstitel}", viewModel.Einstellungen.Veranstaltungstitel);
+                urkundeOverlay = urkundeOverlay.Replace("{veranstaltungsort}", viewModel.Einstellungen.Veranstaltungsort);
+                urkundeOverlay = urkundeOverlay.Replace("{veranstaltungsleitung}", viewModel.Einstellungen.Veranstaltungsleitung);
+                urkundeOverlay = urkundeOverlay.Replace("{veranstaltungsdatum}", viewModel.Einstellungen.Veranstaltungsdatum.ToString("d"));
+                urkundeOverlay = urkundeOverlay.Replace("{namelinks}", viewModel.Einstellungen.Namelinks);
+                urkundeOverlay = urkundeOverlay.Replace("{namerechts}", viewModel.Einstellungen.Namerechts);
+                urkundeOverlay = urkundeOverlay.Replace("{funktionlinks}", viewModel.Einstellungen.Funktionlinks);
+                urkundeOverlay = urkundeOverlay.Replace("{funktionrechts}", viewModel.Einstellungen.Funktionrechts);
+
+                if (File.Exists(viewModel.Einstellungen.Unterschriftlinks))
+                {
+                    urkundeOverlay = urkundeOverlay.Replace("{unterschriftlinks}", $"data:image/jpeg;base64,{Bilder.readBase64(viewModel.Einstellungen.Unterschriftlinks)}");
+                    urkundeOverlay = urkundeOverlay.Replace("{unterschriftrechts}", $"data:image/jpeg;base64,{Bilder.readBase64(viewModel.Einstellungen.Unterschriftrechts)}");
+                }
+
+                var juengsteGruppe = viewModel.Gruppen.OrderBy(x => x.GesamtAlterinTagen).First();
+
+                urkundeOverlay = urkundeOverlay.Replace("{jugendfeuerwehr}", juengsteGruppe.GruppenName);
+                urkundeOverlay = urkundeOverlay.Replace("{jahre}", juengsteGruppe.GesamtAlter.ToString());
+
+                string pfad = System.IO.Path.Combine(exportPath, $"UrkundeJuengsteGruppe.pdf");
+                bool erfolgreich = await pDF.ConvertHtmlFileToPdf(urkundeOverlay, pfad);
+
+                if (!erfolgreich)
+                {
+                    MessageBox.Show($"Export der Jüngsten Gruppe fehlgeschlagen!", "Fehler: Export Jüngste Gruppe", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                ShowExportMessageBox("Export der Jüngsten Gruppe abgeschlossen!\nZielverzeichnis öffnen?",
+                    "Export Urkunden", exportPath);
+                ((Button)sender).IsEnabled = true;
+            }
+            catch (Exception ex)
+            {
+                ((Button)sender).IsEnabled = true;
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Export der Jüngsten Gruppe fehlgeschlagen!\n{ex}", "Fehler: Export Jüngste Gruppe", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void ExportGruppenExcel_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -593,6 +656,7 @@ namespace BWB_Auswertung.Views
                 WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkunde_Original.indd"), BWB_Auswertung.Properties.Resources.UrkundeOriginalTheme1);
                 WriteFile.writeText(System.IO.Path.Combine(vorlagenPath, "UrkundeOverlay.html"), BWB_Auswertung.Properties.Resources.UrkundeOverlay);
                 WriteFile.writeText(System.IO.Path.Combine(vorlagenPath, "UrkundeOverlayTheme1.html"), BWB_Auswertung.Properties.Resources.UrkundeOverlayTheme1);
+                WriteFile.writeText(System.IO.Path.Combine(vorlagenPath, "UrkundeOverlayJuengsteGruppe.html"), BWB_Auswertung.Properties.Resources.UrkundeOverlayJuengsteGruppe);
                 WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkundenpapier-Beispiel.pdf"), BWB_Auswertung.Properties.Resources.Urkundenpapier_BeispielDruck);
                 WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkundenpapier-Beispiel.indd"), BWB_Auswertung.Properties.Resources.Urkundenpapier_BeispielIndesign);
 

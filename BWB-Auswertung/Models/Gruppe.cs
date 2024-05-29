@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace BWB_Auswertung.Models
 {
@@ -666,6 +667,21 @@ namespace BWB_Auswertung.Models
                     default:
                         return 0; // Gruppe zu alt
                 }
+            }
+        }
+        public string GruppennameOhneSonderzeichen
+        {
+            get {
+                Regex rgx = new Regex("[^a-zA-Z0-9öäüÄÜÖß ]");
+                return rgx.Replace(GruppenName, "");
+            }
+        }
+        public string FeuerwehrOhneSonderzeichen
+        {
+            get
+            {
+                Regex rgx = new Regex("[^a-zA-Z0-9öäüÄÜÖß ]");
+                return rgx.Replace(Feuerwehr, "");
             }
         }
 

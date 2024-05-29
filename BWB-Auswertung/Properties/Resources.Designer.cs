@@ -335,6 +335,23 @@ namespace BWB_Auswertung.Properties {
         ///            size: A4;
         ///            margi [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
+        internal static string UrkundeOverlayJuengsteGruppe {
+            get {
+                return ResourceManager.GetString("UrkundeOverlayJuengsteGruppe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional //EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;
+        ///&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; xmlns:v=&quot;urn:schemas-microsoft-com:vml&quot; xmlns:o=&quot;urn:schemas-microsoft-com:office:office&quot;&gt;
+        ///&lt;head&gt;
+        ///    &lt;link href=&quot;https://fonts.googleapis.com/css?family=Open+Sans&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;&gt;
+        ///    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;
+        ///    &lt;style&gt;
+        ///        @page {
+        ///            size: A4;
+        ///            margi [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
         internal static string UrkundeOverlayTheme1 {
             get {
                 return ResourceManager.GetString("UrkundeOverlayTheme1", resourceCulture);

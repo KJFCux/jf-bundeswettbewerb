@@ -364,7 +364,7 @@ namespace BWB_Auswertung.IO
 
                 foreach (Gruppe gruppe in gruppen)
                 {
-                    string excelpath = System.IO.Path.Combine(filePath, $"Wertungsbogen-{gruppe.GruppenName}.xlsx");
+                    string excelpath = System.IO.Path.Combine(filePath, $"Wertungsbogen-{gruppe.GruppennameOhneSonderzeichen}.xlsx");
                     WriteFile.ByteArrayToFile(excelpath, BWB_Auswertung.Properties.Resources.Auswertungsbogen);
                     using (SpreadsheetDocument document = SpreadsheetDocument.Open(excelpath, true))
                     {
