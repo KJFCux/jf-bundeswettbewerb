@@ -197,10 +197,10 @@ public class MainViewModel : INotifyPropertyChanged
                     sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.GruppenName).ToList();
                     break;
                 case 1:
-                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.StartzeitATeil).ToList();
+                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.StartzeitATeil).ThenBy(gruppe=>gruppe.WettbewerbsbahnATeil).ToList();
                     break;
                 case 2:
-                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.StartzeitBTeil).ToList();
+                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.StartzeitBTeil).ThenBy(gruppe => gruppe.WettbewerbsbahnBTeil).ToList();
                     break;
                 case 3:
                     sortedGruppen = Gruppen.OrderByDescending(gruppe => gruppe.GesamtPunkte).ToList();
