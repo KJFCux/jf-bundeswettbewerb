@@ -185,7 +185,7 @@ namespace BWB_Auswertung.Views
                     kontrollblattGruppe = kontrollblattGruppe.Replace("{tabellenzeile}", tabellenzeilen);
 
                     string pfad = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
-                    bool erfolgreich = await pDF.ConvertHtmlFileToPdf(kontrollblattGruppe, pfad);
+                    bool erfolgreich = await pDF.ConvertHtmlFileToPdf(kontrollblattGruppe, pfad, false);
                     if (!erfolgreich)
                     {
                         MessageBox.Show($"Export der Kontrollblätter fehlgeschlagen!", "Fehler: Export Kontrollblätter", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -195,7 +195,10 @@ namespace BWB_Auswertung.Views
                 }
 
                 //Alle Kontrollblätter in eine Datei speichern und die anderen Dateien löschen
-                pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"Kontrollblätter.pdf"), true);
+                pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"Kontrollblätter.pdf"), true,
+                    titel: $"Kontrollblätter - Stand: {DateTime.Now.ToString("dd.MM.yyyy HH:mm")}",
+                    subject: $"Kontrollblätter für den {einstellungen.Veranstaltungstitel}",
+                    author: einstellungen.Veranstaltungsleitung);
 
 
                 //Excel Datei für die Checkup Zelte exportieren
@@ -266,7 +269,7 @@ namespace BWB_Auswertung.Views
                         geburtstagslisteHTML = geburtstagslisteHTML.Replace("{akt_seite}", anzahlSeiten.ToString());
                         geburtstagslisteHTML = geburtstagslisteHTML.Replace("{alle_seiten}", alleSeiten.ToString());
                         string pfadinIf = System.IO.Path.Combine(exportPath, $"{Guid.NewGuid()}.pdf");
-                        if (!await pDF.ConvertHtmlFileToPdf(geburtstagslisteHTML, pfadinIf))
+                        if (!await pDF.ConvertHtmlFileToPdf(geburtstagslisteHTML, pfadinIf, false))
                         {
                             MessageBox.Show($"Export der Geburtstagsliste fehlgeschlagen!", "Fehler: Export Geburtstagsliste", MessageBoxButton.OK, MessageBoxImage.Error);
                             return;
@@ -295,16 +298,15 @@ namespace BWB_Auswertung.Views
                 htmlGeburtstagsliste_Vorlage = htmlGeburtstagsliste_Vorlage.Replace("{akt_seite}", anzahlSeiten.ToString());
                 htmlGeburtstagsliste_Vorlage = htmlGeburtstagsliste_Vorlage.Replace("{alle_seiten}", anzahlSeiten.ToString());
                 string pfad = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
-                bool erfolgreich = await pDF.ConvertHtmlFileToPdf(htmlGeburtstagsliste_Vorlage, pfad);
+                bool erfolgreich = await pDF.ConvertHtmlFileToPdf(htmlGeburtstagsliste_Vorlage, pfad, false);
                 if (!erfolgreich)
                 {
                     MessageBox.Show($"Export der Geburtstagsliste fehlgeschlagen!", "Fehler: Export Geburtstagsliste", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
                 pfade.Add(pfad);
-                //Alle Platzierungslisten in eine Datei speichern und die anderen Dateien löschen
-
-                pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"Geburtstagsliste.pdf"), true);
+                //Alle Geburtstagslisten in eine Datei speichern und die anderen Dateien löschen
+                pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"Geburtstagsliste.pdf"), deleteSource: true, titel: "Geburtstagsliste", subject: "Liste von Teilnehmenden die am Veranstaltungstag Geburtstag haben", author: einstellungen.Veranstaltungsleitung);
 
                 ShowExportMessageBox("Export der Geburtstagsliste abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Geburtstagsliste", exportPath);
@@ -384,7 +386,7 @@ namespace BWB_Auswertung.Views
                         platzierungslisteHTML = platzierungslisteHTML.Replace("{akt_seite}", anzahlSeiten.ToString());
                         platzierungslisteHTML = platzierungslisteHTML.Replace("{alle_seiten}", alleSeiten.ToString());
                         string pfadinIf = System.IO.Path.Combine(exportPath, $"{Guid.NewGuid()}.pdf");
-                        if (!await pDF.ConvertHtmlFileToPdf(platzierungslisteHTML, pfadinIf))
+                        if (!await pDF.ConvertHtmlFileToPdf(platzierungslisteHTML, pfadinIf, false))
                         {
                             MessageBox.Show($"Export der Platzierungsliste fehlgeschlagen!", "Fehler: Export Platzierungsliste", MessageBoxButton.OK, MessageBoxImage.Error);
                             return;
@@ -413,7 +415,7 @@ namespace BWB_Auswertung.Views
                 htmlPlatzierungsliste_Vorlage = htmlPlatzierungsliste_Vorlage.Replace("{akt_seite}", anzahlSeiten.ToString());
                 htmlPlatzierungsliste_Vorlage = htmlPlatzierungsliste_Vorlage.Replace("{alle_seiten}", anzahlSeiten.ToString());
                 string pfad = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
-                bool erfolgreich = await pDF.ConvertHtmlFileToPdf(htmlPlatzierungsliste_Vorlage, pfad);
+                bool erfolgreich = await pDF.ConvertHtmlFileToPdf(htmlPlatzierungsliste_Vorlage, pfad, false);
                 if (!erfolgreich)
                 {
                     MessageBox.Show($"Export der Platzierungslisten fehlgeschlagen!", "Fehler: Export Platzierungslisten", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -421,7 +423,9 @@ namespace BWB_Auswertung.Views
                 }
                 pfade.Add(pfad);
                 //Alle Platzierungslisten in eine Datei speichern und die anderen Dateien löschen
-                pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"{dateiname}.pdf"), true);
+                pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"{dateiname}.pdf"), true, titel: "Platzierungsliste aller Gruppen",
+                    subject: $"Platzierungsliste für den {einstellungen.Veranstaltungstitel} am {einstellungen.Veranstaltungsdatum.ToShortDateString()} in {einstellungen.Veranstaltungsort}.",
+                    author: einstellungen.Veranstaltungsleitung);
             }
             catch (Exception ex)
             {
@@ -465,6 +469,8 @@ namespace BWB_Auswertung.Views
             {
                 ((Button)sender).IsEnabled = false;
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
+                Settings einstellungen = viewModel.Einstellungen;
+
                 PDF pDF = new PDF();
                 //Für die Excel Liste die Leere Datei erstellen
                 string excelpath = System.IO.Path.Combine(exportPath, "Urkundenliste.xlsx");
@@ -515,7 +521,7 @@ namespace BWB_Auswertung.Views
                     aktuelleUrkunde = aktuelleUrkunde.Replace("{platz}", gruppe.Platz.ToString());
 
                     string pfad = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
-                    bool erfolgreich = await pDF.ConvertHtmlFileToPdf(aktuelleUrkunde, pfad);
+                    bool erfolgreich = await pDF.ConvertHtmlFileToPdf(aktuelleUrkunde, pfad, false);
                     if (!erfolgreich)
                     {
                         MessageBox.Show($"Export der Urkunden fehlgeschlagen!", "Fehler: Export Urkunde", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -524,7 +530,7 @@ namespace BWB_Auswertung.Views
                     pfade.Add(pfad);
 
                 }
-                pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"UrkundenOverlay.pdf"), true);
+                pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"UrkundenOverlay.pdf"), true, "Urkunden", subject: "Urkunden", author: einstellungen.Veranstaltungsleitung);
 
 
                 ShowExportMessageBox("Export der Urkunden abgeschlossen!\nZielverzeichnis öffnen?",
@@ -545,6 +551,8 @@ namespace BWB_Auswertung.Views
             {
                 ((Button)sender).IsEnabled = false;
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
+                Settings einstellungen = viewModel.Einstellungen;
+
                 PDF pDF = new PDF();
 
                 string urkundeOverlayPfad = System.IO.Path.Combine(vorlagenPath, "UrkundeOverlayJuengsteGruppe.html");
@@ -581,15 +589,15 @@ namespace BWB_Auswertung.Views
                 urkundeOverlay = urkundeOverlay.Replace("{jahre}", juengsteGruppe.GesamtAlter.ToString());
 
                 string pfad = System.IO.Path.Combine(exportPath, $"UrkundeJuengsteGruppe.pdf");
-                bool erfolgreich = await pDF.ConvertHtmlFileToPdf(urkundeOverlay, pfad);
+                bool erfolgreich = await pDF.ConvertHtmlFileToPdf(urkundeOverlay, pfad, true, $"Jüngste Gruppe: {juengsteGruppe.GruppenName}", $"Urkunde für die jüngste Gruppe", einstellungen.Veranstaltungsleitung);
 
                 if (!erfolgreich)
                 {
-                    MessageBox.Show($"Export der Jüngsten Gruppe fehlgeschlagen!", "Fehler: Export Jüngste Gruppe", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Export der jüngsten Gruppe fehlgeschlagen!", "Fehler: Export jüngste Gruppe", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
-                ShowExportMessageBox("Export der Jüngsten Gruppe abgeschlossen!\nZielverzeichnis öffnen?",
+                ShowExportMessageBox("Export der jüngsten Gruppe abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Urkunden", exportPath);
                 ((Button)sender).IsEnabled = true;
             }
@@ -597,7 +605,7 @@ namespace BWB_Auswertung.Views
             {
                 ((Button)sender).IsEnabled = true;
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-                MessageBox.Show($"Export der Jüngsten Gruppe fehlgeschlagen!\n{ex}", "Fehler: Export Jüngste Gruppe", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Export der jüngsten Gruppe fehlgeschlagen!\n{ex}", "Fehler: Export jüngste Gruppe", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

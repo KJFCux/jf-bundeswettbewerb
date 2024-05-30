@@ -20,5 +20,8 @@
     <Setting Name="GithubDownloadURL" Type="System.String" Scope="User">
       <Value Profile="(Default)">https://github.com/KJFCux/jf-bundeswettbewerb/releases/download/{release}/BWB-Auswertung.exe</Value>
     </Setting>
+    <Setting Name="FriendlyName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Inferno Auswertung</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

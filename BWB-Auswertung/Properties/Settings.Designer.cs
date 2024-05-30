@@ -80,5 +80,17 @@ namespace BWB_Auswertung.Properties {
                 this["GithubDownloadURL"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Inferno Auswertung")]
+        public string FriendlyName {
+            get {
+                return ((string)(this["FriendlyName"]));
+            }
+            set {
+                this["FriendlyName"] = value;
+            }
+        }
     }
 }
