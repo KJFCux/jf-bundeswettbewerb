@@ -10,6 +10,7 @@ using System.Windows.Data;
 using BWB_Auswertung.IO;
 using System.Windows.Controls;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace BWB_Auswertung.Views
 {
@@ -320,19 +321,27 @@ namespace BWB_Auswertung.Views
             }
 
         }
-        private void ExportPDFPlatzierungsliste_Click(object sender, RoutedEventArgs e)
+        private async void ExportPDFPlatzierungsliste_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 ((Button)sender).IsEnabled = false;
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
 
-                helperExportPDFPlatzierungsliste(viewModel.Gruppen.OrderBy(x => x.Platz).ToList(), "Platzierungsliste");
-                helperExportPDFPlatzierungsliste(viewModel.Gruppen.OrderByDescending(x => x.Platz).ToList(), "PlatzierungslisteAbsteigend");
+                List<Task<bool>> tasks = new List<Task<bool>>
+                {
+                    helperExportPDFPlatzierungsliste(viewModel.Gruppen.OrderBy(x => x.Platz).ToList(), "Platzierungsliste"),
+                    helperExportPDFPlatzierungsliste(viewModel.Gruppen.OrderByDescending(x => x.Platz).ToList(), "PlatzierungslisteAbsteigend")
+                };
+                await Task.WhenAll(tasks);
 
-                ShowExportMessageBox("Export der Platzierungslisten abgeschlossen!\nZielverzeichnis öffnen?",
-                    "Export Platzierungslisten", exportPath);
+                if (tasks.All(task => task.Result))
+                {
+                    ShowExportMessageBox("Export der Platzierungslisten abgeschlossen!\nZielverzeichnis öffnen?",
+                        "Export Platzierungslisten", exportPath);
+                }
                 ((Button)sender).IsEnabled = true;
+
             }
             catch (Exception ex)
             {
@@ -342,7 +351,7 @@ namespace BWB_Auswertung.Views
             }
 
         }
-        private async void helperExportPDFPlatzierungsliste(List<Gruppe> gruppen, string dateiname)
+        private async Task<bool> helperExportPDFPlatzierungsliste(List<Gruppe> gruppen, string dateiname)
         {
 
             try
@@ -373,23 +382,23 @@ namespace BWB_Auswertung.Views
                 string tabelle = string.Empty;
 
                 int anzahlSeiten = 1;
-                int maxProSeite = 26;//26 Passen auf eine Seite
+                int maxProSeite = 25;//25 Passen auf eine Seite
                 int seitenindex = 1;
                 int alleSeiten = Convert.ToInt32(Math.Ceiling(viewModel.Gruppen.Count() / (float)maxProSeite));
 
                 foreach (Gruppe gruppe in gruppen)
                 {
-                    if (seitenindex >= maxProSeite)
+                    if (seitenindex > maxProSeite)
                     {
                         string platzierungslisteHTML = htmlPlatzierungsliste_Vorlage;
                         platzierungslisteHTML = platzierungslisteHTML.Replace("{tabellenzeile}", tabelle);
                         platzierungslisteHTML = platzierungslisteHTML.Replace("{akt_seite}", anzahlSeiten.ToString());
                         platzierungslisteHTML = platzierungslisteHTML.Replace("{alle_seiten}", alleSeiten.ToString());
-                        string pfadinIf = System.IO.Path.Combine(exportPath, $"{Guid.NewGuid()}.pdf");
+                        string pfadinIf = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
                         if (!await pDF.ConvertHtmlFileToPdf(platzierungslisteHTML, pfadinIf, false))
                         {
                             MessageBox.Show($"Export der Platzierungsliste fehlgeschlagen!", "Fehler: Export Platzierungsliste", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
+                            return false;
                         }
                         pfade.Add(pfadinIf);
 
@@ -419,18 +428,20 @@ namespace BWB_Auswertung.Views
                 if (!erfolgreich)
                 {
                     MessageBox.Show($"Export der Platzierungslisten fehlgeschlagen!", "Fehler: Export Platzierungslisten", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
+                    return false;
                 }
                 pfade.Add(pfad);
                 //Alle Platzierungslisten in eine Datei speichern und die anderen Dateien löschen
                 pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"{dateiname}.pdf"), true, titel: "Platzierungsliste aller Gruppen",
                     subject: $"Platzierungsliste für den {einstellungen.Veranstaltungstitel} am {einstellungen.Veranstaltungsdatum.ToShortDateString()} in {einstellungen.Veranstaltungsort}.",
                     author: einstellungen.Veranstaltungsleitung);
+                return true;
             }
             catch (Exception ex)
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Platzierungslisten fehlgeschlagen!\n{ex}", "Fehler: Export Platzierungslisten", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
             }
         }
 
