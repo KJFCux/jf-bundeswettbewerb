@@ -525,7 +525,7 @@ namespace BWB_Auswertung
                             if (gruppe.WettbewerbsbahnBTeil == null) gruppe.WettbewerbsbahnBTeil = gefundeneGruppe.WettbewerbsbahnBTeil;
 
                             //Hinweis an Benutzer das die Gruppe existiert
-                            MessageBox.Show($"Die Gruppe {gruppe.GruppenName} von der Ortswehr {gruppe.Feuerwehr} aus {gruppe.Organisationseinheit} Existiert bereits!\nURL der Anmeldung neu: {gruppe.UrlderAnmeldung}\nURL der Anmeldung alt: {gefundeneGruppe.UrlderAnmeldung}", "Gruppe bereits vorhanden!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            MessageBox.Show($"Die Gruppe {gruppe.GruppenName} von der Ortswehr {gruppe.Feuerwehr} aus {gruppe.Organisationseinheit} Existierte bereits und wurde überschrieben!\nURL der Anmeldung neu: {gruppe.UrlderAnmeldung}\nURL der Anmeldung alt: {gefundeneGruppe.UrlderAnmeldung}", "Gruppe wurde überschrieben!", MessageBoxButton.OK, MessageBoxImage.Warning);
 
                             // Alte Gruppe löschen
                             viewModel.RemoveSelectedGroup(gefundeneGruppe, false);
