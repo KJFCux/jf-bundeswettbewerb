@@ -2310,7 +2310,11 @@
                          Loaded="gruppenListBox_Loaded">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding GruppenName}" />
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding StartNr}" />
+                                <TextBlock Text=" | " />
+                                <TextBlock Text="{Binding GruppenName}" />
+                            </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
