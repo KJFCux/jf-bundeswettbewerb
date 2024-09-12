@@ -11,8 +11,8 @@
 	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 	<NeutralLanguage>de-DE</NeutralLanguage>
 	<StartupObject>BWB_Auswertung.App</StartupObject>
-	<AssemblyVersion>1.0.9</AssemblyVersion>
-	<FileVersion>1.0.9</FileVersion>
+	<AssemblyVersion>1.0.10</AssemblyVersion>
+	<FileVersion>1.0.10</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,6 +37,7 @@
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0" />
     <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="4.11.0" />
     <PackageReference Include="MahApps.Metro.IconPacks.Octicons" Version="4.11.0" />
+    <PackageReference Include="NPOI" Version="2.7.0" />
     <PackageReference Include="PuppeteerSharp" Version="15.1.0" />
     <PackageReference Include="ReactiveUI" Version="19.6.1" />
     <PackageReference Include="ReactiveUI.Events.WPF" Version="15.1.1" />
@@ -86,7 +87,7 @@
 		<NugetTools>$(PkgNuGet_CommandLine)\tools</NugetTools>
 		<SquirrelTools>$(Pkgsquirrel_windows)\tools</SquirrelTools>
 
-		<Version>1.0.9</Version>
+		<Version>1.0.10</Version>
 
 		<NuspecFile>$(ProjectDir)ReleaseSpec.nuspec</NuspecFile>
 	</PropertyGroup>

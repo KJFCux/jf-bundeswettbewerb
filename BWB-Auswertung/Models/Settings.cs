@@ -10,7 +10,9 @@ namespace BWB_Auswertung.Models
         [Description("Offenes Gewässer")]
         OFFENESGEWAESSER,
         [Description("Unterflurhydrant")]
-        UNTERFLURHYDRANT
+        UNTERFLURHYDRANT,
+        [Description("Keine Vorgabezeit")]
+        KEINEVORGABEZEIT
     }
     [Serializable]
     public class Settings
@@ -46,6 +48,7 @@ namespace BWB_Auswertung.Models
                 {
                     case Art.OFFENESGEWAESSER: return 420;
                     case Art.UNTERFLURHYDRANT: return 360;
+                    case Art.KEINEVORGABEZEIT: return 0;
                     default: return 0;
                 }
             }

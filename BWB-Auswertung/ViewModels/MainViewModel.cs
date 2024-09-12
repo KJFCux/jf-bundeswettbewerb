@@ -116,7 +116,8 @@ public class MainViewModel : INotifyPropertyChanged
         ArtList = new ObservableCollection<Art>
         {
             Art.UNTERFLURHYDRANT,
-            Art.OFFENESGEWAESSER
+            Art.OFFENESGEWAESSER,
+            Art.KEINEVORGABEZEIT
         };
     }
     public void OverrideSettings(Settings einstellungenNew)
