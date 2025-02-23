@@ -179,7 +179,7 @@ namespace LagerInsights
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
                 openFileDialog.Multiselect = true;
-                openFileDialog.Filter = "JF-BWB Dateien (*.XML)|*.xml|All files (*.*)|*.*";
+                openFileDialog.Filter = "LagerInsights Dateien (*.XML)|*.xml|All files (*.*)|*.*";
                 openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 if (openFileDialog.ShowDialog() == true)
                 {
@@ -674,6 +674,45 @@ namespace LagerInsights
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
             }
         }
+        private void EmailSchreiben_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                //ToDO
+                string? urlderAnmeldung = UrlderAnmeldung.Text?.ToString();
+                if (urlderAnmeldung != null) Clipboard.SetText(urlderAnmeldung);
+
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+            }
+        }
+        private void TelefonnummerKopieren_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                //ToDO
+                string? urlderAnmeldung = UrlderAnmeldung.Text?.ToString();
+                if (urlderAnmeldung != null) Clipboard.SetText(urlderAnmeldung);
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+            }
+        }
+        private void DecimalTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            // Prüfen, ob die Eingabe ein gültiger Dezimalwert ist
+            e.Handled = !IsTextAllowed(e.Text);
+        }
+
+        private static bool IsTextAllowed(string text)
+        {
+            // Verwenden Sie Regex, um nur Zahlen und Dezimaltrennzeichen zuzulassen
+            return Regex.IsMatch(text, @"^[0-9]*(?:\.[0-9]*)?$");
+        }
+
     }
 
     public class AgeToColorConverter : IValueConverter

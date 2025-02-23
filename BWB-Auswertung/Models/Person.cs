@@ -10,6 +10,20 @@ namespace LagerInsights.Models
         D,
         N
     }
+
+    public enum Status
+    {
+        [Description("Teilnehmer / 1. Geschwisterkind")]
+        AGESCHWISTERKIND,
+        [Description("2. Geschwisterkind")]
+        BGESCHWISTERKIND,
+        [Description("3. Geschwisterkind")]
+        CGESCHWISTERKIND,
+        [Description("Betreuer")]
+        BETREUER,
+        [Description("Mitarbeiter")]
+        MITARBEITER
+    }
     [Serializable]
     public class Person : INotifyPropertyChanged
     {
@@ -17,7 +31,16 @@ namespace LagerInsights.Models
 
         public string Vorname { get; set; }
         public string Nachname { get; set; }
+
         public Gender Geschlecht { get; set; }
+
+        public string Strasse { get; set; }
+        public string Plz { get; set; }
+        public string Ort { get; set; }
+        public Status Status { get; set; }
+        public string Essgewohnheiten { get; set; }
+        public string Unvertraeglichkeiten { get; set; }
+
 
 
         private DateTime geburtsdatum;
@@ -49,17 +72,39 @@ namespace LagerInsights.Models
                         age--;
                     }
                 }
-                    
+
                 return age;
+            }
+        }
+        public string StatusFriendlyName
+        {
+            get
+            {
+                switch (Status)
+                {
+                    case Status.AGESCHWISTERKIND: return "Teilnehmer / 1. Geschwisterkind";
+                    case Status.BGESCHWISTERKIND: return "2. Geschwisterkind";
+                    case Status.CGESCHWISTERKIND: return "3. Geschwisterkind";
+                    case Status.BETREUER: return "Betreuer";
+                    case Status.MITARBEITER: return "Mitarbeiter";
+
+                    default: return "none";
+                }
             }
         }
 
         public Person()
         {
+            Geschlecht = Gender.N;
+            Geburtsdatum = new DateTime(DateTime.Now.Year, 1, 1);
             Vorname = string.Empty;
             Nachname = string.Empty;
-            Geschlecht = Gender.N;
-            Geburtsdatum = new DateTime(DateTime.Now.Year,1,1);
+            Strasse = string.Empty;
+            Plz = string.Empty;
+            Ort = string.Empty;
+            Status = Status.AGESCHWISTERKIND;
+            Essgewohnheiten = string.Empty;
+            Unvertraeglichkeiten = string.Empty;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

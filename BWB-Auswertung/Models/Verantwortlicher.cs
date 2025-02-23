@@ -25,7 +25,18 @@ namespace LagerInsights.Models
         public string Telefon { get; set; }
         public string Email { get; set; }
 
-
+        public Verantwortlicher()
+        {
+            Vorname = string.Empty;
+            Nachname = string.Empty;
+            Geschlecht = Gender.N;
+            Strasse = string.Empty;
+            Plz = string.Empty;
+            Ort = string.Empty;
+            Funktion = string.Empty;
+            Telefon = string.Empty;
+            Email = string.Empty;
+        }
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged()

@@ -208,18 +208,18 @@
                                 <StackPanel Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
                                         <Label Content="Feuerwehr:"
-                                               ToolTip="Name der Feuerwehr (BSP.: FF Musterstadt)"
-                                               HorizontalAlignment="Left"
+                                               ToolTip="Name der Feuerwehr (BSP.: JF Musterstadt)"
                                                Margin="20,10,20,10"
                                                VerticalAlignment="Top"
-                                               FontSize="24" />
+                                               FontSize="24"
+                                               Width="240" />
                                         <TextBox TextWrapping="Wrap"
                                                  Text="{Binding SelectedItem.Feuerwehr, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                 ToolTip="Name der Feuerwehr (BSP.: FF Musterstadt)"
+                                                 ToolTip="Name der Feuerwehr (BSP.: JF Musterstadt)"
                                                  MinWidth="600"
                                                  MaxWidth="800"
                                                  FontSize="24"
-                                                 Margin="105,0,0,0"
+                                                 Margin="20,10,20,10"
                                                  Height="44" />
                                     </StackPanel>
                                     <!--Organisationseinheit-->
@@ -229,207 +229,186 @@
                                             <Label Content="Organisationseinheit:"
                                                    HorizontalAlignment="Left"
                                                    Margin="20,10,0,0"
-                                                   ToolTip="Untergeordnete Organisationseinheit. Bei Kreisentscheiden z.B. die Gemeinde aus der die Gruppe kommt."
-                                                   VerticalAlignment="Center"
-                                                   FontSize="24" />
+                                                   ToolTip="Untergeordnete Organisationseinheit. Bei Kreiszeltlagern z.B. die Gemeinde aus der die Feuerwehr kommt."
+                                                   FontSize="24"
+                                                   Width="240" />
                                             <Label Content="(Kreis, Abschnitt, Gemeinde, ...)"
                                                    HorizontalAlignment="Left"
                                                    Margin="20,0,0,10"
-                                                   ToolTip="Untergeordnete Organisationseinheit. Bei Kreisentscheiden z.B. die Gemeinde aus der die Gruppe kommt."
+                                                   ToolTip="Untergeordnete Organisationseinheit. Bei Kreiszeltlagern z.B. die Gemeinde aus der die Feuerwehr kommt."
                                                    VerticalAlignment="Center"
                                                    FontSize="14" />
                                         </StackPanel>
                                         <TextBox TextWrapping="Wrap"
                                                  Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Organisationseinheit,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                 Margin="18,10,20,10"
-                                                 ToolTip="Untergeordnete Organisationseinheit. Bei Kreisentscheiden z.B. die Gemeinde aus der die Gruppe kommt."
+                                                 Margin="40,10,20,10"
+                                                 ToolTip="Untergeordnete Organisationseinheit. Bei Kreiszeltlagern z.B. die Gemeinde aus der die Feuerwehr kommt."
                                                  MinWidth="600"
-                                                 MaxWidth="800"
+                                                 MaxWidth="900"
                                                  FontSize="24"
                                                  Height="44"
                                                  VerticalAlignment="Center" />
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <Label Content="Verantwortlicher:"
-                                               ToolTip="Name der Feuerwehr (BSP.: FF Musterstadt)"
+                                               ToolTip="Name der Verantwortlichen Person"
                                                HorizontalAlignment="Left"
                                                Margin="20,10,20,10"
                                                VerticalAlignment="Center"
-                                               FontSize="24" />
+                                               FontSize="24"
+                                               Width="240" />
                                         <TextBox TextWrapping="Wrap"
-                                                 Text="{Binding SelectedItem.Feuerwehr, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                 ToolTip="Name der Feuerwehr (BSP.: FF Musterstadt)"
-                                                 MinWidth="600"
-                                                 MaxWidth="800"
+                                                 Text="{Binding SelectedItem.Verantworlicher.Vorname, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 ToolTip="Vorname der Verantwortlichen Person"
+                                                 MinWidth="300"
+                                                 MaxWidth="400"
                                                  FontSize="24"
-                                                 Margin="105,0,0,0"
+                                                 Margin="20,10,5,10"
+                                                 Height="44"
+                                                 VerticalAlignment="Center" />
+                                        <TextBox TextWrapping="Wrap"
+                                                 Text="{Binding SelectedItem.Verantworlicher.Nachname, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 ToolTip="Nachname der Verantwortlichen Person"
+                                                 MinWidth="300"
+                                                 MaxWidth="400"
+                                                 FontSize="24"
+                                                 Margin="5,10,5,10"
                                                  Height="44"
                                                  VerticalAlignment="Center" />
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <Label Content="E-Mail:"
-                                               ToolTip="Name der Feuerwehr (BSP.: FF Musterstadt)"
+                                               ToolTip="E-Mail der Verantwortlichen Person"
                                                HorizontalAlignment="Left"
                                                Margin="20,10,20,10"
                                                VerticalAlignment="Center"
-                                               FontSize="24" />
+                                               FontSize="24"
+                                               Width="200" />
+                                        <Button Content=""
+                                                Width="40"
+                                                Height="40"
+                                                ToolTip="E-Mail Schreiben"
+                                                Click="EmailSchreiben_Click">
+                                            <Button.ContentTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <iconPacks:PackIconModern Width="22"
+                                                                                  Height="22"
+                                                                                  VerticalAlignment="Center"
+                                                                                  Kind="Email" />
+                                                        <TextBlock Margin="0 0 0 0"
+                                                                   VerticalAlignment="Center"
+                                                                   Text="{Binding}" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </Button.ContentTemplate>
+                                        </Button>
                                         <TextBox TextWrapping="Wrap"
-                                                 Text="{Binding SelectedItem.Feuerwehr, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                 ToolTip="Name der Feuerwehr (BSP.: FF Musterstadt)"
+                                                 Text="{Binding SelectedItem.Verantworlicher.Email, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 ToolTip="E-Mail der Verantwortlichen Person"
                                                  MinWidth="600"
                                                  MaxWidth="800"
                                                  FontSize="24"
-                                                 Margin="105,0,0,0"
+                                                 Margin="20,10,20,10"
                                                  Height="44"
                                                  VerticalAlignment="Center" />
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <Label Content="Telefon:"
-                                               ToolTip="Name der Feuerwehr (BSP.: FF Musterstadt)"
+                                               ToolTip="Telefonnummer der Verantwortlichen Person"
                                                HorizontalAlignment="Left"
                                                Margin="20,10,20,10"
                                                VerticalAlignment="Center"
-                                               FontSize="24" />
+                                               FontSize="24"
+                                               Width="200" />
+                                        <Button Content=""
+                                                Width="40"
+                                                Height="40"
+                                                ToolTip="Telefonnummer kopieren"
+                                                Click="TelefonnummerKopieren_Click">
+                                            <Button.ContentTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <iconPacks:PackIconModern Width="22"
+                                                                                  Height="22"
+                                                                                  VerticalAlignment="Center"
+                                                                                  Kind="Phone" />
+                                                        <TextBlock Margin="0 0 0 0"
+                                                                   VerticalAlignment="Center"
+                                                                   Text="{Binding}" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </Button.ContentTemplate>
+                                        </Button>
                                         <TextBox TextWrapping="Wrap"
-                                                 Text="{Binding SelectedItem.Feuerwehr, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                 ToolTip="Name der Feuerwehr (BSP.: FF Musterstadt)"
+                                                 Text="{Binding SelectedItem.Verantwortlicher.Telefon, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 ToolTip="Telefonnummer der Verantwortlichen Person"
                                                  MinWidth="600"
                                                  MaxWidth="800"
                                                  FontSize="24"
-                                                 Margin="105,0,0,0"
+                                                 Margin="20,10,20,10"
                                                  Height="44"
                                                  VerticalAlignment="Center" />
                                     </StackPanel>
                                 </StackPanel>
                             </GroupBox>
-                            <GroupBox Header="Auswertung">
+                            <GroupBox Header="Finanzen">
+
                                 <StackPanel Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
-                                        <Label Content="Platzierung:"
+                                        <Label Content="Betrag zu bezahlen:"
                                                HorizontalAlignment="Left"
                                                Margin="20,10,20,10"
-                                               ToolTip="Die Platzierung wird entsprechend der Wettbewerbsregeln für den Bundeswettbewerb automatisch berechnet"
+                                               ToolTip="Diesen Betrag muss die Gruppe bezahlen"
                                                VerticalAlignment="Top"
                                                FontSize="24"
                                                FontWeight="Bold" />
 
-                                        <Label Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.Platz,Mode=OneWay, TargetNullValue=0}"
-                                               Margin="0,10,40,10"
-                                               ToolTip="Die Platzierung wird entsprechend der Wettbewerbsregeln für den Bundeswettbewerb automatisch berechnet"
+                                        <Label Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.zuBezahlenderBetrag,Mode=OneWay, TargetNullValue=0}"
+                                               Margin="0,10,2,10"
+                                               ToolTip="Diesen Betrag muss die Gruppe bezahlen"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
                                                FontSize="20"
                                                FontWeight="Bold" />
-                                        <CheckBox Grid.Column="4"
-                                                  Grid.Row="3"
-                                                  Content="Gruppe ohne Wertung"
-                                                  Margin="40,20,0,0"
-                                                  ToolTip="Die Gruppe kann von einer Wertung ausgenommen werden. In diesem Fall wird die Gruppe an das Ende der Platzierungsliste gesetzt."
-                                                  HorizontalAlignment="Center"
-                                                  VerticalAlignment="Top"
-                                                  FontSize="20"
-                                                  FontWeight="Bold"
-                                                  IsChecked="{Binding ElementName=gruppenListBox, Path=SelectedItem.OhneWertung, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=false}" />
-                                        <TextBox TextWrapping="Wrap"
-                                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Losentscheid,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                 Margin="80,10,20,10"
-                                                 Width="40"
-                                                 FontSize="24"
-                                                 ToolTip="Für den Fall einer Punktgleichheit, auch nach den Entscheidungskriterien der Wettbewerbsordnung, kann hier ein vorgenommener Losentscheid eingetragen werden. Wird hier nichts eingetragen wird bei Punktgleichheit nach Auswertung aller anderen Kriterien automatisch ein Losentscheid vorgenommen."
-                                                 Height="40" />
-                                        <Label Content="Losentscheid"
+                                        <Label Content="€"
+                                               Margin="0,10,40,10"
+                                               ToolTip=""
                                                HorizontalAlignment="Center"
-                                               Margin="0,10,20,10"
                                                VerticalAlignment="Center"
                                                FontSize="20"
-                                               ToolTip="Für den Fall einer Punktgleichheit, auch nach den Entscheidungskriterien der Wettbewerbsordnung, kann hier ein vorgenommener Losentscheid eingetragen werden. Wird hier nichts eingetragen, wird bei Punktgleichheit nach Auswertung aller anderen Kriterien automatisch ein Losentscheid vorgenommen."
                                                FontWeight="Bold" />
-                                        <TextBlock Margin="0,10,20,10"
-                                                   TextWrapping="Wrap"
-                                                   VerticalAlignment="Center"
-                                                   FontSize="12"
-                                                   Text=""
-                                                   Width="458" />
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label Content="Vorgabezeit A-Teil:"
-                                               HorizontalAlignment="Left"
-                                               ToolTip="Die Vorgabezeit für den A-Teil ergibt sich aus der Einstellung Unterflurhydrant oder Offenes Gewässer"
-                                               Margin="20,10,0,10"
-                                               VerticalAlignment="Top"
-                                               FontSize="24" />
-                                        <Label HorizontalAlignment="Left"
-                                               Margin="0,10,40,10"
-                                               ToolTip="Die Vorgabezeit für den A-Teil ergibt sich aus der Einstellung Unterflurhydrant oder Offenes Gewässer"
-                                               VerticalAlignment="Top"
-                                               FontSize="24">
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Einstellungen.Vorgabezeit}" />
-                                                <TextBlock Text=" Sekunden" />
-                                            </StackPanel>
-                                        </Label>
-                                        <Label Content="Sollzeit B-Teil:"
-                                               HorizontalAlignment="Left"
-                                               Margin="20,10,0,10"
-                                               ToolTip="Die Sollzeit für den B-Teil wird entsprechend der Wettbewerbsordnung berechnet. Die Ersatzperson zählt nicht."
-                                               VerticalAlignment="Top"
-                                               FontSize="24" />
-                                        <Label HorizontalAlignment="Left"
-                                               Margin="0,10,40,10"
-                                               ToolTip="Die Sollzeit für den B-Teil wird entsprechend der Wettbewerbsordnung berechnet. Die Ersatzperson zählt nicht."
-                                               VerticalAlignment="Top"
-                                               FontSize="24">
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.SollZeitBTeilInMinutenString,Mode=OneWay }" />
-                                                <TextBlock Text=" Minuten" />
-                                            </StackPanel>
-                                        </Label>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label Content="Punkte A-Teil:"
-                                               HorizontalAlignment="Left"
-                                               Margin="20,10,0,10"
-                                               VerticalAlignment="Top"
-                                               FontSize="24" />
-                                        <Label   Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.PunkteATeil,Mode=OneWay}"
-                                                 Margin="0,10,20,10"
-                                                 VerticalAlignment="Center"
-                                                 FontSize="24" />
-                                        <Label Content="Punkte B-Teil:"
-                                               HorizontalAlignment="Left"
-                                               Margin="20,10,0,10"
-                                               VerticalAlignment="Top"
-                                               FontSize="24" />
-                                        <Label   Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.PunkteBTeil,Mode=OneWay}"
-                                                 Margin="0,10,20,10"
-                                                 VerticalAlignment="Center"
-                                                 FontSize="24" />
-                                        <Label Content="Gesamteindruck:"
-                                               HorizontalAlignment="Left"
-                                               Margin="20,10,0,10"
-                                               VerticalAlignment="Top"
-                                               FontSize="24" />
-                                        <Label   Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.Gesamteindruck,Mode=OneWay}"
-                                                 Margin="0,10,20,10"
-                                                 VerticalAlignment="Center"
-                                                 FontSize="24" />
-                                    </StackPanel>
 
+                                    </StackPanel>
                                     <StackPanel Orientation="Horizontal">
-                                        <Label Content="Punkte Gesamt:"
+                                        <Label Content="Betrag bereits gezahlt:"
                                                HorizontalAlignment="Left"
-                                               Margin="20,10,0,10"
+                                               Margin="20,10,20,10"
+                                               ToolTip="Diesen Betrag hat die Gruppe bereits bezahlt"
                                                VerticalAlignment="Top"
-                                               FontSize="24" />
-                                        <Label   Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.GesamtPunkte,Mode=OneWay}"
-                                                 Margin="0,10,20,10"
-                                                 VerticalAlignment="Center"
+                                               FontSize="24"
+                                               FontWeight="Bold" />
+
+                                        <TextBox x:Name="DecimalTextBox"
+                                                 TextWrapping="Wrap"
+                                                 Text="{Binding SelectedItem.GezahlterBeitrag, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}"
+                                                 ToolTip="Diesen Betrag hat die Gruppe bereits bezahlt"
+                                                 MinWidth="300"
+                                                 MaxWidth="300"
                                                  FontSize="24"
-                                                 FontWeight="Bold" />
+                                                 Margin="20,10,4,10"
+                                                 Height="44"
+                                                 VerticalAlignment="Center"
+                                                 PreviewTextInput="DecimalTextBox_PreviewTextInput" />
 
+                                        <Label Content="€"
+                                               Margin="0,10,40,10"
+                                               ToolTip=""
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="20"
+                                               FontWeight="Bold" />
                                     </StackPanel>
-
-
                                 </StackPanel>
 
                             </GroupBox>
@@ -439,57 +418,54 @@
                                     Grid.Column="1"
                                     Grid.Row="0"
                                     Grid.RowSpan="3">
-                            <GroupBox Header="Wettbewerbsbahnen">
+                            <GroupBox Header="Teilnehmenden Auswertung">
                                 <StackPanel Orientation="Vertical">
                                     <StackPanel Orientation="Vertical"
                                                 Margin="10,10,10,10">
-                                        <Label Content="Bahnnummer A-Teil:"
-                                               HorizontalAlignment="Center"
-                                               Margin="0,10,0,10"
-                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
-                                               VerticalAlignment="Top"
-                                               FontSize="24" />
-                                        <mah:NumericUpDown Minimum="1"
-                                                           Interval="1"
-                                                           Width="100"
-                                                           FontSize="20"
-                                                           Value="{Binding ElementName=gruppenListBox, Path=SelectedItem.WettbewerbsbahnATeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        <Label Content="Startzeit A-Teil:"
-                                               HorizontalAlignment="Center"
-                                               Margin="0,10,0,10"
-                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
-                                               VerticalAlignment="Top"
-                                               FontSize="24" />
-                                        <mah:TimePicker SelectedDateTime="{Binding ElementName=gruppenListBox, Path=SelectedItem.StartzeitATeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                        Culture="de-DE"
-                                                        FontSize="20"
-                                                        SelectedTimeFormat="Short" />
+                                        <Label Content="Anzahl Teilnehmende"
+                                               ToolTip="Gesamtanzahl Teilnehmende"
+                                               FontSize="24"
+                                               FontWeight="Bold"
+                                               HorizontalAlignment="Center" />
+                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.anzahlTeilnehmer,Mode=OneWay}"
+                                                   FontSize="24"
+                                                   FontWeight="Bold" />
+
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical"
                                                 Margin="10,10,10,10">
 
-                                        <Label Content="Bahnnummer B-Teil:"
-                                               HorizontalAlignment="Center"
-                                               Margin="0,10,0,10"
-                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
-                                               VerticalAlignment="Top"
-                                               FontSize="24" />
+                                        <Label Content="Anzahl 2. Geschwisterkind"
+                                               ToolTip="Gesamtanzahl 2. Geschwisterkind"
+                                               FontSize="20"
+                                               HorizontalAlignment="Center" />
+                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.anzahl2Geschwisterkind,Mode=OneWay}"
+                                                   FontSize="16"
+                                                   FontWeight="Bold" />
 
-                                        <mah:NumericUpDown Minimum="1"
-                                                           Interval="1"
-                                                           Width="100"
-                                                           FontSize="20"
-                                                           Value="{Binding ElementName=gruppenListBox, Path=SelectedItem.WettbewerbsbahnBTeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        <Label Content="Startzeit B-Teil:"
-                                               HorizontalAlignment="Center"
-                                               Margin="0,10,0,10"
-                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
-                                               VerticalAlignment="Top"
-                                               FontSize="24" />
-                                        <mah:TimePicker SelectedDateTime="{Binding ElementName=gruppenListBox, Path=SelectedItem.StartzeitBTeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                        Culture="de-DE"
-                                                        FontSize="20"
-                                                        SelectedTimeFormat="Short" />
+                                        <Label Content="Anzahl 3. Geschwisterkind"
+                                               ToolTip="Gesamtanzahl 3. Geschwisterkind"
+                                               FontSize="20"
+                                               HorizontalAlignment="Center" />
+                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.anzahl3Geschwisterkind,Mode=OneWay}"
+                                                   FontSize="16"
+                                                   FontWeight="Bold" />
+
+                                        <Label Content="Anzahl Betreuer"
+                                               ToolTip="Gesamtanzahl Betreuer"
+                                               FontSize="20"
+                                               HorizontalAlignment="Center" />
+                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.anzahlBetreuer,Mode=OneWay}"
+                                                   FontSize="16"
+                                                   FontWeight="Bold" />
+
+                                        <Label Content="Anzahl Mitarbeiter"
+                                               ToolTip="Gesamtanzahl Mitarbeiter"
+                                               FontSize="20"
+                                               HorizontalAlignment="Center" />
+                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.anzahlMitarbeiter,Mode=OneWay}"
+                                                   FontSize="16"
+                                                   FontWeight="Bold" />
                                     </StackPanel>
 
                                 </StackPanel>

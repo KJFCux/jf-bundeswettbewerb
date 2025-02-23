@@ -101,7 +101,10 @@ public class MainViewModel : INotifyPropertyChanged
     }
 
     public List<PersonTeilnehmendenliste> PersonenTeilnehmendenliste => alleTeilnehmenden();
-    public List<PersonTeilnehmendenliste> PersonenMitGeburtstagBeimWettbewerb => personenMitGeburtstagBeimWettbewerb();
+    public List<PersonTeilnehmendenliste> PersonenMitGeburtstagBeimZeltlager => personenMitGeburtstagBeimWettbewerb();
+
+    public decimal BereitsInsgesamtBezahlt => Gruppen.Sum(gruppe => gruppe.GezahlterBeitrag ?? 0);
+    public decimal ZuBezahlenderBetragGesamt => Gruppen.Sum(gruppe => gruppe.zuBezahlenderBetrag);
 
     public Settings Einstellungen
     {
@@ -138,7 +141,7 @@ public class MainViewModel : INotifyPropertyChanged
     }
 
     //Erstellt eine Leere Gruppe
-    public void AddEmptyGruppe(string feuerwehr, string gruppenName)
+    public void AddEmptyGruppe(string feuerwehr)
     {
 
         //10 Leere Personen erstellen damit diese bearbeitet werden können
@@ -147,13 +150,15 @@ public class MainViewModel : INotifyPropertyChanged
         {
             persons.Add(new Person());
         }
+        
+        Verantwortlicher verantwortlicher = new Verantwortlicher();
 
         //Leere Gruppe erstellen
         Gruppe newGruppe = new Gruppe
         {
             Feuerwehr = feuerwehr,
-            GruppenName = gruppenName,
             Persons = persons,
+            Verantwortlicher = verantwortlicher,
             TimeStampAnmeldung = DateTime.Now,
             TimeStampAenderung = DateTime.Now
         };
@@ -178,47 +183,31 @@ public class MainViewModel : INotifyPropertyChanged
     {
         if (Gruppen != null)
         {
-            // Sortieren der Gruppen nach Startzeit und weisen Startnummern zu
-            var sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.StartzeitATeil).ThenBy(gruppe => gruppe.WettbewerbsbahnATeil).ThenBy(gruppe => gruppe.GruppenName).ToList();
+            // Sortieren der Gruppen nach Anmeldezeit und weise Lagernummern zu
+            var sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.TimeStampAnmeldung).ThenBy(gruppe => gruppe.Feuerwehr).ToList();
             for (int i = 0; i < sortedGruppen.Count; i++)
             {
-                sortedGruppen[i].LagerNr = i + 1; // Startnummer zuweisen (beginnend bei 1)
+                sortedGruppen[i].LagerNr = i + 1; // Lagernummer zuweisen (beginnend bei 1)
             }
 
-            // Sortieren der Gruppen nach Punkten und Plätze zuweisen
-            sortedGruppen = Gruppen.OrderByDescending(gruppe => gruppe.GesamtPunkte)
-                .ThenBy(gruppe => gruppe.FehlerATeil)//Kriterium 1=> "Anzahl der Fehlerpunkte gemäß Wertungsbögen"
-                .ThenByDescending(gruppe => gruppe.PunkteATeil) //Kriterium 2 => "Besseres Endergebnis im A-Teil"
-                .ThenByDescending(gruppe => gruppe.PunkteBTeil) //Kriterium 3 => "Besseres Endergebnis im B-Teil"
-                .ThenBy(gruppe => gruppe.FehlerBTeil) //Kriterium 4 => Geringere Anzahl Minuspunkte im 400-m-Hindernislauf "Nur Summe der Fehlerpunkte gemäß Wertungsbögen"
-                .ThenBy(gruppe => (gruppe.DurchschnittszeitKnotenATeil + gruppe.FehlerA + gruppe.FehlerW)) //Kriterium 5 => Besserer Zeittakt + Fehlerpunkte A und W.
-                                                                                                           //Hinweis: BWB Ordnung sagt "Summe der Fehlerpunkte gemäß Wertungsbögen während des Zeittaktes für den Angriffstrupp und den Wassertrupp"
-                                                                                                           //Leider ist dies Technisch nicht umsetzbar da die Beschränkung auf den Zeittakt bei den Fehlern nicht eingetragen wird, sondern nur die Gesamtfehler
-                .ThenBy(gruppe => gruppe.Losentscheid) //Sortierung nach Losentscheid wenn eingegeben
-                .ThenBy(gruppe => Guid.NewGuid()) //Final eine Random Sortierung
-                .ToList();
-            for (int i = 0; i < sortedGruppen.Count; i++)
-            {
-                sortedGruppen[i].Platz = i + 1; // Platz zuweisen (beginnend bei 1)
-            }
 
             //Sofern etwas zum sortieren gewählt wurde, die Gruppen entsprechend sortieren
             switch (indexSortBy)
             {
                 case 0:
-                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.GruppenName).ToList();
+                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.Feuerwehr).ToList();
                     break;
                 case 1:
-                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.StartzeitATeil).ThenBy(gruppe => gruppe.WettbewerbsbahnATeil).ToList();
+                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.TimeStampAnmeldung).ThenBy(gruppe => gruppe.Feuerwehr).ToList();
                     break;
                 case 2:
-                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.StartzeitBTeil).ThenBy(gruppe => gruppe.WettbewerbsbahnBTeil).ToList();
+                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.Organisationseinheit).ThenBy(gruppe => gruppe.Feuerwehr).ToList();
                     break;
                 case 3:
-                    sortedGruppen = Gruppen.OrderByDescending(gruppe => gruppe.GesamtPunkte).ToList();
+                    sortedGruppen = Gruppen.OrderByDescending(gruppe => gruppe.Feuerwehr).ToList();
                     break;
                 case 4:
-                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.GesamtAlter).ToList();
+                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.LagerNr).ToList();
                     break;
                 default:
                     break;
@@ -232,7 +221,7 @@ public class MainViewModel : INotifyPropertyChanged
     public List<PersonTeilnehmendenliste> alleTeilnehmenden()
     {
         List<PersonTeilnehmendenliste> alleTeilnehmenden = gruppen
-            .SelectMany(gruppe => gruppe.Persons.Select(person => new PersonTeilnehmendenliste { Feuerwehr = gruppe.Feuerwehr, Gruppenname = gruppe.GruppenName, Person = person }))
+            .SelectMany(gruppe => gruppe.Persons.Select(person => new PersonTeilnehmendenliste { Feuerwehr = gruppe.Feuerwehr, Person = person }))
             .ToList();
 
         return alleTeilnehmenden;
@@ -252,7 +241,7 @@ public class MainViewModel : INotifyPropertyChanged
     {
         if (loeschdialog)
         {
-            MessageBoxResult result = MessageBox.Show($"Möchten Sie diese Gruppe wirklich löschen?\n{gruppe.GruppenName}", "Bestätigung", MessageBoxButton.OKCancel);
+            MessageBoxResult result = MessageBox.Show($"Möchten Sie diese Feuerwehr wirklich löschen?\n{gruppe.Feuerwehr}", "Bestätigung", MessageBoxButton.OKCancel);
             if (result == MessageBoxResult.OK)
             {
                 Gruppen.Remove(gruppe);
@@ -265,34 +254,6 @@ public class MainViewModel : INotifyPropertyChanged
 
     }
 
-    public void switchBoxTeilnehmer(int zielIndex, Gruppe gruppe)
-    {
-        Person ersatz = gruppe.Persons.Last();
-
-        //Den zu ersetzenden vorher zwischenspeichern um ihn später hinten anzufügen
-        Person zuErsetzen = new Person
-        {
-            Geburtsdatum = gruppe.Persons[zielIndex - 1].Geburtsdatum,
-            Geschlecht = gruppe.Persons[zielIndex - 1].Geschlecht,
-            Nachname = gruppe.Persons[zielIndex - 1].Nachname,
-            Vorname = gruppe.Persons[zielIndex - 1].Vorname,
-
-        };
-
-        // An gewünschter Position den Ersatzmann/Frau eintragen
-        gruppe.Persons[zielIndex - 1].Vorname = ersatz.Vorname;
-        gruppe.Persons[zielIndex - 1].Nachname = ersatz.Nachname;
-        gruppe.Persons[zielIndex - 1].Geschlecht = ersatz.Geschlecht;
-        gruppe.Persons[zielIndex - 1].Geburtsdatum = ersatz.Geburtsdatum;
-
-        // An letzter Position den ersetzten wieder eintragen
-        gruppe.Persons[(gruppe.Persons.Count - 1)].Vorname = zuErsetzen.Vorname;
-        gruppe.Persons[(gruppe.Persons.Count - 1)].Nachname = zuErsetzen.Nachname;
-        gruppe.Persons[(gruppe.Persons.Count - 1)].Geschlecht = zuErsetzen.Geschlecht;
-        gruppe.Persons[(gruppe.Persons.Count - 1)].Geburtsdatum = zuErsetzen.Geburtsdatum;
-
-        OnPropertyChanged(nameof(Gruppen));
-    }
 
     private ICommand removeGroupCommand;
 
@@ -317,11 +278,6 @@ public class MainViewModel : INotifyPropertyChanged
 
     internal void AddGroup(Gruppe gruppe)
     {
-        // Falls Personen nicht gesetzt, werden leere Personen hinzugefügt bis 10 erreicht
-        while (gruppe.Persons.Count < 10)
-        {
-            gruppe.Persons.Add(new Person());
-        }
         gruppen.Add(gruppe);
     }
 
