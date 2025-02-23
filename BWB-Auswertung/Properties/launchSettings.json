@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LagerInsights": {
+      "commandName": "Project",
+      "commandLineArgs": "/v"
+    }
+  }
+}

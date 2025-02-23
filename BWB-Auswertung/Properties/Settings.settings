@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="LagerInsightsALLagerInsights.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="GithubURL" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://github.com/KJFCux/kzl-teilnehmenden-auswertung</Value>
+    </Setting>
+    <Setting Name="KJFURL" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://www.kjf-cux.de</Value>
+    </Setting>
+    <Setting Name="BWBURL" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://www.jf-bundeswettbewerb.de</Value>
+    </Setting>
+    <Setting Name="HilfeURL" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://hilfe.jf-bundeswettbewerb.de</Value>
+    </Setting>
+    <Setting Name="GithubReleaseURL" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://api.github.com/repos/KJFCux/kzl-teilnehmenden-auswertung/releases</Value>
+    </Setting>
+    <Setting Name="GithubDownloadURL" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://github.com/KJFCux/kzl-teilnehmenden-auswertung/releases/download/{release}/LagerInsights.exe</Value>
+    </Setting>
+    <Setting Name="FriendlyName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">LagerInsights</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
