@@ -372,53 +372,6 @@ namespace LagerInsights
                 MessageBox.Show($"Fehler beim öffnen der Einstellungen\n{ex}", "Fehler: Öffne Einstellungen", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        private void ImportExcel_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                MainViewModel viewModel = (MainViewModel)this.DataContext;
-
-                OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Multiselect = true;
-                openFileDialog.Filter = "Excel Meldebögen|*.xlsx;";
-                openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                if (openFileDialog.ShowDialog() == true)
-                {
-                    foreach (string file in openFileDialog.FileNames)
-                    {
-
-                        var gruppe = Excel.ImportExcelGruppe(file);
-                        if (gruppe != null)
-                        {
-
-                            //Alte überschreiben
-                            var gefundeneGruppen = viewModel.Gruppen.Where(x => x.Feuerwehr.Equals(gruppe.Feuerwehr)).ToList();
-
-                            foreach (var gefundeneGruppe in gefundeneGruppen)
-                            {
-                                viewModel.RemoveSelectedGroup(gefundeneGruppe, false);
-                            }
-                            viewModel.AddGroup(gruppe);
-                        }
-
-
-                    }
-                }
-
-                //Filterung entfernen
-                FertigeGruppenAusblenden_Checkbox.IsChecked = false;
-
-                //Hinzugefügtes einsortieren
-                viewModel.Sort(sortComboBox.SelectedIndex);
-
-            }
-            catch (Exception ex)
-            {
-                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-                MessageBox.Show($"Fehler beim Excel Import\n{ex}", "Fehler: Import", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-        }
 
         //Beim schließen des Programms alle Daten speichern
         private void Window_Closing(object sender, CancelEventArgs e)
