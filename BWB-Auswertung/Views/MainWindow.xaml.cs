@@ -348,12 +348,12 @@ namespace LagerInsights
             try
             {
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
-                viewModel.AddEmptyGruppe("", "Neue Gruppe");
+                viewModel.AddEmptyGruppe("Feuerwehr");
             }
             catch (Exception ex)
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-                MessageBox.Show($"Fehler beim hinzufügen einer neuen Gruppe\n{ex}", "Fehler: Neue Gruppe", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Fehler beim hinzufügen einer neuen Feuerwehr\n{ex}", "Fehler: Neue Feuerwehr", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -392,7 +392,7 @@ namespace LagerInsights
                         {
 
                             //Alte überschreiben
-                            var gefundeneGruppen = viewModel.Gruppen.Where(x => x.GruppenName.Equals(gruppe.GruppenName)).ToList();
+                            var gefundeneGruppen = viewModel.Gruppen.Where(x => x.Feuerwehr.Equals(gruppe.Feuerwehr)).ToList();
 
                             foreach (var gefundeneGruppe in gefundeneGruppen)
                             {
@@ -464,7 +464,7 @@ namespace LagerInsights
 
                 foreach (var gruppe in viewModel.Gruppen)
                 {
-                    string datei = System.IO.Path.Combine($"{gruppe.FeuerwehrOhneSonderzeichen} - {gruppe.GruppennameOhneSonderzeichen}.xml");
+                    string datei = System.IO.Path.Combine($"{gruppe.FeuerwehrOhneSonderzeichen}.xml");
                     WriteFile.writeText(System.IO.Path.Combine(savePath, datei), SerializeXML<Gruppe>.Serialize(gruppe));
 
                     //Dateinamen merken um alte löschen zu können
@@ -514,18 +514,15 @@ namespace LagerInsights
                     //Schauen ob bereits vorhanden und alten Eintrag löschen
                     if (ueberrschreiben)
                     {
-                        var gefundeneGruppen = viewModel.Gruppen.Where(x => x.GruppenName.Equals(gruppe.GruppenName)).ToList();
+                        var gefundeneGruppen = viewModel.Gruppen.Where(x => x.Feuerwehr.Equals(gruppe.Feuerwehr)).ToList();
 
                         foreach (var gefundeneGruppe in gefundeneGruppen)
                         {
-                            //Die Startzeiten/Bahnen sollen nicht überschrieben werden, sofern sie im Import nicht gesetzt sind
-                            if (gruppe.StartzeitATeil == DateTime.MinValue) gruppe.StartzeitATeil = gefundeneGruppe.StartzeitATeil;
-                            if (gruppe.StartzeitBTeil == DateTime.MinValue) gruppe.StartzeitBTeil = gefundeneGruppe.StartzeitBTeil;
-                            if (gruppe.WettbewerbsbahnATeil == null) gruppe.WettbewerbsbahnATeil = gefundeneGruppe.WettbewerbsbahnATeil;
-                            if (gruppe.WettbewerbsbahnBTeil == null) gruppe.WettbewerbsbahnBTeil = gefundeneGruppe.WettbewerbsbahnBTeil;
+                            //Der gezahlte Betrag soll nicht überschrieben werden.
+                            if (gruppe.GezahlterBeitrag != null && gruppe.GezahlterBeitrag != 0) gruppe.GezahlterBeitrag = gefundeneGruppe.GezahlterBeitrag;
 
                             //Hinweis an Benutzer das die Gruppe existiert
-                            MessageBox.Show($"Die Gruppe {gruppe.GruppenName} von der Ortswehr {gruppe.Feuerwehr} aus {gruppe.Organisationseinheit} Existierte bereits und wurde überschrieben!\nURL der Anmeldung neu: {gruppe.UrlderAnmeldung}\nURL der Anmeldung alt: {gefundeneGruppe.UrlderAnmeldung}", "Gruppe wurde überschrieben!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            MessageBox.Show($"Die JF {gruppe.Feuerwehr} aus {gruppe.Organisationseinheit} Existierte bereits und wurde überschrieben!\nURL der Anmeldung neu: {gruppe.UrlderAnmeldung}\nURL der Anmeldung alt: {gefundeneGruppe.UrlderAnmeldung}", "Anmeldung wurde überschrieben!", MessageBoxButton.OK, MessageBoxImage.Warning);
 
                             // Alte Gruppe löschen
                             viewModel.RemoveSelectedGroup(gefundeneGruppe, false);
@@ -565,7 +562,6 @@ namespace LagerInsights
                 }
 
                 //Veranstaltungszeit Global setzen
-                Globals.SECONDS_ATEIL = viewModel.Einstellungen.Vorgabezeit;
                 Globals.VERANSTALTUNGSDATUM = viewModel.Einstellungen.Veranstaltungsdatum;
             }
             catch (Exception ex)
@@ -574,28 +570,7 @@ namespace LagerInsights
             }
         }
 
-        private void ersatzComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                // Stellen Sie sicher, dass ein Element ausgewählt ist und es sich um eine Gruppe handelt
-                if (gruppenListBox != null)
-                {
-                    if (ersatzComboBox.SelectedIndex >= 1 && gruppenListBox.SelectedItem != null && gruppenListBox.SelectedItem is Gruppe selectedGruppe)
-                    {
 
-                        MainViewModel viewModel = (MainViewModel)this.DataContext;
-                        viewModel.switchBoxTeilnehmer(ersatzComboBox.SelectedIndex, selectedGruppe);
-                        ersatzComboBox.SelectedIndex = 0;
-                        FertigeGruppenAusblendenHelper();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-            }
-        }
 
         private void FertigeGruppenAusblenden(object sender, RoutedEventArgs e)
         {
@@ -614,13 +589,7 @@ namespace LagerInsights
                     {
                         if (item is Gruppe gruppe)
                         {
-                            return ((gruppe.ATeilGesamteindruck < 1)
-                                     && (gruppe.BTeilGesamteindruck < 1)
-                                     && (gruppe.PunkteBTeil < 1)
-                                     && (gruppe.DurchschnittszeitKnotenATeil < 1)
-                                     && (gruppe.DurchschnittszeitBTeil < 1)
-                                     && (gruppe.DurchschnittszeitATeil < 1)
-                                     );
+                            return (gruppe.GezahlterBeitrag >= gruppe.zuBezahlenderBetrag);
                         }
                         return false;
                     };
