@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -35,7 +36,8 @@ namespace LagerInsights.Views
             InitializeComponent();
             DataContext = new MainViewModel();
 
-            settingsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ProgrammName, "Einstellungen");
+            settingsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                ProgrammName, "Einstellungen");
             DirectoryInfo di = Directory.CreateDirectory(settingsPath);
             LoadSettings();
         }
@@ -45,13 +47,16 @@ namespace LagerInsights.Views
             try
             {
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
-                WriteFile.writeText(System.IO.Path.Combine(settingsPath, "settings.xml"), SerializeXML<Gruppe>.Serialize(viewModel.Einstellungen));
+                WriteFile.writeText(System.IO.Path.Combine(settingsPath, "settings.xml"),
+                    SerializeXML<Gruppe>.Serialize(viewModel.Einstellungen));
                 this.Close();
             }
             catch (Exception ex)
             {
-                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-                MessageBox.Show($"Fehler beim speichern von Einstellungen\n{ex}", "Fehler: Einstellungen", MessageBoxButton.OK, MessageBoxImage.Error);
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name,
+                    System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim speichern von Einstellungen\n{ex}", "Fehler: Einstellungen",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -78,8 +83,10 @@ namespace LagerInsights.Views
             }
             catch (Exception ex)
             {
-                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-                MessageBox.Show($"Fehler beim laden der Einstellungen\n{ex}", "Fehler: Einstellungen", MessageBoxButton.OK, MessageBoxImage.Error);
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name,
+                    System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim laden der Einstellungen\n{ex}", "Fehler: Einstellungen",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
         }
@@ -91,7 +98,8 @@ namespace LagerInsights.Views
             {
                 // Erstellen und Konfigurieren des OpenFileDialog
                 OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Filter = "Bilddateien (*.jpg; *.jpeg; *.png; *.gif)|*.jpg; *.jpeg; *.png; *.gif|Alle Dateien (*.*)|*.*";
+                openFileDialog.Filter =
+                    "Bilddateien (*.jpg; *.jpeg; *.png; *.gif)|*.jpg; *.jpeg; *.png; *.gif|Alle Dateien (*.*)|*.*";
                 openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                 openFileDialog.Title = "Logo auswählen";
 
@@ -104,8 +112,10 @@ namespace LagerInsights.Views
             }
             catch (Exception ex)
             {
-                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-                MessageBox.Show($"Fehler beim Festlegen von Einstellungen\n{ex}", "Fehler: Einstellungen", MessageBoxButton.OK, MessageBoxImage.Error);
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name,
+                    System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim Festlegen von Einstellungen\n{ex}", "Fehler: Einstellungen",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -115,7 +125,8 @@ namespace LagerInsights.Views
             {
                 // Erstellen und Konfigurieren des OpenFileDialog
                 OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Filter = "Bilddateien (*.jpg; *.jpeg; *.png; *.gif)|*.jpg; *.jpeg; *.png; *.gif|Alle Dateien (*.*)|*.*";
+                openFileDialog.Filter =
+                    "Bilddateien (*.jpg; *.jpeg; *.png; *.gif)|*.jpg; *.jpeg; *.png; *.gif|Alle Dateien (*.*)|*.*";
                 openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                 openFileDialog.Title = "Unterschrift 2 auswählen";
 
@@ -128,8 +139,10 @@ namespace LagerInsights.Views
             }
             catch (Exception ex)
             {
-                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-                MessageBox.Show($"Fehler beim Festlegen von Einstellungen\n{ex}", "Fehler: Einstellungen", MessageBoxButton.OK, MessageBoxImage.Error);
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name,
+                    System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim Festlegen von Einstellungen\n{ex}", "Fehler: Einstellungen",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -139,7 +152,8 @@ namespace LagerInsights.Views
             {
                 // Erstellen und Konfigurieren des OpenFileDialog
                 OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Filter = "Bilddateien (*.jpg; *.jpeg; *.png; *.gif)|*.jpg; *.jpeg; *.png; *.gif|Alle Dateien (*.*)|*.*";
+                openFileDialog.Filter =
+                    "Bilddateien (*.jpg; *.jpeg; *.png; *.gif)|*.jpg; *.jpeg; *.png; *.gif|Alle Dateien (*.*)|*.*";
                 openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                 openFileDialog.Title = "Unterschrift 1 auswählen";
 
@@ -152,9 +166,58 @@ namespace LagerInsights.Views
             }
             catch (Exception ex)
             {
-                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-                MessageBox.Show($"Fehler beim Festlegen von Einstellungen\n{ex}", "Fehler: Einstellungen", MessageBoxButton.OK, MessageBoxImage.Error);
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name,
+                    System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim Festlegen von Einstellungen\n{ex}", "Fehler: Einstellungen",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void TesteVerbindung_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                //TODO
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name,
+                    System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim Verbinden mit FTO\n{ex}", "Fehler: Einstellungen",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        //Fenster Skalieren
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            try
+            {
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+
+                // Annahme: Mindestgröße für die Skalierung festlegen
+                double minWindowSize = 1600; // Minimale Fensterbreite
+
+                // Berechne den Skalierungsfaktor basierend auf der aktuellen Fensterbreite
+                double scaleFactor = Math.Min(1, ActualWidth / minWindowSize);
+
+                // Setze den Skalierungsfaktor im ViewModel
+                viewModel.ScaleFactor = scaleFactor;
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+            }
+        }
+        private void DecimalTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            // Prüfen, ob die Eingabe ein gültiger Dezimalwert ist
+            e.Handled = !IsTextAllowed(e.Text);
+        }
+
+        private static bool IsTextAllowed(string text)
+        {
+            // Verwenden Sie Regex, um nur Zahlen und Dezimaltrennzeichen zuzulassen
+            return Regex.IsMatch(text, @"^[0-9]*(?:\.[0-9]*)?$");
         }
     }
 }
