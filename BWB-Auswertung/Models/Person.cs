@@ -87,7 +87,6 @@ namespace LagerInsights.Models
                     case Status.CGESCHWISTERKIND: return "3. Geschwisterkind";
                     case Status.BETREUER: return "Betreuer";
                     case Status.MITARBEITER: return "Mitarbeiter";
-
                     default: return "none";
                 }
             }

@@ -247,7 +247,8 @@
                                 <DataGridTextColumn Header="Alter"
                                                     MaxWidth="60"
                                                     Binding="{Binding Person.Alter}" />
-                                <DataGridTextColumn Header="M/W/D" MaxWidth="70"
+                                <DataGridTextColumn Header="M/W/D"
+                                                    MaxWidth="70"
                                                     Binding="{Binding Person.Geschlecht}" />
                             </DataGrid.Columns>
                         </DataGrid>
@@ -401,44 +402,25 @@
 
                 </Grid>
             </TabItem>
-
             <TabItem Header="Alle Gruppen">
-                <DataGrid     AutoGenerateColumns="False"
-                              IsReadOnly="True"
-                              ItemsSource="{Binding Gruppen}">
+                <DataGrid AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          ItemsSource="{Binding Gruppen}"
+                          ColumnWidth="*">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Start-Nr"
-                                            Binding="{Binding LagerNr}" />
+                        <DataGridTextColumn Header="Lager Nr."
+                                            Binding="{Binding LagerNr}"
+                                            MaxWidth="80" />
                         <DataGridTextColumn Header="Feuerwehr"
                                             Binding="{Binding Feuerwehr}" />
-                        <DataGridTextColumn Header="Gruppenname"
-                                            Binding="{Binding GruppenName}" />
-                        <DataGridTextColumn Header="Platz"
-                                            Binding="{Binding Platz}" />
-                        <DataGridTextColumn Header="Gesamtpunkte"
-                                            Binding="{Binding GesamtPunkte}" />
-                        <DataGridTextColumn Header="Pkt. A-Teil"
-                                            Binding="{Binding PunkteATeil}" />
-                        <DataGridTextColumn Header="Zeit A-Teil"
-                                            Binding="{Binding DurchschnittszeitATeil}" />
-                        <DataGridTextColumn Header="Zeittakt"
-                                            Binding="{Binding DurchschnittszeitKnotenATeil}" />
-                        <DataGridTextColumn Header="Fehler A-Teil"
-                                            Binding="{Binding FehlerATeil}" />
-                        <DataGridTextColumn Header="Eindruck A-Teil"
-                                            Binding="{Binding ATeilGesamteindruck}" />
-                        <DataGridTextColumn Header="Pkt. B-Teil"
-                                            Binding="{Binding PunkteBTeil}" />
-                        <DataGridTextColumn Header="Zeit B-Teil"
-                                            Binding="{Binding DurchschnittszeitBTeil}" />
-                        <DataGridTextColumn Header="Sollzeit B-Teil"
-                                            Binding="{Binding SollZeitBTeilInSekunden}" />
-                        <DataGridTextColumn Header="Fehler B-Teil"
-                                            Binding="{Binding FehlerBTeil}" />
-                        <DataGridTextColumn Header="Eindruck B-Teil"
-                                            Binding="{Binding BTeilGesamteindruck}" />
-                        <DataGridTextColumn Header="Alter"
-                                            Binding="{Binding GesamtAlter}" />
+                        <DataGridTextColumn Header="Kontakt Name"
+                                            Binding="{Binding Verantwortlicher.FullName}" />
+                        <DataGridTextColumn Header="Kontakt Telefon"
+                                            Binding="{Binding Verantwortlicher.Telefon}" />
+                        <DataGridTextColumn Header="Kontakt E-Mail"
+                                            Binding="{Binding Verantwortlicher.Email}" />
+                        <DataGridTextColumn Header="Anzahl"
+                                            Binding="{Binding AnzahlTeilnehmer}" />
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -446,10 +428,11 @@
             <TabItem Header="Alle Teilnehmenden">
                 <DataGrid     AutoGenerateColumns="False"
                               IsReadOnly="True"
-                              ItemsSource="{Binding PersonenTeilnehmendenliste}">
+                              ItemsSource="{Binding PersonenTeilnehmendenliste}"
+                              ColumnWidth="SizeToCells">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Gruppenname"
-                                            Binding="{Binding Gruppenname}" />
+                        <DataGridTextColumn Header="Feuerwehr"
+                                            Binding="{Binding Feuerwehr}" />
                         <DataGridTextColumn Header="Vorname"
                                             Binding="{Binding Person.Vorname}" />
                         <DataGridTextColumn Header="Nachname"
@@ -460,6 +443,12 @@
                                             Binding="{Binding Person.Alter}" />
                         <DataGridTextColumn Header="M/W/D"
                                             Binding="{Binding Person.Geschlecht}" />
+                        <DataGridTextColumn Header="Status"
+                                            Binding="{Binding Person.StatusFriendlyName}" />
+                        <DataGridTextColumn Header="Essgewohnheiten"
+                                            Binding="{Binding Person.Essgewohnheiten}" />
+                        <DataGridTextColumn Header="Unverträglichkeiten"
+                                            Binding="{Binding Person.Unvertraeglichkeiten}" />
                     </DataGrid.Columns>
                 </DataGrid>
 

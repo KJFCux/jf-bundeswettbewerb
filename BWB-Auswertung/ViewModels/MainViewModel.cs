@@ -104,7 +104,7 @@ public class MainViewModel : INotifyPropertyChanged
     public List<PersonTeilnehmendenliste> PersonenMitGeburtstagBeimZeltlager => personenMitGeburtstagBeimWettbewerb();
 
     public decimal BereitsInsgesamtBezahlt => Gruppen.Sum(gruppe => gruppe.GezahlterBeitrag ?? 0);
-    public decimal ZuBezahlenderBetragGesamt => Gruppen.Sum(gruppe => gruppe.zuBezahlenderBetrag);
+    public decimal ZuBezahlenderBetragGesamt => Gruppen.Sum(gruppe => gruppe.ZuBezahlenderBetrag);
 
     public Settings Einstellungen
     {

@@ -92,16 +92,15 @@
                                                         Kind="ApplicationExport" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem x:Name="ImportierenExcel"
-                              Header="Excel Importieren"
-                              ToolTip="Meldebögen im Excel Format Importieren"
-                              Click="ImportExcel_Click"
+                    <MenuItem x:Name="SyncmitFtp"
+                              Header="Sync mit FTP"
+                              ToolTip="Daten von FTP Server laden "
                               Foreground="{DynamicResource MahApps.Brushes.Text}">
                         <MenuItem.Icon>
                             <iconPacks:PackIconMaterial Width="22"
                                                         Height="22"
                                                         VerticalAlignment="Center"
-                                                        Kind="MicrosoftExcel" />
+                                                        Kind="ServerNetwork" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
@@ -119,7 +118,7 @@
             </Menu>
             <Button x:Name="EinstellungenButton"
                     Content="Einstellungen"
-                    ToolTip="Einstellungen für das LagerInsightssprogramm"
+                    ToolTip="Einstellungen für das LagerInsights programm"
                     Click="OpenSettingsButton_Click">
                 <Button.ContentTemplate>
                     <DataTemplate>
@@ -364,7 +363,7 @@
                                                FontSize="24"
                                                FontWeight="Bold" />
 
-                                        <Label Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.zuBezahlenderBetrag,Mode=OneWay, TargetNullValue=0}"
+                                        <Label Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.ZuBezahlenderBetrag,Mode=OneWay, TargetNullValue=0}"
                                                Margin="0,10,2,10"
                                                ToolTip="Diesen Betrag muss die Gruppe bezahlen"
                                                HorizontalAlignment="Center"
@@ -427,7 +426,7 @@
                                                FontSize="24"
                                                FontWeight="Bold"
                                                HorizontalAlignment="Center" />
-                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.anzahlTeilnehmer,Mode=OneWay}"
+                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.AnzahlTeilnehmer,Mode=OneWay}"
                                                    FontSize="24"
                                                    FontWeight="Bold" />
 
@@ -439,7 +438,7 @@
                                                ToolTip="Gesamtanzahl 2. Geschwisterkind"
                                                FontSize="20"
                                                HorizontalAlignment="Center" />
-                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.anzahl2Geschwisterkind,Mode=OneWay}"
+                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Anzahl2Geschwisterkind,Mode=OneWay}"
                                                    FontSize="16"
                                                    FontWeight="Bold" />
 
@@ -447,7 +446,7 @@
                                                ToolTip="Gesamtanzahl 3. Geschwisterkind"
                                                FontSize="20"
                                                HorizontalAlignment="Center" />
-                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.anzahl3Geschwisterkind,Mode=OneWay}"
+                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Anzahl3Geschwisterkind,Mode=OneWay}"
                                                    FontSize="16"
                                                    FontWeight="Bold" />
 
@@ -455,7 +454,7 @@
                                                ToolTip="Gesamtanzahl Betreuer"
                                                FontSize="20"
                                                HorizontalAlignment="Center" />
-                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.anzahlBetreuer,Mode=OneWay}"
+                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.AnzahlBetreuer,Mode=OneWay}"
                                                    FontSize="16"
                                                    FontWeight="Bold" />
 
@@ -463,7 +462,7 @@
                                                ToolTip="Gesamtanzahl Mitarbeiter"
                                                FontSize="20"
                                                HorizontalAlignment="Center" />
-                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.anzahlMitarbeiter,Mode=OneWay}"
+                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.AnzahlMitarbeiter,Mode=OneWay}"
                                                    FontSize="16"
                                                    FontWeight="Bold" />
                                     </StackPanel>

@@ -589,7 +589,7 @@ namespace LagerInsights
                     {
                         if (item is Gruppe gruppe)
                         {
-                            return (gruppe.GezahlterBeitrag >= gruppe.zuBezahlenderBetrag);
+                            return (gruppe.GezahlterBeitrag >= gruppe.ZuBezahlenderBetrag);
                         }
                         return false;
                     };

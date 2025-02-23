@@ -25,6 +25,13 @@ namespace LagerInsights.Models
         public string Telefon { get; set; }
         public string Email { get; set; }
 
+        public string FullName
+        {
+            get
+            {
+                return $"{Vorname} {Nachname}";
+            }
+        }
         public Verantwortlicher()
         {
             Vorname = string.Empty;

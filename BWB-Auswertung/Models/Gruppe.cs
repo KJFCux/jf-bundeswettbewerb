@@ -36,37 +36,37 @@ namespace LagerInsights.Models
             }
         }
 
-        public int anzahlTeilnehmer => Persons.Count;
+        public int AnzahlTeilnehmer => Persons.Count;
 
-        public int anzahl1Geschwisterkind
+        public int Anzahl1Geschwisterkind
         {
             get
             {
                 return Persons.Count(p => p.Status == Status.AGESCHWISTERKIND);
             }
         }
-        public int anzahl2Geschwisterkind
+        public int Anzahl2Geschwisterkind
         {
             get
             {
                 return Persons.Count(p => p.Status == Status.BGESCHWISTERKIND);
             }
         }
-        public int anzahl3Geschwisterkind
+        public int Anzahl3Geschwisterkind
         {
             get
             {
                 return Persons.Count(p => p.Status == Status.CGESCHWISTERKIND);
             }
         }
-        public int anzahlBetreuer
+        public int AnzahlBetreuer
         {
             get
             {
                 return Persons.Count(p => p.Status == Status.BETREUER);
             }
         }
-        public int anzahlMitarbeiter
+        public int AnzahlMitarbeiter
         {
             get
             {
@@ -74,14 +74,11 @@ namespace LagerInsights.Models
             }
         }
 
-        public decimal zuBezahlenderBetrag
+        public decimal ZuBezahlenderBetrag
         {
             get
             {
-
-                return (Teilnehmerbeitrag ?? 0 * (anzahl1Geschwisterkind + anzahlBetreuer + anzahlMitarbeiter)) + ((Teilnehmerbeitrag ?? 0 * anzahl2Geschwisterkind) * 0.75m) + ((Teilnehmerbeitrag ?? 0 * anzahl3Geschwisterkind) * 0.5m);
-
-                return Persons.Count(p => p.Status == Status.MITARBEITER);
+                return (Teilnehmerbeitrag ?? 0 * (Anzahl1Geschwisterkind + AnzahlBetreuer + AnzahlMitarbeiter)) + ((Teilnehmerbeitrag ?? 0 * Anzahl2Geschwisterkind) * 0.75m) + ((Teilnehmerbeitrag ?? 0 * Anzahl3Geschwisterkind) * 0.5m);
             }
         }
 

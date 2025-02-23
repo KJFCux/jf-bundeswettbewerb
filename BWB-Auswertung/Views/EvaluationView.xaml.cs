@@ -35,7 +35,7 @@ namespace LagerInsights.Views
                 try
                 {
                     double prozentwert = mainViewModel.Gruppen.Where(x =>
-                    x.GezahlterBeitrag >= x.zuBezahlenderBetrag).ToList().Count();
+                    x.GezahlterBeitrag >= x.ZuBezahlenderBetrag).ToList().Count();
                     double prozentsatz = prozentwert / grundwert * 100d;
                     Bezahlfortschritt.Value = prozentsatz;
                     AnzahlFehlenderGruppen.Content = grundwert - prozentwert;
@@ -75,7 +75,7 @@ namespace LagerInsights.Views
 
 
                     //Gesamt Betrag zu bezahlen
-                    var gesamtBetragZuBezahlen = mainViewModel.Gruppen.Sum(g => g.zuBezahlenderBetrag);
+                    var gesamtBetragZuBezahlen = mainViewModel.Gruppen.Sum(g => g.ZuBezahlenderBetrag);
                     GesamtBetragZuBezahlen.Content = gesamtBetragZuBezahlen.ToString("C", CultureInfo.CurrentCulture);
 
                     //Bereits bezahlter Betrag
@@ -298,7 +298,7 @@ namespace LagerInsights.Views
                     currentTabellenzeile = currentTabellenzeile.Replace("{lagernr}", $"{gruppe.LagerNr}.");
                     currentTabellenzeile = currentTabellenzeile.Replace("{gruppenname}", $"{gruppe.Feuerwehr}");
                     currentTabellenzeile = currentTabellenzeile.Replace("{ort}", $"{gruppe.Organisationseinheit}");
-                    currentTabellenzeile = currentTabellenzeile.Replace("{teilnehmende}", $"{gruppe.anzahlTeilnehmer}");
+                    currentTabellenzeile = currentTabellenzeile.Replace("{teilnehmende}", $"{gruppe.AnzahlTeilnehmer}");
 
                     tabelle += currentTabellenzeile;
                     seitenindex++;
