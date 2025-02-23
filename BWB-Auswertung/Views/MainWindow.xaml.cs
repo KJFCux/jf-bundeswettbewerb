@@ -106,7 +106,7 @@ namespace LagerInsights
                     if (latestRelease.tag_name.CompareTo($"LagerInsights/{currentVersion}") > 0)
                     {
                         // Eine neue Version ist verfügbar. Fragen ob die Datei heruntergeladen werden soll
-                        var result = MessageBox.Show($"Es gibt eine neue Version des Auswertungsprogramms!\nMöchtest du die neue Version herunterladen?", "Update verfügbar!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        var result = MessageBox.Show($"Es gibt eine neue Version der LagerInsights!\nMöchtest du die neue Version herunterladen?", "Update verfügbar!", MessageBoxButton.YesNo, MessageBoxImage.Question);
                         if (result == MessageBoxResult.Yes)
                         {
                             Process.Start(new ProcessStartInfo(LagerInsights.Properties.Settings.Default.GithubDownloadURL.Replace("{release}", latestRelease.tag_name)) { UseShellExecute = true });

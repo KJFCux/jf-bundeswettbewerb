@@ -150,7 +150,7 @@ public class MainViewModel : INotifyPropertyChanged
         {
             persons.Add(new Person());
         }
-        
+
         Verantwortlicher verantwortlicher = new Verantwortlicher();
 
         //Leere Gruppe erstellen
@@ -198,13 +198,13 @@ public class MainViewModel : INotifyPropertyChanged
                     sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.Feuerwehr).ToList();
                     break;
                 case 1:
-                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.TimeStampAnmeldung).ThenBy(gruppe => gruppe.Feuerwehr).ToList();
+                    sortedGruppen = Gruppen.OrderByDescending(gruppe => gruppe.Feuerwehr).ToList();
                     break;
                 case 2:
                     sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.Organisationseinheit).ThenBy(gruppe => gruppe.Feuerwehr).ToList();
                     break;
                 case 3:
-                    sortedGruppen = Gruppen.OrderByDescending(gruppe => gruppe.Feuerwehr).ToList();
+                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.TimeStampAnmeldung).ThenBy(gruppe => gruppe.Feuerwehr).ToList();
                     break;
                 case 4:
                     sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.LagerNr).ToList();
@@ -230,8 +230,10 @@ public class MainViewModel : INotifyPropertyChanged
     public List<PersonTeilnehmendenliste> personenMitGeburtstagBeimWettbewerb()
     {
         List<PersonTeilnehmendenliste> alleMitGeburtstagBeimWettbewerb = alleTeilnehmenden().Where(p =>
-        p.Person.Geburtsdatum.Day == Einstellungen.Veranstaltungsdatum.Day &&
-        p.Person.Geburtsdatum.Month == Einstellungen.Veranstaltungsdatum.Month
+        (p.Person.Geburtsdatum.Day >= Einstellungen.Veranstaltungsdatum.Day &&
+        p.Person.Geburtsdatum.Month >= Einstellungen.Veranstaltungsdatum.Month) &&
+        (p.Person.Geburtsdatum.Day <= Einstellungen.VeranstaltungsdatumEnde.Day &&
+         p.Person.Geburtsdatum.Month <= Einstellungen.VeranstaltungsdatumEnde.Month)
         ).ToList();
         return alleMitGeburtstagBeimWettbewerb;
     }

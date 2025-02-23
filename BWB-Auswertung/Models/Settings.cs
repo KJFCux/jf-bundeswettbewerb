@@ -20,6 +20,7 @@ namespace LagerInsights.Models
         public string Veranstaltungsort { get; set; }
 
         public DateTime Veranstaltungsdatum { get; set; }
+        public DateTime VeranstaltungsdatumEnde { get; set; }
 
         public Art Art { get; set; }
 
@@ -37,8 +38,7 @@ namespace LagerInsights.Models
         public string Funktionrechts { get; set; }
         public string Unterschriftrechts { get; set; }
 
-
-
+        public decimal Teilnehmendenbeitrag { get; set; }
 
         public int Vorgabezeit
         {
@@ -59,8 +59,10 @@ namespace LagerInsights.Models
             Veranstaltungsleitung = string.Empty;
             Veranstaltungsort = string.Empty;
             Veranstaltungstitel = string.Empty;
+            Teilnehmendenbeitrag = 0m;
             Art = Art.OFFENESGEWAESSER;
             Veranstaltungsdatum = DateTime.Today;
+            VeranstaltungsdatumEnde = DateTime.Today.AddDays(7);
         }
     }
 

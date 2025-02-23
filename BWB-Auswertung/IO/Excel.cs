@@ -10,62 +10,6 @@ namespace LagerInsights.IO
 {
     public static class Excel
     {
-        public static Gruppe ImportExcelGruppe(string path)
-        {
-            try
-            {
-                using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
-                {
-                    IWorkbook workbook = new XSSFWorkbook(file);
-                    ISheet sheet = workbook.GetSheetAt(0);
-
-                    List<Person> teilnehmende = new List<Person>();
-
-                    string jugendfeuerwehr = GetCellValue(sheet, "C", 4).Trim();
-                    string ou = GetCellValue(sheet, "C", 5).Trim();
-
-                    for (int i = 13; i <= 22; i++)
-                    {
-                        string nachname = GetCellValue(sheet, "B", i).Trim();
-                        string vorname = GetCellValue(sheet, "C", i).Trim();
-                        string tag = GetCellValue(sheet, "D", i);
-                        string monat = GetCellValue(sheet, "E", i);
-                        string jahr = GetCellValue(sheet, "F", i);
-
-                        DateTime geburtsdatum = DateTime.Now;
-                        try
-                        {
-                            geburtsdatum = new DateTime(
-                                Convert.ToInt32(jahr),
-                                Convert.ToInt32(monat),
-                                Convert.ToInt32(tag));
-                        }
-                        catch (Exception ex)
-                        {
-                            LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-                        }
-                        Person person = new Person()
-                        {
-                            Vorname = vorname,
-                            Nachname = nachname,
-                            Geschlecht = Gender.N,
-                            Geburtsdatum = geburtsdatum
-                        };
-
-                        teilnehmende.Add(person);
-                    }
-
-                    Gruppe gruppe = new Gruppe() { Feuerwehr = jugendfeuerwehr, Organisationseinheit = ou, Persons = teilnehmende, GruppenName = jugendfeuerwehr };
-
-                    return gruppe;
-                }
-            }
-            catch (Exception ex)
-            {
-                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-                return null;
-            }
-        }
 
         public static void ExportExcelGruppen(List<Gruppe> gruppen, string path)
         {
@@ -86,16 +30,15 @@ namespace LagerInsights.IO
                         {
                             SetCellValue(sheet, "A", index, gruppe.Organisationseinheit ?? "");
                             SetCellValue(sheet, "B", index, gruppe.Feuerwehr);
-                            SetCellValue(sheet, "C", index, gruppe.GruppenName);
-                            SetCellValue(sheet, "D", index, gruppe.LagerNr.ToString());
-                            SetCellValue(sheet, "E", index, gruppe.Platz.ToString());
-                            SetCellValue(sheet, "F", index, gruppe.GesamtPunkte.ToString());
-                            SetCellValue(sheet, "G", index, teilnehmende.Geschlecht.ToString());
-                            SetCellValue(sheet, "H", index, teilnehmende.Vorname);
-                            SetCellValue(sheet, "I", index, teilnehmende.Nachname);
-                            SetCellValue(sheet, "J", index, teilnehmende.Geburtsdatum.ToString("yyyy-MM-dd"));
-                            SetCellValue(sheet, "K", index, teilnehmende.Alter.ToString());
-
+                            SetCellValue(sheet, "C", index, gruppe.LagerNr.ToString() ?? "");
+                            SetCellValue(sheet, "D", index, teilnehmende.Geschlecht.ToString());
+                            SetCellValue(sheet, "E", index, teilnehmende.Vorname);
+                            SetCellValue(sheet, "F", index, teilnehmende.Nachname);
+                            SetCellValue(sheet, "G", index, teilnehmende.Geburtsdatum.ToString("yyyy-MM-dd"));
+                            SetCellValue(sheet, "H", index, teilnehmende.Alter.ToString());
+                            SetCellValue(sheet, "I", index, teilnehmende.StatusFriendlyName);
+                            SetCellValue(sheet, "J", index, teilnehmende.Essgewohnheiten);
+                            SetCellValue(sheet, "K", index, teilnehmende.Unvertraeglichkeiten);
                             index++;
                         }
                     }
