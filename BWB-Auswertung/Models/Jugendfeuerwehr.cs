@@ -26,7 +26,19 @@ namespace LagerInsights.Models
         public DateTime? TimeStampAnmeldung { get; set; }
         public DateTime? TimeStampAenderung { get; set; }
         public decimal? GezahlterBeitrag { get; set; }
-        public decimal? Teilnehmerbeitrag { get; set; }
+        private decimal? teilnehmerbeitrag;
+        public decimal? Teilnehmerbeitrag
+        {
+            get => teilnehmerbeitrag;
+            set
+            {
+                if (teilnehmerbeitrag != value)
+                {
+                    teilnehmerbeitrag = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
 
         public string FeuerwehrOhneSonderzeichen
@@ -80,7 +92,11 @@ namespace LagerInsights.Models
         {
             get
             {
-                return (Teilnehmerbeitrag ?? 0 * (Anzahl1Geschwisterkind + AnzahlBetreuer + AnzahlMitarbeiter)) + ((Teilnehmerbeitrag ?? 0 * Anzahl2Geschwisterkind) * 0.75m) + ((Teilnehmerbeitrag ?? 0 * Anzahl3Geschwisterkind) * 0.5m);
+                decimal normaleTeilnehmer =
+                    (Teilnehmerbeitrag ?? 0 * (Anzahl1Geschwisterkind + AnzahlBetreuer + AnzahlMitarbeiter));
+                decimal zweiGeschwister = (((Teilnehmerbeitrag ?? 0) * 0.75m) * Anzahl2Geschwisterkind) ;
+                decimal dreiGeschwister = (((Teilnehmerbeitrag ?? 0) * 0.5m) * Anzahl2Geschwisterkind);
+                return normaleTeilnehmer+zweiGeschwister+dreiGeschwister;
             }
         }
 

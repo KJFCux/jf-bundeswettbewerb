@@ -260,15 +260,19 @@ namespace LagerInsights
         {
             try
             {
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+
                 // Stellen Sie sicher, dass ein Element ausgewählt ist und es sich um eine Gruppe handelt
                 if (gruppenListBox.SelectedItem != null && gruppenListBox.SelectedItem is Jugendfeuerwehr selectedGruppe)
                 {
                     // Der DataContext wird automatisch aktualisiert
+
+                    //Bei Gruppenwechsel der jeweiligen Gruppe den aktuellen Teilnehmerbeitrag setzen
+                    selectedGruppe.Teilnehmerbeitrag = viewModel.Einstellungen.Teilnehmendenbeitrag;
                 }
                 //Wenn die Sortierung einen Wert hat, danach sortieren
 
                 //Alles neu sortieren
-                MainViewModel viewModel = (MainViewModel)this.DataContext;
                 viewModel.Sort(sortComboBox.SelectedIndex);
 
                 //Beim Durchklicken durch die Gruppen alle Daten speichern

@@ -196,13 +196,13 @@ namespace LagerInsights.Views
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
 
                 // Annahme: Mindestgröße für die Skalierung festlegen
-                double minWindowSize = 1600; // Minimale Fensterbreite
+                double minWindowSize = 1020; // Minimale Fensterbreite
 
                 // Berechne den Skalierungsfaktor basierend auf der aktuellen Fensterbreite
                 double scaleFactor = Math.Min(1, ActualWidth / minWindowSize);
 
                 // Setze den Skalierungsfaktor im ViewModel
-                viewModel.ScaleFactor = scaleFactor;
+                viewModel.ScaleFactorSettings = scaleFactor;
             }
             catch (Exception ex)
             {

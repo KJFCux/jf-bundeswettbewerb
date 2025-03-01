@@ -200,7 +200,7 @@
                                    Margin="0,10,10,10"
                                    FontSize="16"
                                    VerticalAlignment="Top" />
-                            <Label Content="€ bereits bezahlt"
+                            <Label Content="bereits bezahlt"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"
                                    FontSize="16"
@@ -216,7 +216,7 @@
                                    Margin="0,10,10,10"
                                    FontSize="16"
                                    VerticalAlignment="Top" />
-                            <Label Content="€ offen"
+                            <Label Content="offen"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"
                                    FontSize="16"

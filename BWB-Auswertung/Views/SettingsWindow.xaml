@@ -12,22 +12,19 @@
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Title="Auswertung"
+        Title="Einstellungen"
         Height="800"
         Width="1020"
         SnapsToDevicePixels="True"
         SizeChanged="Window_SizeChanged">
     <Window.LayoutTransform>
-        <ScaleTransform ScaleX="{Binding ScaleFactorEvaluation}"
-                        ScaleY="{Binding ScaleFactorEvaluation}" />
+        <ScaleTransform ScaleX="{Binding ScaleFactorSettings}"
+                        ScaleY="{Binding ScaleFactorSettings}" />
     </Window.LayoutTransform>
-    <Window.Resources>
-        <local1:WidthConverter x:Key="WidthConverter" />
-    </Window.Resources>
     <Grid>
         <Grid.LayoutTransform>
-            <ScaleTransform ScaleX="{Binding ScaleFactorEvaluation}"
-                            ScaleY="{Binding ScaleFactorEvaluation}" />
+            <ScaleTransform ScaleX="{Binding ScaleFactorSettings}"
+                            ScaleY="{Binding ScaleFactorSettings}" />
         </Grid.LayoutTransform>
         <TabControl>
             <TabItem Header="Einstellungen">

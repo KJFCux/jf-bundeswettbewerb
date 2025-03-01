@@ -686,7 +686,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding Feuerwehr}" />
                                 <TextBlock Text=" | " />
-                                <TextBlock Text="{Binding anzahlTeilnehmer}" />
+                                <TextBlock Text="{Binding AnzahlTeilnehmer}" />
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

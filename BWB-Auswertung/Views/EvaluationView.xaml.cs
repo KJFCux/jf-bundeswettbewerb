@@ -58,7 +58,7 @@ namespace LagerInsights.Views
 
                     //Anzahl W Person
                     var anzahlWTeilnehmer = mainViewModel.Gruppen.Sum(g => g.Persons.Count(p => p.Geschlecht == Gender.W));
-                    AnzahlTeilnehmende.Content = anzahlWTeilnehmer;
+                    AnzahlWeiblich.Content = anzahlWTeilnehmer;
 
                     //Anzahl M Person
                     var anzahlMTeilnehmer = mainViewModel.Gruppen.Sum(g => g.Persons.Count(p => p.Geschlecht == Gender.M));
