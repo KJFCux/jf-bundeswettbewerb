@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Security;
 using System.Windows.Markup;
 
 namespace LagerInsights.Models
@@ -66,6 +67,10 @@ namespace LagerInsights.Models
 
         public Settings()
         {
+            Server = string.Empty;
+            Pfad = string.Empty;
+            Username = string.Empty;
+            Password = string.Empty;
             Veranstaltungsleitung = string.Empty;
             Veranstaltungsort = string.Empty;
             Veranstaltungstitel = string.Empty;

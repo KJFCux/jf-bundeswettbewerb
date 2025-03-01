@@ -261,7 +261,7 @@ namespace LagerInsights
             try
             {
                 // Stellen Sie sicher, dass ein Element ausgewählt ist und es sich um eine Gruppe handelt
-                if (gruppenListBox.SelectedItem != null && gruppenListBox.SelectedItem is Gruppe selectedGruppe)
+                if (gruppenListBox.SelectedItem != null && gruppenListBox.SelectedItem is Jugendfeuerwehr selectedGruppe)
                 {
                     // Der DataContext wird automatisch aktualisiert
                 }
@@ -290,7 +290,7 @@ namespace LagerInsights
                 // Stellen Sie sicher, dass ein Element ausgewählt ist und es sich um eine Gruppe handelt
                 if (gruppenListBox != null)
                 {
-                    if (gruppenListBox.SelectedItem != null && gruppenListBox.SelectedItem is Gruppe selectedGruppe)
+                    if (gruppenListBox.SelectedItem != null && gruppenListBox.SelectedItem is Jugendfeuerwehr selectedGruppe)
                     {
                         // Der DataContext wird automatisch aktualisiert
                     }
@@ -418,7 +418,7 @@ namespace LagerInsights
                 foreach (var gruppe in viewModel.Gruppen)
                 {
                     string datei = System.IO.Path.Combine($"{gruppe.FeuerwehrOhneSonderzeichen}.xml");
-                    WriteFile.writeText(System.IO.Path.Combine(savePath, datei), SerializeXML<Gruppe>.Serialize(gruppe));
+                    WriteFile.writeText(System.IO.Path.Combine(savePath, datei), SerializeXML<Jugendfeuerwehr>.Serialize(gruppe));
 
                     //Dateinamen merken um alte löschen zu können
                     aktuelleDateien.Add(datei);
@@ -460,22 +460,22 @@ namespace LagerInsights
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
 
                 // Deserialisieren der XML-Datei und Hinzufügen der deserialisierten Gruppen zum ViewModel
-                Gruppe gruppe = DeserializeXML<Gruppe>.Deserialize<Gruppe>(file);
+                Jugendfeuerwehr jugendfeuerwehr = DeserializeXML<Jugendfeuerwehr>.Deserialize<Jugendfeuerwehr>(file);
 
-                if (gruppe != null)
+                if (jugendfeuerwehr != null)
                 {
                     //Schauen ob bereits vorhanden und alten Eintrag löschen
                     if (ueberrschreiben)
                     {
-                        var gefundeneGruppen = viewModel.Gruppen.Where(x => x.Feuerwehr.Equals(gruppe.Feuerwehr)).ToList();
+                        var gefundeneGruppen = viewModel.Gruppen.Where(x => x.Feuerwehr.Equals(jugendfeuerwehr.Feuerwehr)).ToList();
 
                         foreach (var gefundeneGruppe in gefundeneGruppen)
                         {
                             //Der gezahlte Betrag soll nicht überschrieben werden.
-                            if (gruppe.GezahlterBeitrag != null && gruppe.GezahlterBeitrag != 0) gruppe.GezahlterBeitrag = gefundeneGruppe.GezahlterBeitrag;
+                            if (jugendfeuerwehr.GezahlterBeitrag != null && jugendfeuerwehr.GezahlterBeitrag != 0) jugendfeuerwehr.GezahlterBeitrag = gefundeneGruppe.GezahlterBeitrag;
 
                             //Hinweis an Benutzer das die Gruppe existiert
-                            MessageBox.Show($"Die JF {gruppe.Feuerwehr} aus {gruppe.Organisationseinheit} Existierte bereits und wurde überschrieben!\nURL der Anmeldung neu: {gruppe.UrlderAnmeldung}\nURL der Anmeldung alt: {gefundeneGruppe.UrlderAnmeldung}", "Anmeldung wurde überschrieben!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            MessageBox.Show($"Die JF {jugendfeuerwehr.Feuerwehr} aus {jugendfeuerwehr.Organisationseinheit} Existierte bereits und wurde überschrieben!\nURL der Anmeldung neu: {jugendfeuerwehr.UrlderAnmeldung}\nURL der Anmeldung alt: {gefundeneGruppe.UrlderAnmeldung}", "Anmeldung wurde überschrieben!", MessageBoxButton.OK, MessageBoxImage.Warning);
 
                             // Alte Gruppe löschen
                             viewModel.RemoveSelectedGroup(gefundeneGruppe, false);
@@ -484,7 +484,7 @@ namespace LagerInsights
 
                     }
                     //Neuen Eintrag importieren
-                    viewModel.AddGroup(gruppe);
+                    viewModel.AddGroup(jugendfeuerwehr);
                 }
             }
             catch (Exception ex)
@@ -540,7 +540,7 @@ namespace LagerInsights
                     ICollectionView view = CollectionViewSource.GetDefaultView(gruppenListBox.ItemsSource);
                     view.Filter = item =>
                     {
-                        if (item is Gruppe gruppe)
+                        if (item is Jugendfeuerwehr gruppe)
                         {
                             return (gruppe.GezahlterBeitrag >= gruppe.ZuBezahlenderBetrag);
                         }
@@ -600,23 +600,39 @@ namespace LagerInsights
         {
             try
             {
-                //ToDO
-                string? urlderAnmeldung = UrlderAnmeldung.Text?.ToString();
-                if (urlderAnmeldung != null) Clipboard.SetText(urlderAnmeldung);
-
+                string? emailVerantwortlicher = EmailVerantwortlicher.Text?.ToString();
+                if (!string.IsNullOrEmpty(emailVerantwortlicher))
+                {
+                    Clipboard.SetText(emailVerantwortlicher);
+                    string mailto = $"mailto:{emailVerantwortlicher}";
+                    Process.Start(new ProcessStartInfo(mailto) { UseShellExecute = true });
+                }
+                else
+                {
+                    MessageBox.Show("Keine E-Mail-Adresse für den Verantwortlichen eingetragen.", "Fehler: E-Mail schreiben", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim Öffnen des E-Mail-Clients\n{ex}", "Fehler: E-Mail schreiben", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private void TelefonnummerKopieren_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                //ToDO
-                string? urlderAnmeldung = UrlderAnmeldung.Text?.ToString();
-                if (urlderAnmeldung != null) Clipboard.SetText(urlderAnmeldung);
+                string? telefonVerantwortlicher = TelefonVerantwortlicher.Text?.ToString();
+                if (!string.IsNullOrEmpty(telefonVerantwortlicher))
+                {
+                    Clipboard.SetText(telefonVerantwortlicher);
+                    string mailto = $"tel:{telefonVerantwortlicher}";
+                    Process.Start(new ProcessStartInfo(mailto) { UseShellExecute = true });
+                }
+                else
+                {
+                    MessageBox.Show("Keine E-Mail-Adresse für den Verantwortlichen eingetragen.", "Fehler: E-Mail schreiben", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
@@ -635,6 +651,10 @@ namespace LagerInsights
             return Regex.IsMatch(text, @"^[0-9]*(?:\.[0-9]*)?$");
         }
 
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 
     public class AgeToColorConverter : IValueConverter

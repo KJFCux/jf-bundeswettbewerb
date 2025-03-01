@@ -11,7 +11,7 @@ namespace LagerInsights.IO
     public static class Excel
     {
 
-        public static void ExportExcelGruppen(List<Gruppe> gruppen, string path)
+        public static void ExportExcelGruppen(List<Jugendfeuerwehr> gruppen, string path)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace LagerInsights.IO
                     ISheet sheet = workbook.GetSheetAt(0);
 
                     int index = 3;
-                    foreach (Gruppe gruppe in gruppen)
+                    foreach (Jugendfeuerwehr gruppe in gruppen)
                     {
                         foreach (Person teilnehmende in gruppe.Persons)
                         {

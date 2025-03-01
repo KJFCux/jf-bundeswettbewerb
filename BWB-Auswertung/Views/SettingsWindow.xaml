@@ -394,12 +394,12 @@
                                VerticalAlignment="Center"
                                FontSize="16"
                                FontWeight="Bold" />
-                        <PasswordBox Password="{Binding Einstellungen.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                     ToolTip="Password zum Verbinden mit dem Server"
+                        <PasswordBox ToolTip="Password zum Verbinden mit dem Server"
                                      FontSize="16"
                                      Margin="10,5,10,10"
                                      Height="20"
-                                     VerticalAlignment="Center" />
+                                     VerticalAlignment="Center"
+                                     PasswordChanged="PasswordBox_PasswordChanged" />
                         <Button Content="Teste Verbindung"
                                 ToolTip="Verbinde mit dem FTP Server und teste die Verbindung"
                                 Click="TesteVerbindung_Click"

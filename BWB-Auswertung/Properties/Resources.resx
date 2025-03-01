@@ -140,7 +140,7 @@
     <value>..\Resources\Vorlagen\GeburtstagsListeTabellenzeile.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="Gruppendaten" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Vorlagen\Gruppendaten.xlsx;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\Vorlagen\Gruppendaten.xlsx;System.Byte[]</value>
   </data>
   <data name="Kontrollblatt" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Vorlagen\Kontrollblatt.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>

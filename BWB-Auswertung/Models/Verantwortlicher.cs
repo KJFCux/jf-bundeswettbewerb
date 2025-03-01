@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace LagerInsights.Models
 {
@@ -14,6 +15,8 @@ namespace LagerInsights.Models
 
 
         public string Vorname { get; set; }
+
+        [XmlElement("Name")]
         public string Nachname { get; set; }
 
         public Gender Geschlecht { get; set; }

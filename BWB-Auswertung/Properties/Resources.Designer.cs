@@ -238,7 +238,7 @@ namespace LagerInsights.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die &lt;tr&gt;
         ///	&lt;td style=&quot;text-align: right; padding-right: 2mm; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
-        ///		{platz}
+        ///		{lagernr}
         ///	&lt;/td&gt;
         ///	&lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
         ///		{gruppenname}
@@ -247,7 +247,7 @@ namespace LagerInsights.Properties {
         ///		{ort}
         ///	&lt;/td&gt;
         ///	&lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
-        ///		{gesamtpunkte}
+        ///		{teilnehmende}
         ///	&lt;/td&gt;
         ///&lt;/tr&gt; ähnelt.
         /// </summary>

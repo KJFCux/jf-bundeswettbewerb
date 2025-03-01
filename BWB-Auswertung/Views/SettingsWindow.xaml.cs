@@ -48,7 +48,7 @@ namespace LagerInsights.Views
             {
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 WriteFile.writeText(System.IO.Path.Combine(settingsPath, "settings.xml"),
-                    SerializeXML<Gruppe>.Serialize(viewModel.Einstellungen));
+                    SerializeXML<Jugendfeuerwehr>.Serialize(viewModel.Einstellungen));
                 this.Close();
             }
             catch (Exception ex)
@@ -172,6 +172,7 @@ namespace LagerInsights.Views
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        
 
         private void TesteVerbindung_Click(object sender, RoutedEventArgs e)
         {
@@ -183,7 +184,7 @@ namespace LagerInsights.Views
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name,
                     System.Diagnostics.EventLogEntryType.Error);
-                MessageBox.Show($"Fehler beim Verbinden mit FTO\n{ex}", "Fehler: Einstellungen",
+                MessageBox.Show($"Fehler beim Verbinden mit FTP\n{ex}", "Fehler: Einstellungen",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -218,6 +219,16 @@ namespace LagerInsights.Views
         {
             // Verwenden Sie Regex, um nur Zahlen und Dezimaltrennzeichen zuzulassen
             return Regex.IsMatch(text, @"^[0-9]*(?:\.[0-9]*)?$");
+        }
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            var passwordBox = sender as PasswordBox;
+            if (passwordBox != null)
+            {
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+                viewModel.Einstellungen.Password = passwordBox.Password;
+            }
         }
     }
 }

@@ -237,7 +237,7 @@ namespace LagerInsights.Views
             }
 
         }
-        private async Task<bool> helperExportPDFPlatzierungsliste(List<Gruppe> gruppen, string dateiname)
+        private async Task<bool> helperExportPDFPlatzierungsliste(List<Jugendfeuerwehr> gruppen, string dateiname)
         {
 
             try
@@ -272,7 +272,7 @@ namespace LagerInsights.Views
                 int seitenindex = 1;
                 int alleSeiten = Convert.ToInt32(Math.Ceiling(viewModel.Gruppen.Count() / (float)maxProSeite));
 
-                foreach (Gruppe gruppe in gruppen)
+                foreach (Jugendfeuerwehr gruppe in gruppen)
                 {
                     if (seitenindex > maxProSeite)
                     {
@@ -381,7 +381,7 @@ namespace LagerInsights.Views
                 }
 
                 List<string> pfade = new List<string>();
-                foreach (Gruppe gruppe in viewModel.Gruppen.OrderByDescending(x => x.Feuerwehr))
+                foreach (Jugendfeuerwehr gruppe in viewModel.Gruppen.OrderByDescending(x => x.Feuerwehr))
                 {
                     string aktuelleUrkunde = urkundeOverlay;
 

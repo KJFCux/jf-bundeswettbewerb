@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 
 namespace LagerInsights.Models
 {
     [Serializable]
-    public class Gruppe : INotifyPropertyChanged
+    [XmlRoot("Jugendfeuerwehr")]
+    public class Jugendfeuerwehr : INotifyPropertyChanged
     {
         public int? LagerNr { get; set; }
 

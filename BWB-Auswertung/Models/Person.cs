@@ -1,27 +1,37 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace LagerInsights.Models
 {
     public enum Gender
     {
+        [Description("Frau")]
         W,
+        [Description("Herr")]
         M,
+        [Description("Sonstiges")]
         D,
+        [Description("Herr/Frau/Sonstiges")]
         N
     }
 
     public enum Status
     {
         [Description("Teilnehmer / 1. Geschwisterkind")]
+        [XmlEnum("1Geschwister")]
         AGESCHWISTERKIND,
         [Description("2. Geschwisterkind")]
+        [XmlEnum("2Geschwister")]
         BGESCHWISTERKIND,
         [Description("3. Geschwisterkind")]
+        [XmlEnum("4Geschwister")]
         CGESCHWISTERKIND,
         [Description("Betreuer")]
+        [XmlEnum("Betreuer")]
         BETREUER,
         [Description("Mitarbeiter")]
+        [XmlEnum("Mitarbeiter")]
         MITARBEITER
     }
     [Serializable]
@@ -30,11 +40,15 @@ namespace LagerInsights.Models
 
 
         public string Vorname { get; set; }
+
+        [XmlElement("Name")]
         public string Nachname { get; set; }
 
         public Gender Geschlecht { get; set; }
 
         public string Strasse { get; set; }
+
+        [XmlElement("PLZ")]
         public string Plz { get; set; }
         public string Ort { get; set; }
         public Status Status { get; set; }

@@ -6,7 +6,7 @@
                  xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:local="clr-namespace:LagerInsights"
-                 Title="DJF Bundeswettbewerb Auswertungsprogramm"
+                 Title="LagerInsights"
                  Width="1600"
                  Height="900"
                  GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
@@ -257,7 +257,7 @@
                                                FontSize="24"
                                                Width="240" />
                                         <TextBox TextWrapping="Wrap"
-                                                 Text="{Binding SelectedItem.Verantworlicher.Vorname, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 Text="{Binding SelectedItem.Verantwortlicher.Vorname, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                  ToolTip="Vorname der Verantwortlichen Person"
                                                  MinWidth="300"
                                                  MaxWidth="400"
@@ -266,7 +266,7 @@
                                                  Height="44"
                                                  VerticalAlignment="Center" />
                                         <TextBox TextWrapping="Wrap"
-                                                 Text="{Binding SelectedItem.Verantworlicher.Nachname, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 Text="{Binding SelectedItem.Verantwortlicher.Nachname, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                  ToolTip="Nachname der Verantwortlichen Person"
                                                  MinWidth="300"
                                                  MaxWidth="400"
@@ -302,15 +302,17 @@
                                                 </DataTemplate>
                                             </Button.ContentTemplate>
                                         </Button>
-                                        <TextBox TextWrapping="Wrap"
-                                                 Text="{Binding SelectedItem.Verantworlicher.Email, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        <TextBox x:Name="EmailVerantwortlicher"
+                                                 TextWrapping="Wrap"
+                                                 Text="{Binding SelectedItem.Verantwortlicher.Email, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                  ToolTip="E-Mail der Verantwortlichen Person"
                                                  MinWidth="600"
                                                  MaxWidth="800"
                                                  FontSize="24"
                                                  Margin="20,10,20,10"
                                                  Height="44"
-                                                 VerticalAlignment="Center" />
+                                                 VerticalAlignment="Center"
+                                                 TextChanged="TextBox_TextChanged" />
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <Label Content="Telefon:"
@@ -339,7 +341,8 @@
                                                 </DataTemplate>
                                             </Button.ContentTemplate>
                                         </Button>
-                                        <TextBox TextWrapping="Wrap"
+                                        <TextBox  x:Name="TelefonVerantwortlicher"
+                                                 TextWrapping="Wrap"
                                                  Text="{Binding SelectedItem.Verantwortlicher.Telefon, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                  ToolTip="Telefonnummer der Verantwortlichen Person"
                                                  MinWidth="600"
@@ -428,7 +431,8 @@
                                                HorizontalAlignment="Center" />
                                         <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.AnzahlTeilnehmer,Mode=OneWay}"
                                                    FontSize="24"
-                                                   FontWeight="Bold" />
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center" />
 
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical"
@@ -440,7 +444,8 @@
                                                HorizontalAlignment="Center" />
                                         <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Anzahl2Geschwisterkind,Mode=OneWay}"
                                                    FontSize="16"
-                                                   FontWeight="Bold" />
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center" />
 
                                         <Label Content="Anzahl 3. Geschwisterkind"
                                                ToolTip="Gesamtanzahl 3. Geschwisterkind"
@@ -448,7 +453,8 @@
                                                HorizontalAlignment="Center" />
                                         <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Anzahl3Geschwisterkind,Mode=OneWay}"
                                                    FontSize="16"
-                                                   FontWeight="Bold" />
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center" />
 
                                         <Label Content="Anzahl Betreuer"
                                                ToolTip="Gesamtanzahl Betreuer"
@@ -456,7 +462,8 @@
                                                HorizontalAlignment="Center" />
                                         <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.AnzahlBetreuer,Mode=OneWay}"
                                                    FontSize="16"
-                                                   FontWeight="Bold" />
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center" />
 
                                         <Label Content="Anzahl Mitarbeiter"
                                                ToolTip="Gesamtanzahl Mitarbeiter"
@@ -464,7 +471,8 @@
                                                HorizontalAlignment="Center" />
                                         <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.AnzahlMitarbeiter,Mode=OneWay}"
                                                    FontSize="16"
-                                                   FontWeight="Bold" />
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center" />
                                     </StackPanel>
 
                                 </StackPanel>
@@ -539,21 +547,24 @@
                 <TabItem Header="Teilnehmende">
                     <DataGrid AutoGenerateColumns="False"
                               IsReadOnly="False"
-                              ItemsSource="{Binding SelectedItem.Persons}"
+                              ItemsSource="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons}"
                               ColumnWidth="SizeToCells">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Geschlecht"
                                                 Binding="{Binding Geschlecht}"
-                                                IsReadOnly="True" />
+                                                IsReadOnly="True"
+                                                Width="100" />
                             <DataGridTextColumn Header="Vorname"
                                                 Binding="{Binding Vorname}" />
                             <DataGridTextColumn Header="Nachname"
                                                 Binding="{Binding Nachname}" />
                             <DataGridTextColumn Header="Geburtsdatum"
-                                                Binding="{Binding Geburtsdatum}" />
+                                                Binding="{Binding Geburtsdatum, StringFormat=d}"
+                                                Width="120" />
                             <DataGridTextColumn Header="Alter"
                                                 Binding="{Binding Alter}"
-                                                IsReadOnly="True" />
+                                                IsReadOnly="True"
+                                                Width="80" />
                             <DataGridTextColumn Header="Status"
                                                 Binding="{Binding StatusFriendlyName}"
                                                 IsReadOnly="True" />

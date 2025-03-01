@@ -11,7 +11,7 @@ using System.IO;
 
 public class MainViewModel : INotifyPropertyChanged
 {
-    private ObservableCollection<Gruppe> gruppen;
+    private ObservableCollection<Jugendfeuerwehr> gruppen;
     private Settings einstellungen;
     private ObservableCollection<Art> artList;
     private ObservableCollection<Status> statusList;
@@ -80,7 +80,7 @@ public class MainViewModel : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public ObservableCollection<Gruppe> Gruppen
+    public ObservableCollection<Jugendfeuerwehr> Gruppen
     {
         get
         {
@@ -123,7 +123,7 @@ public class MainViewModel : INotifyPropertyChanged
     {
         //Leere Collections erstellen
         Einstellungen = new Settings();
-        Gruppen = new ObservableCollection<Gruppe>()
+        Gruppen = new ObservableCollection<Jugendfeuerwehr>()
         {
             //Testdaten können hier eingefügt werden
         };
@@ -154,7 +154,7 @@ public class MainViewModel : INotifyPropertyChanged
         Verantwortlicher verantwortlicher = new Verantwortlicher();
 
         //Leere Gruppe erstellen
-        Gruppe newGruppe = new Gruppe
+        Jugendfeuerwehr newJugendfeuerwehr = new Jugendfeuerwehr
         {
             Feuerwehr = feuerwehr,
             Persons = persons,
@@ -163,7 +163,7 @@ public class MainViewModel : INotifyPropertyChanged
             TimeStampAenderung = DateTime.Now
         };
 
-        Gruppen.Add(newGruppe);
+        Gruppen.Add(newJugendfeuerwehr);
 
     }
     protected virtual void OnPropertyChanged(string propertyName)
@@ -213,7 +213,7 @@ public class MainViewModel : INotifyPropertyChanged
                     break;
             }
 
-            Gruppen = new ObservableCollection<Gruppe>(sortedGruppen);
+            Gruppen = new ObservableCollection<Jugendfeuerwehr>(sortedGruppen);
             OnPropertyChanged(nameof(Gruppen));
         }
 
@@ -239,19 +239,19 @@ public class MainViewModel : INotifyPropertyChanged
     }
 
 
-    public void RemoveSelectedGroup(Gruppe gruppe, bool loeschdialog = true)
+    public void RemoveSelectedGroup(Jugendfeuerwehr jugendfeuerwehr, bool loeschdialog = true)
     {
         if (loeschdialog)
         {
-            MessageBoxResult result = MessageBox.Show($"Möchten Sie diese Feuerwehr wirklich löschen?\n{gruppe.Feuerwehr}", "Bestätigung", MessageBoxButton.OKCancel);
+            MessageBoxResult result = MessageBox.Show($"Möchten Sie diese Feuerwehr wirklich löschen?\n{jugendfeuerwehr.Feuerwehr}", "Bestätigung", MessageBoxButton.OKCancel);
             if (result == MessageBoxResult.OK)
             {
-                Gruppen.Remove(gruppe);
+                Gruppen.Remove(jugendfeuerwehr);
             }
         }
         else
         {
-            Gruppen.Remove(gruppe);
+            Gruppen.Remove(jugendfeuerwehr);
         }
 
     }
@@ -265,22 +265,22 @@ public class MainViewModel : INotifyPropertyChanged
         {
             if (removeGroupCommand == null)
             {
-                removeGroupCommand = new RelayCommand(param => this.RemoveSelectedGroup(param as Gruppe),
-                                                        param => this.CanRemoveGroup(param as Gruppe));
+                removeGroupCommand = new RelayCommand(param => this.RemoveSelectedGroup(param as Jugendfeuerwehr),
+                                                        param => this.CanRemoveGroup(param as Jugendfeuerwehr));
             }
             return removeGroupCommand;
         }
     }
 
-    private bool CanRemoveGroup(Gruppe gruppe)
+    private bool CanRemoveGroup(Jugendfeuerwehr jugendfeuerwehr)
     {
         // Überprüfen ob die Person entfernt werden kann, z.B. ob sie ausgewählt ist
-        return gruppe != null;
+        return jugendfeuerwehr != null;
     }
 
-    internal void AddGroup(Gruppe gruppe)
+    internal void AddGroup(Jugendfeuerwehr jugendfeuerwehr)
     {
-        gruppen.Add(gruppe);
+        gruppen.Add(jugendfeuerwehr);
     }
 
 
