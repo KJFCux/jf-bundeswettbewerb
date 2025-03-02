@@ -94,7 +94,8 @@
                     </MenuItem>
                     <MenuItem x:Name="SyncmitFtp"
                               Header="Sync mit FTP"
-                              ToolTip="Daten von FTP Server laden "
+                              ToolTip="Daten von FTP Server laden"
+                              Click="SyncmitFtp_OnClick"
                               Foreground="{DynamicResource MahApps.Brushes.Text}">
                         <MenuItem.Icon>
                             <iconPacks:PackIconMaterial Width="22"
@@ -311,8 +312,7 @@
                                                  FontSize="24"
                                                  Margin="20,10,20,10"
                                                  Height="44"
-                                                 VerticalAlignment="Center"
-                                                 TextChanged="TextBox_TextChanged" />
+                                                 VerticalAlignment="Center" />
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <Label Content="Telefon:"
@@ -342,15 +342,15 @@
                                             </Button.ContentTemplate>
                                         </Button>
                                         <TextBox  x:Name="TelefonVerantwortlicher"
-                                                 TextWrapping="Wrap"
-                                                 Text="{Binding SelectedItem.Verantwortlicher.Telefon, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                 ToolTip="Telefonnummer der Verantwortlichen Person"
-                                                 MinWidth="600"
-                                                 MaxWidth="800"
-                                                 FontSize="24"
-                                                 Margin="20,10,20,10"
-                                                 Height="44"
-                                                 VerticalAlignment="Center" />
+                                                  TextWrapping="Wrap"
+                                                  Text="{Binding SelectedItem.Verantwortlicher.Telefon, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  ToolTip="Telefonnummer der Verantwortlichen Person"
+                                                  MinWidth="600"
+                                                  MaxWidth="800"
+                                                  FontSize="24"
+                                                  Margin="20,10,20,10"
+                                                  Height="44"
+                                                  VerticalAlignment="Center" />
                                     </StackPanel>
                                 </StackPanel>
                             </GroupBox>
@@ -365,8 +365,7 @@
                                                VerticalAlignment="Top"
                                                FontSize="24"
                                                FontWeight="Bold" />
-
-                                        <Label Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.ZuBezahlenderBetrag,Mode=OneWay, TargetNullValue=0}"
+                                        <Label Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.ZuBezahlenderBetrag, Mode=OneWay, TargetNullValue=0, StringFormat={}{0:C2}}"
                                                Margin="0,10,2,10"
                                                ToolTip="Diesen Betrag muss die Gruppe bezahlen"
                                                HorizontalAlignment="Center"
@@ -576,13 +575,13 @@
                                                 IsReadOnly="True" />
                             <DataGridTextColumn Header="Strasse"
                                                 Binding="{Binding Strasse}"
-                                                IsReadOnly="True" />
+                                                IsReadOnly="False" />
                             <DataGridTextColumn Header="PLZ"
                                                 Binding="{Binding Plz}"
-                                                IsReadOnly="True" />
+                                                IsReadOnly="False" />
                             <DataGridTextColumn Header="Ort"
                                                 Binding="{Binding Ort}"
-                                                IsReadOnly="True" />
+                                                IsReadOnly="False" />
                         </DataGrid.Columns>
                     </DataGrid>
 

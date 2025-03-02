@@ -22,6 +22,7 @@ using System.Text.Json;
 using System.Net.Http;
 using ControlzEx.Standard;
 using System.Text.RegularExpressions;
+using Renci.SshNet;
 
 namespace LagerInsights
 {
@@ -496,6 +497,52 @@ namespace LagerInsights
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
             }
         }
+        private void SyncmitFtp_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // SFTP Einstellungen aus dem Model laden
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+                var einstellungen = viewModel.Einstellungen;
+
+                // Dictionary zum Speichern der Dateien
+                Dictionary<string, string> fileContents = new Dictionary<string, string>();
+
+                using (var sftp = new SftpClient(einstellungen.Hostname, 22, einstellungen.Username, einstellungen.Password))
+                {
+                    sftp.Connect();
+                    var files = sftp.ListDirectory(einstellungen.Pfad);
+
+                    foreach (var file in files)
+                    {
+                        if (!file.IsDirectory && file.Name.EndsWith(".xml") && !file.Name.Contains("_")) //Mit _ gefolgt von Timestamp werden die Revisionen angelegt. Diese nicht herunterladen.
+                        {
+                            using (Stream fileStream = new MemoryStream())
+                            {
+                                sftp.DownloadFile(file.FullName, fileStream);
+                                fileStream.Position = 0;
+                                using (StreamReader reader = new StreamReader(fileStream))
+                                {
+                                    string content = reader.ReadToEnd();
+                                    string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file.Name);
+                                    fileContents[fileNameWithoutExtension] = content;
+                                }
+                            }
+                        }
+                    }
+
+                    sftp.Disconnect();
+                }
+
+                // Hier können Sie das Dictionary weiterverarbeiten oder anzeigen
+                MessageBox.Show("Dateien erfolgreich heruntergeladen.", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim Herunterladen der Dateien\n{ex}", "Fehler: SFTP", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
         private void LoadSettings()
         {
@@ -546,9 +593,9 @@ namespace LagerInsights
                     {
                         if (item is Jugendfeuerwehr gruppe)
                         {
-                            return (gruppe.GezahlterBeitrag >= gruppe.ZuBezahlenderBetrag);
+                            return !(gruppe.GezahlterBeitrag >= gruppe.ZuBezahlenderBetrag);
                         }
-                        return false;
+                        return true;
                     };
                 }
                 else
@@ -653,11 +700,6 @@ namespace LagerInsights
         {
             // Verwenden Sie Regex, um nur Zahlen und Dezimaltrennzeichen zuzulassen
             return Regex.IsMatch(text, @"^[0-9]*(?:\.[0-9]*)?$");
-        }
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
         }
     }
 

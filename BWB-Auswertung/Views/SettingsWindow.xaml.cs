@@ -19,6 +19,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Renci.SshNet;
 
 namespace LagerInsights.Views
 {
@@ -172,19 +173,34 @@ namespace LagerInsights.Views
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        
 
-        private void TesteVerbindung_Click(object sender, RoutedEventArgs e)
+
+        void TesteVerbindung_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                //TODO
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+                var einstellungen = viewModel.Einstellungen;
+
+                using (var sftp = new SftpClient(einstellungen.Hostname, 22, einstellungen.Username, einstellungen.Password))
+                {
+                    sftp.Connect();
+                    if (sftp.IsConnected)
+                    {
+                        MessageBox.Show("Verbindung erfolgreich!", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Verbindung fehlgeschlagen!", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    sftp.Disconnect();
+                }
             }
             catch (Exception ex)
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name,
                     System.Diagnostics.EventLogEntryType.Error);
-                MessageBox.Show($"Fehler beim Verbinden mit FTP\n{ex}", "Fehler: Einstellungen",
+                MessageBox.Show($"Fehler beim Verbinden mit SFTP\n{ex}", "Fehler: Einstellungen",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -229,6 +245,11 @@ namespace LagerInsights.Views
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 viewModel.Einstellungen.Password = passwordBox.Password;
             }
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }

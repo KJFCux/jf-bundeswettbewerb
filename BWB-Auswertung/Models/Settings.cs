@@ -42,7 +42,7 @@ namespace LagerInsights.Models
         public decimal Teilnehmendenbeitrag { get; set; }
 
         //FTP Daten
-        public string Server { get; set; }
+        public string Hostname { get; set; }
 
         public string Pfad { get; set; }
 
@@ -67,7 +67,7 @@ namespace LagerInsights.Models
 
         public Settings()
         {
-            Server = string.Empty;
+            Hostname = string.Empty;
             Pfad = string.Empty;
             Username = string.Empty;
             Password = string.Empty;

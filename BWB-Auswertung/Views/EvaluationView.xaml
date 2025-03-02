@@ -184,11 +184,6 @@
                                    Margin="0,10,10,10"
                                    FontSize="16"
                                    VerticalAlignment="Top" />
-                            <Label Content="€"
-                                   HorizontalAlignment="Left"
-                                   Margin="0,10,10,10"
-                                   FontSize="16"
-                                   VerticalAlignment="Top" />
                             <Label Content="|"
                                    HorizontalAlignment="Left"
                                    Margin="0,10,10,10"

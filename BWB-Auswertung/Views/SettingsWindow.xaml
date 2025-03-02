@@ -353,8 +353,8 @@
                                  ToolTip="Hostname des Servers"
                                  FontSize="16"
                                  Margin="10,5,10,10"
-                                 Height="20"
-                                 VerticalAlignment="Center" />
+                                 Height="34"
+                                 TextChanged="TextBox_TextChanged" />
                         <Label Content="Pfad"
                                ToolTip="Pfad zu den Gruppendaten"
                                HorizontalAlignment="Center"
@@ -367,7 +367,7 @@
                                  ToolTip="Pfad zu den Gruppendaten"
                                  FontSize="16"
                                  Margin="10,5,10,10"
-                                 Height="20"
+                                 Height="34"
                                  VerticalAlignment="Center" />
                         <Label Content="Benutzername"
                                ToolTip="Benutzername zum Verbinden mit dem Server"
@@ -381,7 +381,7 @@
                                  ToolTip="Benutzername zum Verbinden mit dem Server"
                                  FontSize="16"
                                  Margin="10,5,10,10"
-                                 Height="20"
+                                 Height="34"
                                  VerticalAlignment="Center" />
 
                         <Label Content="Password"
@@ -394,7 +394,7 @@
                         <PasswordBox ToolTip="Password zum Verbinden mit dem Server"
                                      FontSize="16"
                                      Margin="10,5,10,10"
-                                     Height="20"
+                                     Height="34"
                                      VerticalAlignment="Center"
                                      PasswordChanged="PasswordBox_PasswordChanged" />
                         <Button Content="Teste Verbindung"

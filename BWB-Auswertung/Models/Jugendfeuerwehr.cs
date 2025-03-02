@@ -92,11 +92,12 @@ namespace LagerInsights.Models
         {
             get
             {
+                decimal beitrag = Teilnehmerbeitrag.HasValue ? Teilnehmerbeitrag.Value : 200;
                 decimal normaleTeilnehmer =
-                    (Teilnehmerbeitrag ?? 0 * (Anzahl1Geschwisterkind + AnzahlBetreuer + AnzahlMitarbeiter));
-                decimal zweiGeschwister = (((Teilnehmerbeitrag ?? 0) * 0.75m) * Anzahl2Geschwisterkind) ;
-                decimal dreiGeschwister = (((Teilnehmerbeitrag ?? 0) * 0.5m) * Anzahl2Geschwisterkind);
-                return normaleTeilnehmer+zweiGeschwister+dreiGeschwister;
+                    beitrag * (Anzahl1Geschwisterkind + AnzahlBetreuer + AnzahlMitarbeiter);
+                decimal zweiGeschwister = ((beitrag * 0.75m) * Anzahl2Geschwisterkind);
+                decimal dreiGeschwister = ((beitrag * 0.5m) * Anzahl3Geschwisterkind);
+                return Math.Round(normaleTeilnehmer + zweiGeschwister + dreiGeschwister, 2);
             }
         }
 
