@@ -477,7 +477,10 @@ namespace LagerInsights
                         foreach (var gefundeneGruppe in gefundeneGruppen)
                         {
                             //Der gezahlte Betrag soll nicht überschrieben werden.
-                            if (jugendfeuerwehr.GezahlterBeitrag != null && jugendfeuerwehr.GezahlterBeitrag != 0) jugendfeuerwehr.GezahlterBeitrag = gefundeneGruppe.GezahlterBeitrag;
+                            if (gefundeneGruppe.GezahlterBeitrag != null && gefundeneGruppe.GezahlterBeitrag != 0)
+                            {
+                                jugendfeuerwehr.GezahlterBeitrag = gefundeneGruppe.GezahlterBeitrag;
+                            }
 
                             //Hinweis an Benutzer das die Gruppe existiert
                             if (showOverrideInfo)
