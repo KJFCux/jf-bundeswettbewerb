@@ -458,7 +458,7 @@ namespace LagerInsights
             }
         }
 
-        private void OpenDeserializerForFile(string file, bool ueberrschreiben = false)
+        private void OpenDeserializerForFile(string file, bool ueberrschreiben = false, bool showOverrideInfo = true)
         {
             try
             {
@@ -480,7 +480,12 @@ namespace LagerInsights
                             if (jugendfeuerwehr.GezahlterBeitrag != null && jugendfeuerwehr.GezahlterBeitrag != 0) jugendfeuerwehr.GezahlterBeitrag = gefundeneGruppe.GezahlterBeitrag;
 
                             //Hinweis an Benutzer das die Gruppe existiert
-                            MessageBox.Show($"Die JF {jugendfeuerwehr.Feuerwehr} aus {jugendfeuerwehr.Organisationseinheit} Existierte bereits und wurde überschrieben!\nURL der Anmeldung neu: {jugendfeuerwehr.UrlderAnmeldung}\nURL der Anmeldung alt: {gefundeneGruppe.UrlderAnmeldung}", "Anmeldung wurde überschrieben!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            if (showOverrideInfo)
+                            {
+                                MessageBox.Show(
+                                    $"Die JF {jugendfeuerwehr.Feuerwehr} aus {jugendfeuerwehr.Organisationseinheit} Existierte bereits und wurde überschrieben!\nURL der Anmeldung neu: {jugendfeuerwehr.UrlderAnmeldung}\nURL der Anmeldung alt: {gefundeneGruppe.UrlderAnmeldung}",
+                                    "Anmeldung wurde überschrieben!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            }
 
                             // Alte Gruppe löschen
                             viewModel.RemoveSelectedGroup(gefundeneGruppe, false);
@@ -497,7 +502,8 @@ namespace LagerInsights
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
             }
         }
-        private void SyncmitFtp_OnClick(object sender, RoutedEventArgs e)
+
+        private void SyncmitFtp_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -505,8 +511,13 @@ namespace LagerInsights
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 var einstellungen = viewModel.Einstellungen;
 
-                // Dictionary zum Speichern der Dateien
-                Dictionary<string, string> fileContents = new Dictionary<string, string>();
+                //Download Pfad erstellen
+                var localPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    System.AppDomain.CurrentDomain.FriendlyName, "ftp");
+                _ = Directory.CreateDirectory(localPath);
+
+                // Liste zum Speichern der Dateipfade
+                List<string> filePaths = new List<string>();
 
                 using (var sftp = new SftpClient(einstellungen.Hostname, 22, einstellungen.Username, einstellungen.Password))
                 {
@@ -517,30 +528,37 @@ namespace LagerInsights
                     {
                         if (!file.IsDirectory && file.Name.EndsWith(".xml") && !file.Name.Contains("_")) //Mit _ gefolgt von Timestamp werden die Revisionen angelegt. Diese nicht herunterladen.
                         {
-                            using (Stream fileStream = new MemoryStream())
+                            string localFilePath =
+                                Path.Combine(localPath, file.Name);
+                            using (Stream fileStream = File.Create(localFilePath))
                             {
                                 sftp.DownloadFile(file.FullName, fileStream);
-                                fileStream.Position = 0;
-                                using (StreamReader reader = new StreamReader(fileStream))
-                                {
-                                    string content = reader.ReadToEnd();
-                                    string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file.Name);
-                                    fileContents[fileNameWithoutExtension] = content;
-                                }
                             }
+                            filePaths.Add(localFilePath);
                         }
                     }
 
                     sftp.Disconnect();
                 }
 
-                // Hier können Sie das Dictionary weiterverarbeiten oder anzeigen
-                MessageBox.Show("Dateien erfolgreich heruntergeladen.", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
+                // Heruntergeladene Daten importieren.
+                foreach (string file in filePaths)
+                {
+                    OpenDeserializerForFile(file, true, false);
+                }
+
+                //Filterung entfernen
+                FertigeGruppenAusblenden_Checkbox.IsChecked = false;
+
+                //Importiertes einsortieren
+                viewModel.Sort(sortComboBox.SelectedIndex);
+
+                MessageBox.Show("Anmeldungen erfolgreich Synchronisiert!", "SFTP Sync erfolgreich", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-                MessageBox.Show($"Fehler beim Herunterladen der Dateien\n{ex}", "Fehler: SFTP", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Fehler beim Herunterladen der Dateien\n{ex}", "Fehler: SFTP Sync", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

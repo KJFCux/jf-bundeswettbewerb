@@ -95,7 +95,7 @@
                     <MenuItem x:Name="SyncmitFtp"
                               Header="Sync mit FTP"
                               ToolTip="Daten von FTP Server laden"
-                              Click="SyncmitFtp_OnClick"
+                              Click="SyncmitFtp_Click"
                               Foreground="{DynamicResource MahApps.Brushes.Text}">
                         <MenuItem.Icon>
                             <iconPacks:PackIconMaterial Width="22"
