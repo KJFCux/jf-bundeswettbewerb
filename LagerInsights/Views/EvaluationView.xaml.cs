@@ -118,8 +118,8 @@ public partial class EvaluationView : Window
             ((Button)sender).IsEnabled = false;
             var viewModel = (MainViewModel)DataContext;
             List<PersonTeilnehmendenliste> personenMitGeburtstag = viewModel.personenMitGeburtstagBeimWettbewerb();
-            string htmlGeburtstagsliste_Vorlage = Properties.Resources.GeburtstagsListeTabellenzeile;
-            var htmlGeburtstagslisteTabellenzeile_Vorlage = Properties.Resources.GeburtstagsListeTabellenzeile;
+            string htmlGeburtstagsliste_Vorlage = Properties.Resources.ResourceManager.GetString("GeburtstagsListe");
+            string htmlGeburtstagslisteTabellenzeile_Vorlage = Properties.Resources.ResourceManager.GetString("GeburtstagslisteTabellenzeile");
             var pDF = new PDF();
             List<string> pfade = new();
 
@@ -136,8 +136,8 @@ public partial class EvaluationView : Window
                 htmlGeburtstagsliste_Vorlage.Replace("{datum_heute}", DateTime.Now.ToString("dd.MM.yyyy HH:mm"));
             htmlGeburtstagsliste_Vorlage =
                 htmlGeburtstagsliste_Vorlage.Replace("{titel}", einstellungen.Veranstaltungstitel);
-            htmlGeburtstagsliste_Vorlage = htmlGeburtstagsliste_Vorlage.Replace("{datum_veranstaltung}",
-                einstellungen.Veranstaltungsdatum.ToString("dd.MM.yyyy"));
+            htmlGeburtstagsliste_Vorlage = htmlGeburtstagsliste_Vorlage.Replace("{datum_veranstaltung}", 
+                $"{einstellungen.Veranstaltungsdatum:dd.MM.yyyy} - {einstellungen.VeranstaltungsdatumEnde:dd.MM.yyyy}");
             htmlGeburtstagsliste_Vorlage =
                 htmlGeburtstagsliste_Vorlage.Replace("{ort}", einstellungen.Veranstaltungsort);
 

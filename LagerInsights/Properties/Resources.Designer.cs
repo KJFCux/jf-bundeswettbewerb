@@ -118,7 +118,18 @@ namespace LagerInsights.Properties {
                 return ResourceManager.GetString("GeburtstagsListeTabellenzeile", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        /// </summary>
+        internal static string GeburtstagsListe
+        {
+            get
+            {
+                return ResourceManager.GetString("GeburtstagsListe", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>

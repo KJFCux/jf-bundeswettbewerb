@@ -16,10 +16,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Remove="Properties\Resources.resx" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Content Include="Resources\Images\Deutsche_Jugendfeuerwehr.ico" />
 	</ItemGroup>
 
@@ -80,6 +76,7 @@
 		<Resource Include="Properties\Resources.resx">
 			<Generator>ResXFileCodeGenerator</Generator>
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Resource>
 	</ItemGroup>
 
