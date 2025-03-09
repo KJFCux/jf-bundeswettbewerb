@@ -1,37 +1,35 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Reflection;
 using System.Windows.Forms;
 
-namespace LagerInsights.IO
+namespace LagerInsights.IO;
+
+public class Dialogs
 {
-    public class Dialogs
+    public string ShowFolderBrowserDialog()
     {
-        public string ShowFolderBrowserDialog()
+        try
         {
-            try
+            var selectedFolderPath = string.Empty;
+
+            using (var dialog = new FolderBrowserDialog())
             {
-                string selectedFolderPath = string.Empty;
+                dialog.Description = "Ordner auswählen oder erstellen";
+                dialog.RootFolder = Environment.SpecialFolder.Desktop;
+                dialog.ShowNewFolderButton = true;
 
-                using (var dialog = new FolderBrowserDialog())
-                {
-                    dialog.Description = "Ordner auswählen oder erstellen";
-                    dialog.RootFolder = Environment.SpecialFolder.Desktop;
-                    dialog.ShowNewFolderButton = true;
+                var result = dialog.ShowDialog();
 
-                    DialogResult result = dialog.ShowDialog();
-
-                    if (result == DialogResult.OK)
-                    {
-                        selectedFolderPath = dialog.SelectedPath;
-                    }
-                }
-
-                return selectedFolderPath;
+                if (result == DialogResult.OK) selectedFolderPath = dialog.SelectedPath;
             }
-            catch (Exception ex)
-            {
-                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-                return string.Empty;
-            }
+
+            return selectedFolderPath;
+        }
+        catch (Exception ex)
+        {
+            LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
+            return string.Empty;
         }
     }
 }

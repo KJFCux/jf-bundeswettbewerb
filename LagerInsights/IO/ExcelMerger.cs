@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -10,23 +9,21 @@ public class ExcelMerger
     {
         IWorkbook outputWorkbook = new XSSFWorkbook();
 
-        foreach (string filePath in filePaths)
-        {
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        foreach (var filePath in filePaths)
+            using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {
                 IWorkbook inputWorkbook = new XSSFWorkbook(fileStream);
-                for (int i = 0; i < inputWorkbook.NumberOfSheets; i++)
+                for (var i = 0; i < inputWorkbook.NumberOfSheets; i++)
                 {
-                    ISheet inputSheet = inputWorkbook.GetSheetAt(i);
-                    string sheetName = Path.GetFileNameWithoutExtension(filePath) + "_" + inputSheet.SheetName;
-                    ISheet outputSheet = outputWorkbook.CreateSheet(sheetName);
+                    var inputSheet = inputWorkbook.GetSheetAt(i);
+                    var sheetName = Path.GetFileNameWithoutExtension(filePath) + "_" + inputSheet.SheetName;
+                    var outputSheet = outputWorkbook.CreateSheet(sheetName);
 
                     CopySheet(inputSheet, outputSheet);
                 }
             }
-        }
 
-        using (FileStream fileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write))
+        using (var fileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write))
         {
             outputWorkbook.Write(fileStream);
         }
@@ -34,12 +31,12 @@ public class ExcelMerger
 
     private void CopySheet(ISheet inputSheet, ISheet outputSheet)
     {
-        for (int i = 0; i <= inputSheet.LastRowNum; i++)
+        for (var i = 0; i <= inputSheet.LastRowNum; i++)
         {
-            IRow inputRow = inputSheet.GetRow(i);
+            var inputRow = inputSheet.GetRow(i);
             if (inputRow != null)
             {
-                IRow outputRow = outputSheet.CreateRow(i);
+                var outputRow = outputSheet.CreateRow(i);
                 CopyRow(inputRow, outputRow);
             }
         }
@@ -47,12 +44,12 @@ public class ExcelMerger
 
     private void CopyRow(IRow inputRow, IRow outputRow)
     {
-        for (int i = 0; i < inputRow.LastCellNum; i++)
+        for (var i = 0; i < inputRow.LastCellNum; i++)
         {
-            ICell inputCell = inputRow.GetCell(i);
+            var inputCell = inputRow.GetCell(i);
             if (inputCell != null)
             {
-                ICell outputCell = outputRow.CreateCell(i);
+                var outputCell = outputRow.CreateCell(i);
                 CopyCell(inputCell, outputCell);
             }
         }
@@ -75,8 +72,6 @@ public class ExcelMerger
                 break;
             case CellType.Formula:
                 outputCell.SetCellFormula(inputCell.CellFormula);
-                break;
-            default:
                 break;
         }
     }

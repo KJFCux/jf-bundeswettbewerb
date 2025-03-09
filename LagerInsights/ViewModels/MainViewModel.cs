@@ -1,24 +1,46 @@
-﻿using LagerInsights.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows.Input;
-using LagerInsights.IO;
 using System.Linq;
 using System.Windows;
-using System.IO;
+using System.Windows.Input;
+using LagerInsights.Models;
 
 public class MainViewModel : INotifyPropertyChanged
 {
-    private ObservableCollection<Jugendfeuerwehr> gruppen;
-    private Settings einstellungen;
+    private double _scaleFactor = 1.0;
+
+    private double _scaleFactorEvaluation = 0.6;
+
+    private double _scaleFactorSettings = 1.0;
     private ObservableCollection<Art> artList;
+    private Settings einstellungen;
+    private ObservableCollection<Jugendfeuerwehr> gruppen;
+
+
+    private ICommand removeGroupCommand;
     private ObservableCollection<Status> statusList;
+
+    public MainViewModel()
+    {
+        //Leere Collections erstellen
+        Einstellungen = new Settings();
+        Gruppen = new ObservableCollection<Jugendfeuerwehr>
+        {
+            //Testdaten können hier eingefügt werden
+        };
+        ArtList = new ObservableCollection<Art>
+        {
+            Art.UNTERFLURHYDRANT,
+            Art.OFFENESGEWAESSER,
+            Art.KEINEVORGABEZEIT
+        };
+    }
 
     public ObservableCollection<Art> ArtList
     {
-        get { return artList; }
+        get => artList;
         set
         {
             artList = value;
@@ -28,7 +50,7 @@ public class MainViewModel : INotifyPropertyChanged
 
     public ObservableCollection<Status> StatusList
     {
-        get { return statusList; }
+        get => statusList;
         set
         {
             statusList = value;
@@ -36,10 +58,9 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
-    private double _scaleFactor = 1.0;
     public double ScaleFactor
     {
-        get { return _scaleFactor; }
+        get => _scaleFactor;
         set
         {
             if (_scaleFactor != value)
@@ -50,10 +71,9 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
-    private double _scaleFactorEvaluation = 0.6;
     public double ScaleFactorEvaluation
     {
-        get { return _scaleFactorEvaluation; }
+        get => _scaleFactorEvaluation;
         set
         {
             if (_scaleFactorEvaluation != value)
@@ -64,10 +84,9 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
-    private double _scaleFactorSettings = 1.0;
     public double ScaleFactorSettings
     {
-        get { return _scaleFactorSettings; }
+        get => _scaleFactorSettings;
         set
         {
             if (_scaleFactorSettings != value)
@@ -78,14 +97,9 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-
     public ObservableCollection<Jugendfeuerwehr> Gruppen
     {
-        get
-        {
-            return gruppen;
-        }
+        get => gruppen;
         set
         {
             gruppen = value;
@@ -108,10 +122,7 @@ public class MainViewModel : INotifyPropertyChanged
 
     public Settings Einstellungen
     {
-        get
-        {
-            return einstellungen;
-        }
+        get => einstellungen;
         set
         {
             einstellungen = value;
@@ -119,21 +130,19 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
-    public MainViewModel()
+    public ICommand RemoveGroupCommand
     {
-        //Leere Collections erstellen
-        Einstellungen = new Settings();
-        Gruppen = new ObservableCollection<Jugendfeuerwehr>()
+        get
         {
-            //Testdaten können hier eingefügt werden
-        };
-        ArtList = new ObservableCollection<Art>
-        {
-            Art.UNTERFLURHYDRANT,
-            Art.OFFENESGEWAESSER,
-            Art.KEINEVORGABEZEIT
-        };
+            if (removeGroupCommand == null)
+                removeGroupCommand = new RelayCommand(param => RemoveSelectedGroup(param as Jugendfeuerwehr),
+                    param => CanRemoveGroup(param as Jugendfeuerwehr));
+            return removeGroupCommand;
+        }
     }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
     public void OverrideSettings(Settings einstellungenNew)
     {
         Einstellungen = einstellungenNew;
@@ -143,18 +152,14 @@ public class MainViewModel : INotifyPropertyChanged
     //Erstellt eine Leere Gruppe
     public void AddEmptyGruppe(string feuerwehr)
     {
-
         //10 Leere Personen erstellen damit diese bearbeitet werden können
-        List<Person> persons = new List<Person>();
-        for (int i = 0; i <= 9; i++)
-        {
-            persons.Add(new Person());
-        }
+        List<Person> persons = new();
+        for (var i = 0; i <= 9; i++) persons.Add(new Person());
 
-        Verantwortlicher verantwortlicher = new Verantwortlicher();
+        var verantwortlicher = new Verantwortlicher();
 
         //Leere Gruppe erstellen
-        Jugendfeuerwehr newJugendfeuerwehr = new Jugendfeuerwehr
+        var newJugendfeuerwehr = new Jugendfeuerwehr
         {
             Feuerwehr = feuerwehr,
             Persons = persons,
@@ -164,8 +169,8 @@ public class MainViewModel : INotifyPropertyChanged
         };
 
         Gruppen.Add(newJugendfeuerwehr);
-
     }
+
     protected virtual void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -184,11 +189,10 @@ public class MainViewModel : INotifyPropertyChanged
         if (Gruppen != null)
         {
             // Sortieren der Gruppen nach Anmeldezeit und weise Lagernummern zu
-            var sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.TimeStampAnmeldung).ThenBy(gruppe => gruppe.Feuerwehr).ToList();
-            for (int i = 0; i < sortedGruppen.Count; i++)
-            {
+            var sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.TimeStampAnmeldung).ThenBy(gruppe => gruppe.Feuerwehr)
+                .ToList();
+            for (var i = 0; i < sortedGruppen.Count; i++)
                 sortedGruppen[i].LagerNr = i + 1; // Lagernummer zuweisen (beginnend bei 1)
-            }
 
 
             //Sofern etwas zum sortieren gewählt wurde, die Gruppen entsprechend sortieren
@@ -201,27 +205,28 @@ public class MainViewModel : INotifyPropertyChanged
                     sortedGruppen = Gruppen.OrderByDescending(gruppe => gruppe.Feuerwehr).ToList();
                     break;
                 case 2:
-                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.Organisationseinheit).ThenBy(gruppe => gruppe.Feuerwehr).ToList();
+                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.Organisationseinheit)
+                        .ThenBy(gruppe => gruppe.Feuerwehr).ToList();
                     break;
                 case 3:
-                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.TimeStampAnmeldung).ThenBy(gruppe => gruppe.Feuerwehr).ToList();
+                    sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.TimeStampAnmeldung)
+                        .ThenBy(gruppe => gruppe.Feuerwehr).ToList();
                     break;
                 case 4:
                     sortedGruppen = Gruppen.OrderBy(gruppe => gruppe.LagerNr).ToList();
-                    break;
-                default:
                     break;
             }
 
             Gruppen = new ObservableCollection<Jugendfeuerwehr>(sortedGruppen);
             OnPropertyChanged(nameof(Gruppen));
         }
-
     }
+
     public List<PersonTeilnehmendenliste> alleTeilnehmenden()
     {
         List<PersonTeilnehmendenliste> alleTeilnehmenden = gruppen
-            .SelectMany(gruppe => gruppe.Persons.Select(person => new PersonTeilnehmendenliste { Feuerwehr = gruppe.Feuerwehr, Person = person }))
+            .SelectMany(gruppe => gruppe.Persons.Select(person => new PersonTeilnehmendenliste
+                { Feuerwehr = gruppe.Feuerwehr, Person = person }))
             .ToList();
 
         return alleTeilnehmenden;
@@ -230,10 +235,10 @@ public class MainViewModel : INotifyPropertyChanged
     public List<PersonTeilnehmendenliste> personenMitGeburtstagBeimWettbewerb()
     {
         List<PersonTeilnehmendenliste> alleMitGeburtstagBeimWettbewerb = alleTeilnehmenden().Where(p =>
-        (p.Person.Geburtsdatum.Day >= Einstellungen.Veranstaltungsdatum.Day &&
-        p.Person.Geburtsdatum.Month >= Einstellungen.Veranstaltungsdatum.Month) &&
-        (p.Person.Geburtsdatum.Day <= Einstellungen.VeranstaltungsdatumEnde.Day &&
-         p.Person.Geburtsdatum.Month <= Einstellungen.VeranstaltungsdatumEnde.Month)
+            p.Person.Geburtsdatum.Day >= Einstellungen.Veranstaltungsdatum.Day &&
+            p.Person.Geburtsdatum.Month >= Einstellungen.Veranstaltungsdatum.Month &&
+            p.Person.Geburtsdatum.Day <= Einstellungen.VeranstaltungsdatumEnde.Day &&
+            p.Person.Geburtsdatum.Month <= Einstellungen.VeranstaltungsdatumEnde.Month
         ).ToList();
         return alleMitGeburtstagBeimWettbewerb;
     }
@@ -243,32 +248,13 @@ public class MainViewModel : INotifyPropertyChanged
     {
         if (loeschdialog)
         {
-            MessageBoxResult result = MessageBox.Show($"Möchten Sie diese Feuerwehr wirklich löschen?\n{jugendfeuerwehr.Feuerwehr}", "Bestätigung", MessageBoxButton.OKCancel);
-            if (result == MessageBoxResult.OK)
-            {
-                Gruppen.Remove(jugendfeuerwehr);
-            }
+            var result = MessageBox.Show($"Möchten Sie diese Feuerwehr wirklich löschen?\n{jugendfeuerwehr.Feuerwehr}",
+                "Bestätigung", MessageBoxButton.OKCancel);
+            if (result == MessageBoxResult.OK) Gruppen.Remove(jugendfeuerwehr);
         }
         else
         {
             Gruppen.Remove(jugendfeuerwehr);
-        }
-
-    }
-
-
-    private ICommand removeGroupCommand;
-
-    public ICommand RemoveGroupCommand
-    {
-        get
-        {
-            if (removeGroupCommand == null)
-            {
-                removeGroupCommand = new RelayCommand(param => this.RemoveSelectedGroup(param as Jugendfeuerwehr),
-                                                        param => this.CanRemoveGroup(param as Jugendfeuerwehr));
-            }
-            return removeGroupCommand;
         }
     }
 
@@ -282,7 +268,4 @@ public class MainViewModel : INotifyPropertyChanged
     {
         gruppen.Add(jugendfeuerwehr);
     }
-
-
-
 }

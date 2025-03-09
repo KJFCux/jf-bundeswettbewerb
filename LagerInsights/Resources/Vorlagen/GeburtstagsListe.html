@@ -127,54 +127,54 @@
     </style>
 </head>
 <body>
-    <div style=" height: 100%; overflow: hidden;">
-        <div class="row">
-            <div class="column80">
-                <h2 style="text-transform: uppercase;">
-                    Zeltlager Geburtstagsliste für das
-                </h2>
-                <h3 style="margin-top: -16px;">
-                    {titel} am {datum_veranstaltung} in {ort}
-                </h3>
-            </div>
-            <div class="column20" style="text-align: right;">
-                <img src="{logo}" alt="Veranstalter Logo" style="max-height: 100px;max-width: 300px">
-            </div>
+<div style=" height: 100%; overflow: hidden;">
+    <div class="row">
+        <div class="column80">
+            <h2 style="text-transform: uppercase;">
+                Zeltlager Geburtstagsliste für das
+            </h2>
+            <h3 style="margin-top: -16px;">
+                {titel} am {datum_veranstaltung} in {ort}
+            </h3>
         </div>
+        <div class="column20" style="text-align: right;">
+            <img src="{logo}" alt="Veranstalter Logo" style="max-height: 100px;max-width: 300px">
+        </div>
+    </div>
 
-        <div class="row" style="width: 190mm; position: absolute; top: 50mm;">
-            <table width="100%" style="table-layout: fixed;">
-                <tr>
-                    <th valign="top" style="padding-left: 2mm; width: 40%">
-                        Name
-                    </th>
-                    <th valign="top" style="width: 32%">
-                        Jugendfeuerwehr
-                    </th>
-                    <th valign="top" style="width: 10%">
-                        Alter
-                    </th>
-                    <th valign="top" style="width: 18%">
-                        Geburtsdatum
-                    </th>
-                </tr>
-                {tabellenzeile}
-            </table>
-        </div>
-        <div style="position: absolute; bottom: 20mm; width: 190mm;">
-            <div class="row" style="width: 100%; justify-content: space-between;">
-                <div>
-                    <p style="font-size: 8pt">
-                        Stand: {datum_heute}
-                    </p>
-                </div>
-                <div>
-                    <p style="font-size: 8pt; text-align: right;">
-                        Seite {akt_seite} von {alle_seiten}
-                    </p>
-                </div>
+    <div class="row" style="width: 190mm; position: absolute; top: 50mm;">
+        <table width="100%" style="table-layout: fixed;">
+            <tr>
+                <th valign="top" style="padding-left: 2mm; width: 40%">
+                    Name
+                </th>
+                <th valign="top" style="width: 32%">
+                    Jugendfeuerwehr
+                </th>
+                <th valign="top" style="width: 10%">
+                    Alter
+                </th>
+                <th valign="top" style="width: 18%">
+                    Geburtsdatum
+                </th>
+            </tr>
+            {tabellenzeile}
+        </table>
+    </div>
+    <div style="position: absolute; bottom: 20mm; width: 190mm;">
+        <div class="row" style="width: 100%; justify-content: space-between;">
+            <div>
+                <p style="font-size: 8pt">
+                    Stand: {datum_heute}
+                </p>
+            </div>
+            <div>
+                <p style="font-size: 8pt; text-align: right;">
+                    Seite {akt_seite} von {alle_seiten}
+                </p>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>

@@ -1,13 +1,13 @@
 ﻿using System;
+using System.IO;
 
-namespace LagerInsights.IO
+namespace LagerInsights.IO;
+
+internal static class Bilder
 {
-    static class Bilder
+    public static string readBase64(string path)
     {
-        public static string readBase64(string path)
-        {
-            byte[] imageArray = System.IO.File.ReadAllBytes(path);
-            return Convert.ToBase64String(imageArray);
-        }
+        var imageArray = File.ReadAllBytes(path);
+        return Convert.ToBase64String(imageArray);
     }
 }

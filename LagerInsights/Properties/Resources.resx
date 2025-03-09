@@ -136,7 +136,7 @@
   <data name="GeburtstagsListe" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Vorlagen\GeburtstagsListe.html;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="GeburtstagsListeTabellenzeile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="GeburtstagslisteTabellenzeile" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Vorlagen\GeburtstagsListeTabellenzeile.html;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Gruppendaten" type="System.Resources.ResXFileRef, System.Windows.Forms">

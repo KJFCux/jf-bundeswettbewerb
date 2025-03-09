@@ -1,11 +1,7 @@
-﻿namespace LagerInsights.Models
+﻿namespace LagerInsights.Models;
+
+public class PersonTeilnehmendenliste
 {
-
-    public class PersonTeilnehmendenliste
-    {
-
-        public string Feuerwehr { get; set; }
-        public Person Person { get; set; }
-
-    }
+    public string Feuerwehr { get; set; }
+    public Person Person { get; set; }
 }

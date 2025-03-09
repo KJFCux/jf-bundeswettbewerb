@@ -1,10 +1,10 @@
-﻿using System.Windows.Input;
-using System;
+﻿using System;
+using System.Windows.Input;
 
 public class RelayCommand : ICommand
 {
-    private readonly Action<object> _execute;
     private readonly Predicate<object> _canExecute;
+    private readonly Action<object> _execute;
 
     public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
     {
@@ -24,7 +24,7 @@ public class RelayCommand : ICommand
 
     public event EventHandler CanExecuteChanged
     {
-        add { CommandManager.RequerySuggested += value; }
-        remove { CommandManager.RequerySuggested -= value; }
+        add => CommandManager.RequerySuggested += value;
+        remove => CommandManager.RequerySuggested -= value;
     }
 }

@@ -3,9 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LagerInsights"
         xmlns:local1="clr-namespace:LagerInsights.Views"
         mc:Ignorable="d"
         ResizeMode="CanResizeWithGrip"
@@ -53,7 +51,7 @@
                                 <ProgressBar x:Name="Bezahlfortschritt"
                                              Value="0"
                                              Height="30"
-                                             Width="{Binding ElementName=StatusBarFortschritt, Path=ActualWidth, Converter={StaticResource WidthConverter}}"></ProgressBar>
+                                             Width="{Binding ElementName=StatusBarFortschritt, Path=ActualWidth, Converter={StaticResource WidthConverter}}" />
                             </StatusBarItem>
                         </StatusBar>
                         <StackPanel Orientation="Horizontal">
@@ -226,10 +224,10 @@
                                FontWeight="Bold"
                                VerticalAlignment="Top"
                                DockPanel.Dock="Top" />
-                        <DataGrid     AutoGenerateColumns="False"
-                                      IsReadOnly="True"
-                                      ItemsSource="{Binding PersonenMitGeburtstagBeimZeltlager}"
-                                      ColumnWidth="*">
+                        <DataGrid AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  ItemsSource="{Binding PersonenMitGeburtstagBeimZeltlager}"
+                                  ColumnWidth="*">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Jugendfeuerwehr"
                                                     Binding="{Binding Feuerwehr}" />
@@ -316,10 +314,10 @@
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <iconPacks:PackIconMaterial  Width="22"
-                                                                     Height="22"
-                                                                     VerticalAlignment="Center"
-                                                                     Kind="MedalOutline" />
+                                        <iconPacks:PackIconMaterial Width="22"
+                                                                    Height="22"
+                                                                    VerticalAlignment="Center"
+                                                                    Kind="MedalOutline" />
                                         <TextBlock Margin="4 0 0 0"
                                                    VerticalAlignment="Center"
                                                    Text="{Binding}" />
@@ -421,10 +419,10 @@
 
             </TabItem>
             <TabItem Header="Alle Teilnehmenden">
-                <DataGrid     AutoGenerateColumns="False"
-                              IsReadOnly="True"
-                              ItemsSource="{Binding PersonenTeilnehmendenliste}"
-                              ColumnWidth="SizeToCells">
+                <DataGrid AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          ItemsSource="{Binding PersonenTeilnehmendenliste}"
+                          ColumnWidth="SizeToCells">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Feuerwehr"
                                             Binding="{Binding Feuerwehr}" />

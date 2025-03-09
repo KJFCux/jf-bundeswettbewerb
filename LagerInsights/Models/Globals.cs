@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace LagerInsights.Models
+namespace LagerInsights.Models;
+
+public static class Globals
 {
-    public static class Globals
-    {
-        public static DateTime VERANSTALTUNGSDATUM = DateTime.Now;
-        public static bool VERBOSE_LOGGING = false;
-    }
+    public static DateTime VERANSTALTUNGSDATUM = DateTime.Now;
+    public static bool VERBOSE_LOGGING = false;
 }

@@ -1,11 +1,10 @@
-﻿using System;
-using System.IO;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
+﻿using System.IO;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 
 public class XlsxToPdfConverter
 {
@@ -13,49 +12,44 @@ public class XlsxToPdfConverter
     {
         // Laden der XLSX-Datei
         IWorkbook workbook;
-        using (FileStream fileStream = new FileStream(xlsxPath, FileMode.Open, FileAccess.Read))
+        using (var fileStream = new FileStream(xlsxPath, FileMode.Open, FileAccess.Read))
         {
             workbook = new XSSFWorkbook(fileStream);
         }
 
         // Erstellen der PDF-Datei
-        using (FileStream pdfFileStream = new FileStream(pdfPath, FileMode.Create, FileAccess.Write))
+        using (var pdfFileStream = new FileStream(pdfPath, FileMode.Create, FileAccess.Write))
         {
-            PdfWriter writer = new PdfWriter(pdfFileStream);
-            PdfDocument pdfDocument = new PdfDocument(writer);
-            Document document = new Document(pdfDocument);
+            var writer = new PdfWriter(pdfFileStream);
+            var pdfDocument = new PdfDocument(writer);
+            var document = new Document(pdfDocument);
 
             // Durch alle Arbeitsblätter gehen
-            for (int i = 0; i < workbook.NumberOfSheets; i++)
+            for (var i = 0; i < workbook.NumberOfSheets; i++)
             {
-                ISheet sheet = workbook.GetSheetAt(i);
+                var sheet = workbook.GetSheetAt(i);
 
                 // Durch alle Zeilen gehen
-                for (int rowIndex = 0; rowIndex <= sheet.LastRowNum; rowIndex++)
+                for (var rowIndex = 0; rowIndex <= sheet.LastRowNum; rowIndex++)
                 {
-                    IRow row = sheet.GetRow(rowIndex);
+                    var row = sheet.GetRow(rowIndex);
                     if (row != null)
-                    {
                         // Durch alle Zellen gehen
-                        for (int colIndex = 0; colIndex < row.LastCellNum; colIndex++)
+                        for (var colIndex = 0; colIndex < row.LastCellNum; colIndex++)
                         {
-                            ICell cell = row.GetCell(colIndex);
+                            var cell = row.GetCell(colIndex);
                             if (cell != null)
                             {
-                                string cellValue = GetCellValue(cell);
-                                Paragraph paragraph = new Paragraph(cellValue);
+                                var cellValue = GetCellValue(cell);
+                                var paragraph = new Paragraph(cellValue);
                                 paragraph.SetTextAlignment(TextAlignment.LEFT);
                                 document.Add(paragraph);
                             }
                         }
-                    }
                 }
 
                 // Seite hinzufügen, wenn es noch weitere Arbeitsblätter gibt
-                if (i < workbook.NumberOfSheets - 1)
-                {
-                    document.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-                }
+                if (i < workbook.NumberOfSheets - 1) document.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             }
 
             document.Close();
@@ -69,14 +63,9 @@ public class XlsxToPdfConverter
             case CellType.String:
                 return cell.StringCellValue;
             case CellType.Numeric:
-                if (DateUtil.IsCellDateFormatted(cell))
-                {
-                    return cell.DateCellValue?.ToString("dd/MM/yyyy") ?? "";
-                }
-                else
-                {
-                    return cell.NumericCellValue.ToString();
-                }
+                if (DateUtil.IsCellDateFormatted(cell)) return cell.DateCellValue?.ToString("dd/MM/yyyy") ?? "";
+
+                return cell.NumericCellValue.ToString();
             case CellType.Boolean:
                 return cell.BooleanCellValue.ToString();
             case CellType.Formula:

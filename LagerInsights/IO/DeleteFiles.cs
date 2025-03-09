@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 
-namespace LagerInsights.IO
+namespace LagerInsights.IO;
+
+public static class DeleteFiles
 {
-    public static class DeleteFiles
+    public static void DeleteFilesExcept(List<string> excludes, string ordnerPfad)
     {
-        public static void DeleteFilesExcept(List<string> excludes, string ordnerPfad)
+        try
         {
-            try
-            {
-                var files = System.IO.Directory.GetFiles(ordnerPfad).Where(x => !excludes.Contains(System.IO.Path.GetFileName(x)));
-                foreach (var file in files)
-                {
-                    System.IO.File.Delete(file);
-                }
-            }
-            catch (Exception ex)
-            {
-                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-            }
+            var files = Directory.GetFiles(ordnerPfad).Where(x => !excludes.Contains(Path.GetFileName(x)));
+            foreach (var file in files) File.Delete(file);
+        }
+        catch (Exception ex)
+        {
+            LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
         }
     }
 }
