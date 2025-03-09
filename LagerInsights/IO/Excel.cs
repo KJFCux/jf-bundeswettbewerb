@@ -38,7 +38,7 @@ public static class Excel
                     {
                         SetCellValue(sheet, "A", index, teilnehmende.Nachname);
                         SetCellValue(sheet, "B", index, teilnehmende.Vorname);
-                        SetCellValue(sheet, "C", index, teilnehmende.Geburtsdatum.ToString("yyyy-MM-dd"));
+                        SetCellValue(sheet, "C", index, teilnehmende.Geburtsdatum.ToString("dd.MM.yyyy"));
                         SetCellValue(sheet, "D", index, teilnehmende.Alter.ToString());
                         SetCellValue(sheet, "E", index, teilnehmende.Geschlecht.ToString());
                         SetCellValue(sheet, "F", index, teilnehmende.Plz ?? "");

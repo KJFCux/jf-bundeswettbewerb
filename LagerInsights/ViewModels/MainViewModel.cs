@@ -243,7 +243,7 @@ public class MainViewModel : INotifyPropertyChanged
         return alleMitGeburtstagBeimWettbewerb;
     }
 
-    public List<PersonTeilnehmendenliste> personenMitUnvertraeglichkeitenBeimZeltlager()
+    public List<PersonTeilnehmendenliste> PersonenMitEssgewohnheitenUndUnvertraeglichkeitenBeimZeltlager()
     {
         List<PersonTeilnehmendenliste> alleMitUnvertraeglichkeitenBeimZeltlager = alleTeilnehmenden().Where(p =>
             p.Person.Essgewohnheiten.ToLower() != "alles" ||
@@ -251,6 +251,21 @@ public class MainViewModel : INotifyPropertyChanged
         ).ToList();
         return alleMitUnvertraeglichkeitenBeimZeltlager;
     }
+    public List<PersonTeilnehmendenliste> PersonenMitEssgewohnheitenBeimZeltlager()
+    {
+        List<PersonTeilnehmendenliste> alleMitUnvertraeglichkeitenBeimZeltlager = alleTeilnehmenden().Where(p =>
+            p.Person.Essgewohnheiten.ToLower() != "alles"
+        ).ToList();
+        return alleMitUnvertraeglichkeitenBeimZeltlager;
+    }
+    public List<PersonTeilnehmendenliste> PersonenMitUnvertraeglichkeitenBeimZeltlager()
+    {
+        List<PersonTeilnehmendenliste> alleMitUnvertraeglichkeitenBeimZeltlager = alleTeilnehmenden().Where(p =>
+            p.Person.Unvertraeglichkeiten.ToLower() != "keine"
+        ).ToList();
+        return alleMitUnvertraeglichkeitenBeimZeltlager;
+    }
+
 
     public int AnzahlVegetarisch()
     {
@@ -265,11 +280,20 @@ public class MainViewModel : INotifyPropertyChanged
             p.Person.Essgewohnheiten.ToLower().Contains("vegan")).ToList().Count;
         return alleVegan;
     }
+    public int AnzahlSonstigeEssgewohnheiten()
+    {
+        int alleVegan = alleTeilnehmenden().Where(p =>
+            !p.Person.Essgewohnheiten.ToLower().Contains("vegan") &&
+            !p.Person.Essgewohnheiten.ToLower().Contains("vegetarisch") &&
+            !p.Person.Essgewohnheiten.ToLower().Contains("alles")
+            ).ToList().Count;
+        return alleVegan;
+    }
 
     public int AnzahlUnvertraeglichkeiten()
     {
         int alleUnvertraeglichkeiten = alleTeilnehmenden().Where(p =>
-            p.Person.Unvertraeglichkeiten.ToLower()!="keine").ToList().Count;
+            p.Person.Unvertraeglichkeiten.ToLower() != "keine").ToList().Count;
         return alleUnvertraeglichkeiten;
     }
 

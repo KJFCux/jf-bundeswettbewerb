@@ -23,6 +23,7 @@ public partial class EvaluationView : Window
     private readonly string vorlagenPath = "";
     private string wertungsbogenPath = "";
 
+
     public EvaluationView(MainViewModel mainViewModel)
     {
         try
@@ -225,7 +226,7 @@ public partial class EvaluationView : Window
         {
             ((Button)sender).IsEnabled = false;
             var viewModel = (MainViewModel)DataContext;
-            List<PersonTeilnehmendenliste> personenMitUnvertraeglichkeiten = viewModel.personenMitUnvertraeglichkeitenBeimZeltlager();
+            List<PersonTeilnehmendenliste> personenMitUnvertraeglichkeiten = viewModel.PersonenMitEssgewohnheitenUndUnvertraeglichkeitenBeimZeltlager();
             string htmlUnvertraeglichektein_Vorlage = Properties.Resources.ResourceManager.GetString("UnvertraeglichkeitenListe");
             string htmlUnvertraeglichkeitenTabellenzeile_Vorlage = Properties.Resources.ResourceManager.GetString("UnvertraeglichkeitenlisteTabellenzeile");
             var pDF = new PDF();
@@ -249,6 +250,21 @@ public partial class EvaluationView : Window
             htmlUnvertraeglichektein_Vorlage =
                 htmlUnvertraeglichektein_Vorlage.Replace("{ort}", einstellungen.Veranstaltungsort);
 
+
+
+            htmlUnvertraeglichektein_Vorlage =
+                htmlUnvertraeglichektein_Vorlage.Replace("{vegetarisch}", viewModel.AnzahlVegetarisch().ToString());
+            htmlUnvertraeglichektein_Vorlage =
+                htmlUnvertraeglichektein_Vorlage.Replace("{vegan}", viewModel.AnzahlVegan().ToString());
+            htmlUnvertraeglichektein_Vorlage =
+                htmlUnvertraeglichektein_Vorlage.Replace("{sonstige}", viewModel.AnzahlSonstigeEssgewohnheiten().ToString());
+            htmlUnvertraeglichektein_Vorlage =
+                htmlUnvertraeglichektein_Vorlage.Replace("{vertraeg}", viewModel.AnzahlUnvertraeglichkeiten().ToString());
+            htmlUnvertraeglichektein_Vorlage =
+                htmlUnvertraeglichektein_Vorlage.Replace("{insgesamttn}", viewModel.Gruppen.Sum(g => g.Persons.Count).ToString());
+
+            htmlUnvertraeglichektein_Vorlage =
+                htmlUnvertraeglichektein_Vorlage.Replace("{gruppenanzahl}", viewModel.Gruppen.Count().ToString());
 
             var tabelle = string.Empty;
 
