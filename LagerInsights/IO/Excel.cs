@@ -12,7 +12,7 @@ namespace LagerInsights.IO;
 
 public static class Excel
 {
-    public static void ExportExcelGruppen(List<Jugendfeuerwehr> gruppen, string path)
+    public static void ExportExcelGruppen(List<Jugendfeuerwehr> gruppen, string path, MainViewModel viewModel)
     {
         try
         {
@@ -24,23 +24,36 @@ public static class Excel
                 IWorkbook workbook = new XSSFWorkbook(fs);
                 var sheet = workbook.GetSheetAt(0);
 
-                var index = 3;
+
+
+                SetCellValue(sheet, "B", 2, viewModel.alleTeilnehmenden().Count.ToString());
+                SetCellValue(sheet, "B", 4, viewModel.AnzahlUnvertraeglichkeiten().ToString());
+                SetCellValue(sheet, "F", 4, viewModel.AnzahlVegetarisch().ToString());
+                SetCellValue(sheet, "I", 4, viewModel.AnzahlVegan().ToString());
+
+                var index = 10;
+
                 foreach (var gruppe in gruppen)
-                foreach (var teilnehmende in gruppe.Persons)
-                {
-                    SetCellValue(sheet, "A", index, gruppe.Organisationseinheit ?? "");
-                    SetCellValue(sheet, "B", index, gruppe.Feuerwehr);
-                    SetCellValue(sheet, "C", index, gruppe.LagerNr.ToString() ?? "");
-                    SetCellValue(sheet, "D", index, teilnehmende.Geschlecht.ToString());
-                    SetCellValue(sheet, "E", index, teilnehmende.Vorname);
-                    SetCellValue(sheet, "F", index, teilnehmende.Nachname);
-                    SetCellValue(sheet, "G", index, teilnehmende.Geburtsdatum.ToString("yyyy-MM-dd"));
-                    SetCellValue(sheet, "H", index, teilnehmende.Alter.ToString());
-                    SetCellValue(sheet, "I", index, teilnehmende.StatusFriendlyName);
-                    SetCellValue(sheet, "J", index, teilnehmende.Essgewohnheiten);
-                    SetCellValue(sheet, "K", index, teilnehmende.Unvertraeglichkeiten);
-                    index++;
-                }
+                    foreach (var teilnehmende in gruppe.Persons)
+                    {
+                        SetCellValue(sheet, "A", index, teilnehmende.Nachname);
+                        SetCellValue(sheet, "B", index, teilnehmende.Vorname);
+                        SetCellValue(sheet, "C", index, teilnehmende.Geburtsdatum.ToString("yyyy-MM-dd"));
+                        SetCellValue(sheet, "D", index, teilnehmende.Alter.ToString());
+                        SetCellValue(sheet, "E", index, teilnehmende.Geschlecht.ToString());
+                        SetCellValue(sheet, "F", index, teilnehmende.Plz ?? "");
+                        SetCellValue(sheet, "G", index, teilnehmende.Ort ?? "");
+                        SetCellValue(sheet, "H", index, teilnehmende.Strasse ?? "");
+                        SetCellValue(sheet, "I", index, teilnehmende.StatusFriendlyName);
+                        SetCellValue(sheet, "J", index, gruppe.Feuerwehr);
+                        SetCellValue(sheet, "K", index, gruppe.Organisationseinheit ?? "");
+                        SetCellValue(sheet, "L", index, teilnehmende.Essgewohnheiten);
+                        SetCellValue(sheet, "M", index, teilnehmende.Unvertraeglichkeiten);
+                        SetCellValue(sheet, "N", index, gruppe.ZuBezahlenderBetrag.ToString("C"));
+                        SetCellValue(sheet, "O", index, gruppe.GezahlterBeitrag?.ToString("C") ?? "");
+
+                        index++;
+                    }
 
                 using (var writeFileStream = new FileStream(file, FileMode.Create, FileAccess.Write))
                 {
@@ -74,4 +87,5 @@ public static class Excel
         for (var i = 0; i < columnName.Length; i++) columnIndex = columnIndex * 26 + (columnName[i] - 'A') + 1;
         return columnIndex - 1;
     }
+
 }

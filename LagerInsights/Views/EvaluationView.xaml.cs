@@ -111,7 +111,7 @@ public partial class EvaluationView : Window
     }
 
 
-    private async void ExportPDFPGeburtstagsliste_Click(object sender, RoutedEventArgs e)
+    private async void ExportPDFGeburtstagsliste_Click(object sender, RoutedEventArgs e)
     {
         try
         {
@@ -136,7 +136,7 @@ public partial class EvaluationView : Window
                 htmlGeburtstagsliste_Vorlage.Replace("{datum_heute}", DateTime.Now.ToString("dd.MM.yyyy HH:mm"));
             htmlGeburtstagsliste_Vorlage =
                 htmlGeburtstagsliste_Vorlage.Replace("{titel}", einstellungen.Veranstaltungstitel);
-            htmlGeburtstagsliste_Vorlage = htmlGeburtstagsliste_Vorlage.Replace("{datum_veranstaltung}", 
+            htmlGeburtstagsliste_Vorlage = htmlGeburtstagsliste_Vorlage.Replace("{datum_veranstaltung}",
                 $"{einstellungen.Veranstaltungsdatum:dd.MM.yyyy} - {einstellungen.VeranstaltungsdatumEnde:dd.MM.yyyy}");
             htmlGeburtstagsliste_Vorlage =
                 htmlGeburtstagsliste_Vorlage.Replace("{ort}", einstellungen.Veranstaltungsort);
@@ -215,6 +215,116 @@ public partial class EvaluationView : Window
             ((Button)sender).IsEnabled = true;
             LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
             MessageBox.Show($"Export der Geburtstagsliste fehlgeschlagen!\n{ex}", "Fehler: Export Geburtstagsliste",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private async void ExportPDFUnvertraeglichkeitenListe_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            ((Button)sender).IsEnabled = false;
+            var viewModel = (MainViewModel)DataContext;
+            List<PersonTeilnehmendenliste> personenMitUnvertraeglichkeiten = viewModel.personenMitUnvertraeglichkeitenBeimZeltlager();
+            string htmlUnvertraeglichektein_Vorlage = Properties.Resources.ResourceManager.GetString("UnvertraeglichkeitenListe");
+            string htmlUnvertraeglichkeitenTabellenzeile_Vorlage = Properties.Resources.ResourceManager.GetString("UnvertraeglichkeitenlisteTabellenzeile");
+            var pDF = new PDF();
+            List<string> pfade = new();
+
+            var einstellungen = viewModel.Einstellungen;
+
+            //Logo und Titel direkt in der Vorlage ändern
+            if (File.Exists(einstellungen.Logopfad))
+                htmlUnvertraeglichektein_Vorlage = htmlUnvertraeglichektein_Vorlage.Replace("{logo}",
+                    $"data:image/jpeg;base64,{Bilder.readBase64(einstellungen.Logopfad)}");
+            else
+                htmlUnvertraeglichektein_Vorlage = htmlUnvertraeglichektein_Vorlage.Replace("{logo}",
+                    $"data:image/svg+xml;base64,{Convert.ToBase64String(Properties.Resources.Deutsche_Jugendfeuerwehr)}");
+            htmlUnvertraeglichektein_Vorlage =
+                htmlUnvertraeglichektein_Vorlage.Replace("{datum_heute}", DateTime.Now.ToString("dd.MM.yyyy HH:mm"));
+            htmlUnvertraeglichektein_Vorlage =
+                htmlUnvertraeglichektein_Vorlage.Replace("{titel}", einstellungen.Veranstaltungstitel);
+            htmlUnvertraeglichektein_Vorlage = htmlUnvertraeglichektein_Vorlage.Replace("{datum_veranstaltung}",
+                $"{einstellungen.Veranstaltungsdatum:dd.MM.yyyy} - {einstellungen.VeranstaltungsdatumEnde:dd.MM.yyyy}");
+            htmlUnvertraeglichektein_Vorlage =
+                htmlUnvertraeglichektein_Vorlage.Replace("{ort}", einstellungen.Veranstaltungsort);
+
+
+            var tabelle = string.Empty;
+
+            var anzahlSeiten = 1;
+            var maxProSeite = 26; //26 Passen auf eine Seite
+            var seitenindex = 1;
+            var alleSeiten = Convert.ToInt32(Math.Ceiling(personenMitUnvertraeglichkeiten.Count() / (float)maxProSeite));
+
+            foreach (var person in personenMitUnvertraeglichkeiten)
+            {
+                if (seitenindex >= maxProSeite)
+                {
+                    var unvertraeglichkeitenHTML = htmlUnvertraeglichektein_Vorlage;
+                    unvertraeglichkeitenHTML = unvertraeglichkeitenHTML.Replace("{tabellenzeile}", tabelle);
+                    unvertraeglichkeitenHTML = unvertraeglichkeitenHTML.Replace("{akt_seite}", anzahlSeiten.ToString());
+                    unvertraeglichkeitenHTML = unvertraeglichkeitenHTML.Replace("{alle_seiten}", alleSeiten.ToString());
+                    var pfadinIf = Path.Combine(exportPath, $"{Guid.NewGuid()}.pdf");
+                    if (!await pDF.ConvertHtmlFileToPdf(unvertraeglichkeitenHTML, pfadinIf))
+                    {
+                        MessageBox.Show("Export der Unverträglichkeiten Liste fehlgeschlagen!",
+                            "Fehler: Export Unverträglichkeiten Liste", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
+                    pfade.Add(pfadinIf);
+
+                    //Alles wieder zurücksetzen
+                    tabelle = string.Empty;
+                    seitenindex = 1;
+                    anzahlSeiten++;
+                }
+
+                var currentTabellenzeile = htmlUnvertraeglichkeitenTabellenzeile_Vorlage;
+                currentTabellenzeile =
+                    currentTabellenzeile.Replace("{name}", $"{person.Person.Vorname} {person.Person.Nachname}");
+                currentTabellenzeile = currentTabellenzeile.Replace("{feuerwehr}", $"{person.Feuerwehr}");
+                currentTabellenzeile = currentTabellenzeile.Replace("{essgewohnheiten}", $"{person.Person.Essgewohnheiten}");
+                currentTabellenzeile = currentTabellenzeile.Replace("{unvertraeglichkeiten}",
+                    $"{person.Person.Unvertraeglichkeiten}");
+
+                tabelle += currentTabellenzeile;
+                seitenindex++;
+            }
+
+
+            //Letzte Seite direkt in die Vorlage einfügen und in die Liste packen.
+            htmlUnvertraeglichektein_Vorlage = htmlUnvertraeglichektein_Vorlage.Replace("{tabellenzeile}", tabelle);
+            htmlUnvertraeglichektein_Vorlage = htmlUnvertraeglichektein_Vorlage.Replace("{akt_seite}", anzahlSeiten.ToString());
+            htmlUnvertraeglichektein_Vorlage =
+                htmlUnvertraeglichektein_Vorlage.Replace("{alle_seiten}", anzahlSeiten.ToString());
+            var pfad = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
+            var erfolgreich = await pDF.ConvertHtmlFileToPdf(htmlUnvertraeglichektein_Vorlage, pfad);
+            if (!erfolgreich)
+            {
+                MessageBox.Show("Export der Unverträglichkeiten Liste fehlgeschlagen!", "Fehler: Export Unverträglichkeiten Liste",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            pfade.Add(pfad);
+            //Alle Geburtstagslisten in eine Datei speichern und die anderen Dateien löschen
+            pDF.MergePdfFiles(pfade, Path.Combine(exportPath, "Unverträglichkeiten-Liste.pdf"), true, "Unverträglichkeiten Liste",
+                "Liste von Teilnehmenden die Unverträglichkeiten oder besondere Essgewohnheiten haben",
+                einstellungen.Veranstaltungsleitung);
+
+            //Liste mit einer Übersicht über die Unvertrtäglichkeiten erstellen
+
+            ShowExportMessageBox("Export der Unverträglichkeiten Liste abgeschlossen!\nZielverzeichnis öffnen?",
+                "Export Unverträglichkeiten Liste", exportPath);
+            ((Button)sender).IsEnabled = true;
+        }
+        catch (Exception ex)
+        {
+            ((Button)sender).IsEnabled = true;
+            LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
+            MessageBox.Show($"Export der Unverträglichkeiten Liste fehlgeschlagen!\n{ex}", "Fehler: Export Unverträglichkeiten Liste",
                 MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
@@ -452,7 +562,7 @@ public partial class EvaluationView : Window
         {
             ((Button)sender).IsEnabled = false;
             var viewModel = (MainViewModel)DataContext;
-            Excel.ExportExcelGruppen(viewModel.Gruppen.OrderBy(x => x.Feuerwehr).ToList(), exportPath);
+            Excel.ExportExcelGruppen(viewModel.Gruppen.OrderBy(x => x.Feuerwehr).ToList(), exportPath, viewModel);
 
             ShowExportMessageBox("Export der Gruppen abgeschlossen!\nZielverzeichnis öffnen?",
                 "Export Gruppen", exportPath);

@@ -111,25 +111,44 @@ namespace LagerInsights.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional //EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;
+        ///&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; xmlns:v=&quot;urn:schemas-microsoft-com:vml&quot; xmlns:o=&quot;urn:schemas-microsoft-com:office:office&quot;&gt;
+        ///&lt;head&gt;
+        ///    &lt;link href=&quot;https://fonts.googleapis.com/css?family=Open+Sans&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;&gt;
+        ///    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;
+        ///    &lt;style&gt;
+        ///        @page {
+        ///            size: A4;
+        ///            margi [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
-        internal static string GeburtstagsListeTabellenzeile {
+        internal static string GeburtstagsListe {
             get {
-                return ResourceManager.GetString("GeburtstagsListeTabellenzeile", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
-        /// </summary>
-        internal static string GeburtstagsListe
-        {
-            get
-            {
                 return ResourceManager.GetString("GeburtstagsListe", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;tr&gt;
+        ///    &lt;td style=&quot;padding-left: 2mm; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {name}
+        ///    &lt;/td&gt;
+        ///    &lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {feuerwehr}
+        ///    &lt;/td&gt;
+        ///    &lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {alter}
+        ///    &lt;/td&gt;
+        ///    &lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {geburtsdatum}
+        ///    &lt;/td&gt;
+        ///&lt;/tr&gt; ähnelt.
+        /// </summary>
+        internal static string GeburtstagslisteTabellenzeile {
+            get {
+                return ResourceManager.GetString("GeburtstagslisteTabellenzeile", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
@@ -159,19 +178,19 @@ namespace LagerInsights.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die &lt;tr&gt;
-        ///	&lt;td style=&quot;text-align: right; padding-right: 2mm; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
-        ///		{nr}
-        ///	&lt;/td&gt;
-        ///	&lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
-        ///		{vorname}
-        ///	&lt;/td&gt;
-        ///	&lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
-        ///		{nachname}
-        ///	&lt;/td&gt;
-        ///	&lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
-        ///		{geschlecht}
-        ///	&lt;/td&gt;
-        ///	&lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow:  [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///    &lt;td style=&quot;text-align: right; padding-right: 2mm; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {nr}
+        ///    &lt;/td&gt;
+        ///    &lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {vorname}
+        ///    &lt;/td&gt;
+        ///    &lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {nachname}
+        ///    &lt;/td&gt;
+        ///    &lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {geschlecht}
+        ///    &lt;/td&gt;
+        ///    &lt;td style=&quot;white [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         internal static string KontrollblattTabellenzeile {
             get {
@@ -218,23 +237,62 @@ namespace LagerInsights.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die &lt;tr&gt;
-        ///	&lt;td style=&quot;text-align: right; padding-right: 2mm; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
-        ///		{lagernr}
-        ///	&lt;/td&gt;
-        ///	&lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
-        ///		{gruppenname}
-        ///	&lt;/td&gt;
-        ///	&lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
-        ///		{ort}
-        ///	&lt;/td&gt;
-        ///	&lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
-        ///		{teilnehmende}
-        ///	&lt;/td&gt;
+        ///    &lt;td style=&quot;text-align: right; padding-right: 2mm; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {lagernr}
+        ///    &lt;/td&gt;
+        ///    &lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {gruppenname}
+        ///    &lt;/td&gt;
+        ///    &lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {ort}
+        ///    &lt;/td&gt;
+        ///    &lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {teilnehmende}
+        ///    &lt;/td&gt;
         ///&lt;/tr&gt; ähnelt.
         /// </summary>
         internal static string PlatzierungsListeTabellenzeile {
             get {
                 return ResourceManager.GetString("PlatzierungsListeTabellenzeile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional //EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;
+        ///&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; xmlns:v=&quot;urn:schemas-microsoft-com:vml&quot; xmlns:o=&quot;urn:schemas-microsoft-com:office:office&quot;&gt;
+        ///&lt;head&gt;
+        ///    &lt;link href=&quot;https://fonts.googleapis.com/css?family=Open+Sans&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;&gt;
+        ///    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;
+        ///    &lt;style&gt;
+        ///        @page {
+        ///            size: A4;
+        ///            margi [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        internal static string UnvertraeglichkeitenListe {
+            get {
+                return ResourceManager.GetString("UnvertraeglichkeitenListe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;tr&gt;
+        ///    &lt;td style=&quot;padding-left: 2mm; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {name}
+        ///    &lt;/td&gt;
+        ///    &lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {feuerwehr}
+        ///    &lt;/td&gt;
+        ///    &lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {alter}
+        ///    &lt;/td&gt;
+        ///    &lt;td style=&quot;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;&quot;&gt;
+        ///        {geburtsdatum}
+        ///    &lt;/td&gt;
+        ///&lt;/tr&gt; ähnelt.
+        /// </summary>
+        internal static string UnvertraeglichkeitenlisteTabellenzeile {
+            get {
+                return ResourceManager.GetString("UnvertraeglichkeitenlisteTabellenzeile", resourceCulture);
             }
         }
         

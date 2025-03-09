@@ -226,7 +226,7 @@ public class MainViewModel : INotifyPropertyChanged
     {
         List<PersonTeilnehmendenliste> alleTeilnehmenden = gruppen
             .SelectMany(gruppe => gruppe.Persons.Select(person => new PersonTeilnehmendenliste
-                { Feuerwehr = gruppe.Feuerwehr, Person = person }))
+            { Feuerwehr = gruppe.Feuerwehr, Person = person }))
             .ToList();
 
         return alleTeilnehmenden;
@@ -241,6 +241,36 @@ public class MainViewModel : INotifyPropertyChanged
             p.Person.Geburtsdatum.Month <= Einstellungen.VeranstaltungsdatumEnde.Month
         ).ToList();
         return alleMitGeburtstagBeimWettbewerb;
+    }
+
+    public List<PersonTeilnehmendenliste> personenMitUnvertraeglichkeitenBeimZeltlager()
+    {
+        List<PersonTeilnehmendenliste> alleMitUnvertraeglichkeitenBeimZeltlager = alleTeilnehmenden().Where(p =>
+            p.Person.Essgewohnheiten.ToLower() != "alles" ||
+            p.Person.Unvertraeglichkeiten.ToLower() != "keine"
+        ).ToList();
+        return alleMitUnvertraeglichkeitenBeimZeltlager;
+    }
+
+    public int AnzahlVegetarisch()
+    {
+        int alleVegetarisch = alleTeilnehmenden().Where(p =>
+            p.Person.Essgewohnheiten.ToLower().Contains("vegetarisch")).ToList().Count;
+        return alleVegetarisch;
+    }
+
+    public int AnzahlVegan()
+    {
+        int alleVegan = alleTeilnehmenden().Where(p =>
+            p.Person.Essgewohnheiten.ToLower().Contains("vegan")).ToList().Count;
+        return alleVegan;
+    }
+
+    public int AnzahlUnvertraeglichkeiten()
+    {
+        int alleUnvertraeglichkeiten = alleTeilnehmenden().Where(p =>
+            p.Person.Unvertraeglichkeiten.ToLower()!="keine").ToList().Count;
+        return alleUnvertraeglichkeiten;
     }
 
 

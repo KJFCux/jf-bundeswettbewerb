@@ -328,7 +328,7 @@
                         <Button Content="Essgewohnheiten Liste"
                                 ToolTip="Exportiert alle Geburtstagskinder in eine Liste"
                                 Margin="10,10,10,10"
-                                Click="ExportPDFPGeburtstagsliste_Click"
+                                Click="ExportPDFUnvertraeglichkeitenListe_Click"
                                 x:Name="ExportPDFPEssensliste_Button">
 
                             <Button.ContentTemplate>
@@ -348,7 +348,7 @@
                         <Button Content="Geburtstagsliste"
                                 ToolTip="Exportiert alle Geburtstagskinder in eine Liste"
                                 Margin="10,10,10,10"
-                                Click="ExportPDFPGeburtstagsliste_Click"
+                                Click="ExportPDFGeburtstagsliste_Click"
                                 x:Name="ExportPDFPGeburtstagsliste_Button">
 
                             <Button.ContentTemplate>
