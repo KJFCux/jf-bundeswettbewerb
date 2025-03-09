@@ -1,11 +1,11 @@
-name: "Deploy BWB-Auswertung"
+name: "Deploy LagerInsights"
 
 on:
     push:
         tags:
-            - "BWB-Auswertung/v*"
+            - "LagerInsights/v*"
 env:
-    PROJECT_PATH: BWB-Auswertung/BWB-Auswertung.csproj
+    PROJECT_PATH: LagerInsights/LagerInsights.csproj
 jobs:
     deploy:
         runs-on: windows-latest
@@ -34,5 +34,5 @@ jobs:
             - uses: csexton/release-asset-action@v2
               with:
                 github-token: ${{ secrets.GITHUB_TOKEN }}                
-                pattern: BWB-Auswertung/bin/Release/net8.0-windows10.0.19041.0/win-x64/publish/*.exe
+                pattern: LagerInsights/bin/Release/net8.0-windows10.0.19041.0/win-x64/publish/*.exe
                 release-url: ${{steps.create_release.outputs.upload_url }}
