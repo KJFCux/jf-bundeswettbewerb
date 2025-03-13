@@ -312,6 +312,10 @@ public partial class EvaluationView : Window
 
             //Letzte Seite direkt in die Vorlage einfügen und in die Liste packen.
             htmlUnvertraeglichektein_Vorlage = htmlUnvertraeglichektein_Vorlage.Replace("{tabellenzeile}", tabelle);
+
+            //Alle Vorkommen von "Sonstiges" abkürzen
+            htmlUnvertraeglichektein_Vorlage = htmlUnvertraeglichektein_Vorlage.Replace("Sonstiges:", "");
+
             htmlUnvertraeglichektein_Vorlage = htmlUnvertraeglichektein_Vorlage.Replace("{akt_seite}", anzahlSeiten.ToString());
             htmlUnvertraeglichektein_Vorlage =
                 htmlUnvertraeglichektein_Vorlage.Replace("{alle_seiten}", anzahlSeiten.ToString());
@@ -355,8 +359,8 @@ public partial class EvaluationView : Window
             List<Task<bool>> tasks = new()
             {
                 helperExportPDFPlatzierungsliste(viewModel.Gruppen.OrderBy(x => x.Feuerwehr).ToList(), "Gruppenliste"),
-                helperExportPDFPlatzierungsliste(viewModel.Gruppen.OrderByDescending(x => x.Feuerwehr).ToList(),
-                    "GruppenlisteAbsteigend")
+             //   helperExportPDFPlatzierungsliste(viewModel.Gruppen.OrderByDescending(x => x.Feuerwehr).ToList(),
+              //      "GruppenlisteAbsteigend")
             };
             await Task.WhenAll(tasks);
 
@@ -421,8 +425,8 @@ public partial class EvaluationView : Window
                     var pfadinIf = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
                     if (!await pDF.ConvertHtmlFileToPdf(platzierungslisteHTML, pfadinIf))
                     {
-                        MessageBox.Show("Export der Platzierungsliste fehlgeschlagen!",
-                            "Fehler: Export Platzierungsliste", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("Export der Gruppenliste fehlgeschlagen!",
+                            "Fehler: Export Gruppenliste", MessageBoxButton.OK, MessageBoxImage.Error);
                         return false;
                     }
 
@@ -435,10 +439,12 @@ public partial class EvaluationView : Window
                 }
 
                 var currentTabellenzeile = htmlPlatzierungslisteTabellenzeile_Vorlage;
-                currentTabellenzeile = currentTabellenzeile.Replace("{lagernr}", $"{gruppe.LagerNr}.");
+                currentTabellenzeile = currentTabellenzeile.Replace("{zeltdorf}", $"{gruppe.Zeltdorf}");
                 currentTabellenzeile = currentTabellenzeile.Replace("{gruppenname}", $"{gruppe.Feuerwehr}");
                 currentTabellenzeile = currentTabellenzeile.Replace("{ort}", $"{gruppe.Organisationseinheit}");
                 currentTabellenzeile = currentTabellenzeile.Replace("{teilnehmende}", $"{gruppe.AnzahlTeilnehmer}");
+                currentTabellenzeile = currentTabellenzeile.Replace("{anmeldung_link}", $"{gruppe.UrlderAnmeldung}");
+                currentTabellenzeile = currentTabellenzeile.Replace("{anmeldung}", $"{gruppe.TimeStampAnmeldung?.ToString("dd.MM.")}");
 
                 tabelle += currentTabellenzeile;
                 seitenindex++;
@@ -463,15 +469,15 @@ public partial class EvaluationView : Window
             pfade.Add(pfad);
             //Alle Platzierungslisten in eine Datei speichern und die anderen Dateien löschen
             pDF.MergePdfFiles(pfade, Path.Combine(exportPath, $"{dateiname}.pdf"), true,
-                "Platzierungsliste aller Gruppen",
-                $"Platzierungsliste für den {einstellungen.Veranstaltungstitel} am {einstellungen.Veranstaltungsdatum.ToShortDateString()} in {einstellungen.Veranstaltungsort}.",
+                "Gruppenliste aller Teilnehmenden Wehren",
+                $"Gruppenliste für das {einstellungen.Veranstaltungstitel} vom {einstellungen.Veranstaltungsdatum.ToShortDateString()} - {einstellungen.VeranstaltungsdatumEnde.ToShortDateString()} in {einstellungen.Veranstaltungsort}.",
                 einstellungen.Veranstaltungsleitung);
             return true;
         }
         catch (Exception ex)
         {
             LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
-            MessageBox.Show($"Export der Platzierungslisten fehlgeschlagen!\n{ex}", "Fehler: Export Platzierungslisten",
+            MessageBox.Show($"Export der Gruppenliste fehlgeschlagen!\n{ex}", "Fehler: Export Gruppenliste",
                 MessageBoxButton.OK, MessageBoxImage.Error);
             return false;
         }

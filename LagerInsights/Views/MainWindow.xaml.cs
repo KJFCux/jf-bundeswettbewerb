@@ -11,6 +11,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -117,7 +118,7 @@ public partial class MainWindow : MetroWindow
                         Process.Start(
                             new ProcessStartInfo(
                                     Settings.Default.GithubDownloadURL.Replace("{release}", latestRelease.tag_name))
-                                { UseShellExecute = true });
+                            { UseShellExecute = true });
                 }
             }
         }
@@ -495,9 +496,26 @@ public partial class MainWindow : MetroWindow
 
                     foreach (var gefundeneGruppe in gefundeneGruppen)
                     {
-                        //Der gezahlte Betrag soll nicht überschrieben werden.
-                        if (gefundeneGruppe.GezahlterBeitrag != null && gefundeneGruppe.GezahlterBeitrag != 0)
+                        // Der gezahlte Betrag soll nur überschrieben werden, wenn der Zeitstempel neuer ist
+                        if (gefundeneGruppe.TimeStampGezahlterBeitrag != null &&
+                            (jugendfeuerwehr.TimeStampGezahlterBeitrag == null || gefundeneGruppe.TimeStampGezahlterBeitrag > jugendfeuerwehr.TimeStampGezahlterBeitrag))
+                        {
                             jugendfeuerwehr.GezahlterBeitrag = gefundeneGruppe.GezahlterBeitrag;
+                        }
+
+                        // Das Zeltdorf soll nur überschrieben werden, wenn der Zeitstempel neuer ist
+                        if (gefundeneGruppe.TimeStampZeltdorf != null &&
+                            (jugendfeuerwehr.TimeStampZeltdorf == null || gefundeneGruppe.TimeStampZeltdorf > jugendfeuerwehr.TimeStampZeltdorf))
+                        {
+                            jugendfeuerwehr.Zeltdorf = gefundeneGruppe.Zeltdorf;
+                        }
+
+                        // Die Einverständniserklärung soll nur überschrieben werden, wenn der Zeitstempel neuer ist
+                        if (gefundeneGruppe.TimeStampEinverstaendniserklaerung != null &&
+                            (jugendfeuerwehr.TimeStampEinverstaendniserklaerung == null || gefundeneGruppe.TimeStampEinverstaendniserklaerung > jugendfeuerwehr.TimeStampEinverstaendniserklaerung))
+                        {
+                            jugendfeuerwehr.Einverstaendniserklaerung = gefundeneGruppe.Einverstaendniserklaerung;
+                        }
 
                         //Hinweis an Benutzer das die Gruppe existiert
                         if (showOverrideInfo)
@@ -529,9 +547,14 @@ public partial class MainWindow : MetroWindow
             var einstellungen = viewModel.Einstellungen;
 
             //Download Pfad erstellen
-            var localPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                AppDomain.CurrentDomain.FriendlyName, "ftp");
-            _ = Directory.CreateDirectory(localPath);
+            var downloadLocalPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                AppDomain.CurrentDomain.FriendlyName, "ftp", "download");
+            _ = Directory.CreateDirectory(downloadLocalPath);
+
+            //Upload Pfad erstellen
+            var uploadlocalPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                AppDomain.CurrentDomain.FriendlyName, "ftp", "upload");
+            _ = Directory.CreateDirectory(uploadlocalPath);
 
             // Liste zum Speichern der Dateipfade
             List<string> filePaths = new();
@@ -540,15 +563,18 @@ public partial class MainWindow : MetroWindow
                        einstellungen.Password))
             {
                 sftp.Connect();
+
                 var files = sftp.ListDirectory(einstellungen.Pfad);
 
+                //Alle Dateien herunterladen
                 foreach (var file in files)
+                {
                     if (!file.IsDirectory && file.Name.EndsWith(".xml") &&
                         !file.Name.Contains(
                             "_")) //Mit _ gefolgt von Timestamp werden die Revisionen angelegt. Diese nicht herunterladen.
                     {
                         var localFilePath =
-                            Path.Combine(localPath, file.Name);
+                            Path.Combine(downloadLocalPath, file.Name);
                         using (Stream fileStream = File.Create(localFilePath))
                         {
                             sftp.DownloadFile(file.FullName, fileStream);
@@ -556,18 +582,49 @@ public partial class MainWindow : MetroWindow
 
                         filePaths.Add(localFilePath);
                     }
+                }
 
                 sftp.Disconnect();
             }
 
             // Heruntergeladene Daten importieren.
+            //Hier wird auch sichergestellt das immer nur die neuesten Werte aus beiden Anmeldungen behalten werden.
             foreach (var file in filePaths) OpenDeserializerForFile(file, true, false);
+
+            // Alle Dateien zum Server hochladen 
+            List<string> dateienZumUpload = new List<string>();
+            foreach (var gruppe in viewModel.Gruppen)
+            {
+                string dateiname = gruppe.FeuerwehrOhneSonderzeichen;
+                string extracted = ExtractAnmeldungParameter(gruppe.UrlderAnmeldung);
+                if (extracted != "")
+                    dateiname = extracted;
+
+                var datei = Path.Combine($"{dateiname}.xml");
+                WriteFile.writeText(Path.Combine(uploadlocalPath, datei), SerializeXML<Jugendfeuerwehr>.Serialize(gruppe));
+                dateienZumUpload.Add(datei);
+            }
+            using (var sftp = new SftpClient(einstellungen.Hostname, 22, einstellungen.Username,
+                       einstellungen.Password))
+            {
+                sftp.Connect();
+
+                //Alle Dateien hochladen
+                foreach (var datei in dateienZumUpload)
+                {
+                    sftp.UploadFile(File.OpenRead(Path.Combine(uploadlocalPath, datei)),
+                        $"{einstellungen.Pfad}/{datei}", true);
+                }
+                sftp.Disconnect();
+
+            }
 
             //Filterung entfernen
             FertigeGruppenAusblenden_Checkbox.IsChecked = false;
 
             //Importiertes einsortieren
             viewModel.Sort(sortComboBox.SelectedIndex);
+
 
             MessageBox.Show("Anmeldungen erfolgreich Synchronisiert!", "SFTP Sync erfolgreich", MessageBoxButton.OK,
                 MessageBoxImage.Information);
@@ -578,6 +635,13 @@ public partial class MainWindow : MetroWindow
             MessageBox.Show($"Fehler beim Herunterladen der Dateien\n{ex}", "Fehler: SFTP Sync", MessageBoxButton.OK,
                 MessageBoxImage.Error);
         }
+    }
+
+    private string ExtractAnmeldungParameter(string url)
+    {
+        var uri = new Uri(url);
+        var query = HttpUtility.ParseQueryString(uri.Query);
+        return query["anmeldung"] ?? "";
     }
 
     private void LoadSettings()

@@ -307,6 +307,7 @@
                             </Button.ContentTemplate>
                         </Button>
                         <Button Content="Urkunden"
+                                IsEnabled="False"
                                 ToolTip="Speichert das Overlay für alle Urkunden als PDF und erzeugt eine Excel Liste für evtl. Serienbriefe"
                                 Margin="10,10,10,10"
                                 Click="ExportUrkunden_Click"

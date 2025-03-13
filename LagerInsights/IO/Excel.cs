@@ -36,6 +36,8 @@ public static class Excel
                 foreach (var gruppe in gruppen)
                     foreach (var teilnehmende in gruppe.Persons)
                     {
+                        string unterlagen = gruppe.Einverstaendniserklaerung.HasValue && gruppe.Einverstaendniserklaerung.Value ? "Ja" : "Nein";
+
                         SetCellValue(sheet, "A", index, teilnehmende.Nachname);
                         SetCellValue(sheet, "B", index, teilnehmende.Vorname);
                         SetCellValue(sheet, "C", index, teilnehmende.Geburtsdatum.ToString("dd.MM.yyyy"));
@@ -51,6 +53,8 @@ public static class Excel
                         SetCellValue(sheet, "M", index, teilnehmende.Unvertraeglichkeiten);
                         SetCellValue(sheet, "N", index, gruppe.ZuBezahlenderBetrag.ToString("C"));
                         SetCellValue(sheet, "O", index, gruppe.GezahlterBeitrag?.ToString("C") ?? "");
+                        SetCellValue(sheet, "P", index, unterlagen);
+                        SetCellValue(sheet, "Q", index, gruppe.Zeltdorf ?? "Nicht zugewiesen");
 
                         index++;
                     }

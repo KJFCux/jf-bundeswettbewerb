@@ -26,11 +26,57 @@ public class Jugendfeuerwehr : INotifyPropertyChanged
 
     public DateTime? TimeStampAnmeldung { get; set; }
     public DateTime? TimeStampAenderung { get; set; }
-    public decimal? GezahlterBeitrag { get; set; }
+    private decimal? gezahlterBeitrag;
+    public decimal? GezahlterBeitrag
+    {
+        get => gezahlterBeitrag;
+        set
+        {
+            if (gezahlterBeitrag != value)
+            {
+                gezahlterBeitrag = value;
+                TimeStampGezahlterBeitrag = DateTime.Now;
+                OnPropertyChanged();
+            }
+        }
+    }
+    public DateTime? TimeStampGezahlterBeitrag { get; set; } //Änderungszeitpunkt des gezahlten Beitrages zum Abgleich mit den Versionen
 
-    public bool? Einverstaendniserklaerung { get; set; }
 
-    public string? Zeltdorf { get; set; }
+    private bool? einverstaendniserklaerung;
+
+    public bool? Einverstaendniserklaerung
+    {
+        get => einverstaendniserklaerung;
+        set
+        {
+            if (einverstaendniserklaerung != value)
+            {
+                einverstaendniserklaerung = value;
+                TimeStampEinverstaendniserklaerung = DateTime.Now;
+                OnPropertyChanged();
+            }
+        }
+    }
+    public DateTime? TimeStampEinverstaendniserklaerung { get; set; } //Änderungszeitpunkt der Einverständniserklärung zum Abgleich mit den Versionen
+
+    private string? zeltdorf;
+
+    public string? Zeltdorf
+    {
+        get => zeltdorf;
+        set
+        {
+            if (zeltdorf != value)
+            {
+                zeltdorf = value;
+                TimeStampZeltdorf = DateTime.Now;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public DateTime? TimeStampZeltdorf { get; set; } //Änderungszeitpunkt des Zeltdorfes zum Abgleich mit den Versionen
 
     public decimal? Teilnehmerbeitrag
     {

@@ -28,6 +28,8 @@ public class Verantwortlicher : INotifyPropertyChanged
     public Gender Geschlecht { get; set; }
 
     public string Strasse { get; set; }
+
+    [XmlElement("PLZ")]
     public string Plz { get; set; }
     public string Ort { get; set; }
     public string Funktion { get; set; }
