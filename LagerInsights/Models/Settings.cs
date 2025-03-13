@@ -29,6 +29,7 @@ public class Settings
         Art = Art.OFFENESGEWAESSER;
         Veranstaltungsdatum = DateTime.Today;
         VeranstaltungsdatumEnde = DateTime.Today.AddDays(7);
+        Zeltdoerfer = new List<string>();
     }
 
     public string Veranstaltungsort { get; set; }

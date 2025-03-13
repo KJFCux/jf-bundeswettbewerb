@@ -412,6 +412,39 @@
                                 </StackPanel>
 
                             </GroupBox>
+
+                            <GroupBox Header="Orga">
+
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Zugewiesenes Zeltdorf:"
+                                               HorizontalAlignment="Left"
+                                               Margin="20,10,20,10"
+                                               ToolTip="Diesem Zeltdorf ist die Gruppe zugewiesen"
+                                               VerticalAlignment="Top"
+                                               FontSize="24"
+                                               FontWeight="Bold" />
+                                        
+
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+
+                                        <Label Content="Einverständniserklärungen vorhanden:"
+                                               Margin="20,10,10,10"
+                                               ToolTip=""
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="24"
+                                               FontWeight="Bold" />
+                                        <CheckBox IsChecked="{Binding SelectedItem.Einverstaendniserklaerung, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  Margin="10,10,20,10"
+                                                  VerticalAlignment="Center"
+                                                  FontSize="24"
+                                                  FontWeight="Bold" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                            </GroupBox>
                         </StackPanel>
                         <!--Group Box, Alles für die Bahn-->
                         <StackPanel Orientation="Vertical"
