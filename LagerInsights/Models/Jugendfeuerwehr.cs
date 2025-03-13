@@ -28,6 +28,10 @@ public class Jugendfeuerwehr : INotifyPropertyChanged
     public DateTime? TimeStampAenderung { get; set; }
     public decimal? GezahlterBeitrag { get; set; }
 
+    public bool? Einverstaendniserklaerung { get; set; }
+
+    public string? Zeltdorf { get; set; }
+
     public decimal? Teilnehmerbeitrag
     {
         get => teilnehmerbeitrag;

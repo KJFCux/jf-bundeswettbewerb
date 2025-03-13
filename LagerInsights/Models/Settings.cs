@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Markup;
@@ -52,6 +53,8 @@ public class Settings
     public string Unterschriftrechts { get; set; }
 
     public decimal Teilnehmendenbeitrag { get; set; }
+
+    public List<string> Zeltdoerfer { get; set; }
 
     //FTP Daten
     public string Hostname { get; set; }

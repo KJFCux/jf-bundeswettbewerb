@@ -258,6 +258,7 @@ public class MainViewModel : INotifyPropertyChanged
         ).ToList();
         return alleMitUnvertraeglichkeitenBeimZeltlager;
     }
+
     public List<PersonTeilnehmendenliste> PersonenMitUnvertraeglichkeitenBeimZeltlager()
     {
         List<PersonTeilnehmendenliste> alleMitUnvertraeglichkeitenBeimZeltlager = alleTeilnehmenden().Where(p =>
