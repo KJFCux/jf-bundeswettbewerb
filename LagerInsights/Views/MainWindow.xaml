@@ -291,9 +291,9 @@
                                                 <DataTemplate>
                                                     <StackPanel Orientation="Horizontal">
                                                         <iconPacks:PackIconModern Width="22"
-                                                            Height="22"
-                                                            VerticalAlignment="Center"
-                                                            Kind="Email" />
+                                                                                  Height="22"
+                                                                                  VerticalAlignment="Center"
+                                                                                  Kind="Email" />
                                                         <TextBlock Margin="0 0 0 0"
                                                                    VerticalAlignment="Center"
                                                                    Text="{Binding}" />
@@ -329,9 +329,9 @@
                                                 <DataTemplate>
                                                     <StackPanel Orientation="Horizontal">
                                                         <iconPacks:PackIconModern Width="22"
-                                                            Height="22"
-                                                            VerticalAlignment="Center"
-                                                            Kind="Phone" />
+                                                                                  Height="22"
+                                                                                  VerticalAlignment="Center"
+                                                                                  Kind="Phone" />
                                                         <TextBlock Margin="0 0 0 0"
                                                                    VerticalAlignment="Center"
                                                                    Text="{Binding}" />
@@ -363,14 +363,13 @@
                                                VerticalAlignment="Top"
                                                FontSize="24"
                                                FontWeight="Bold" />
-                                        <Label
-                                            Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.ZuBezahlenderBetrag, Mode=OneWay, TargetNullValue=0, StringFormat={}{0:C2}}"
-                                            Margin="0,10,2,10"
-                                            ToolTip="Diesen Betrag muss die Gruppe bezahlen"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontSize="20"
-                                            FontWeight="Bold" />
+                                        <Label Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.ZuBezahlenderBetrag, Mode=OneWay, TargetNullValue=0, StringFormat={}{0:C2}}"
+                                               Margin="0,10,2,10"
+                                               ToolTip="Diesen Betrag muss die Gruppe bezahlen"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="20"
+                                               FontWeight="Bold" />
                                         <Label Content="€"
                                                Margin="0,10,40,10"
                                                ToolTip=""
@@ -424,7 +423,12 @@
                                                VerticalAlignment="Top"
                                                FontSize="24"
                                                FontWeight="Bold" />
-                                        
+                                        <ComboBox ItemsSource="{Binding Zeltdoerfer}"
+                                                  SelectedItem="{Binding SelectedItem.Zeltdorf, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  Margin="20,10,20,10"
+                                                  MinWidth="200"
+                                                  FontSize="24"
+                                                  VerticalAlignment="Center" />
 
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
@@ -436,11 +440,12 @@
                                                VerticalAlignment="Center"
                                                FontSize="24"
                                                FontWeight="Bold" />
-                                        <CheckBox IsChecked="{Binding SelectedItem.Einverstaendniserklaerung, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                  Margin="10,10,20,10"
-                                                  VerticalAlignment="Center"
-                                                  FontSize="24"
-                                                  FontWeight="Bold" />
+                                        <mah:ToggleSwitch Margin="10,10,20,10"
+                                                          OnContent="Alles ist vorhanden"
+                                                          OffContent="Unterlagen fehlen"
+                                                          IsOn="{Binding SelectedItem.Einverstaendniserklaerung, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                          Width="200" />
+
                                     </StackPanel>
                                 </StackPanel>
 
@@ -460,11 +465,10 @@
                                                FontSize="24"
                                                FontWeight="Bold"
                                                HorizontalAlignment="Center" />
-                                        <TextBlock
-                                            Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.AnzahlTeilnehmer,Mode=OneWay}"
-                                            FontSize="24"
-                                            FontWeight="Bold"
-                                            HorizontalAlignment="Center" />
+                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.AnzahlTeilnehmer,Mode=OneWay}"
+                                                   FontSize="24"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center" />
 
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical"
@@ -474,41 +478,37 @@
                                                ToolTip="Gesamtanzahl 2. Geschwisterkind"
                                                FontSize="20"
                                                HorizontalAlignment="Center" />
-                                        <TextBlock
-                                            Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Anzahl2Geschwisterkind,Mode=OneWay}"
-                                            FontSize="16"
-                                            FontWeight="Bold"
-                                            HorizontalAlignment="Center" />
+                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Anzahl2Geschwisterkind,Mode=OneWay}"
+                                                   FontSize="16"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center" />
 
                                         <Label Content="Anzahl 3. Geschwisterkind"
                                                ToolTip="Gesamtanzahl 3. Geschwisterkind"
                                                FontSize="20"
                                                HorizontalAlignment="Center" />
-                                        <TextBlock
-                                            Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Anzahl3Geschwisterkind,Mode=OneWay}"
-                                            FontSize="16"
-                                            FontWeight="Bold"
-                                            HorizontalAlignment="Center" />
+                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Anzahl3Geschwisterkind,Mode=OneWay}"
+                                                   FontSize="16"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center" />
 
                                         <Label Content="Anzahl Betreuer"
                                                ToolTip="Gesamtanzahl Betreuer"
                                                FontSize="20"
                                                HorizontalAlignment="Center" />
-                                        <TextBlock
-                                            Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.AnzahlBetreuer,Mode=OneWay}"
-                                            FontSize="16"
-                                            FontWeight="Bold"
-                                            HorizontalAlignment="Center" />
+                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.AnzahlBetreuer,Mode=OneWay}"
+                                                   FontSize="16"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center" />
 
                                         <Label Content="Anzahl Mitarbeiter"
                                                ToolTip="Gesamtanzahl Mitarbeiter"
                                                FontSize="20"
                                                HorizontalAlignment="Center" />
-                                        <TextBlock
-                                            Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.AnzahlMitarbeiter,Mode=OneWay}"
-                                            FontSize="16"
-                                            FontWeight="Bold"
-                                            HorizontalAlignment="Center" />
+                                        <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.AnzahlMitarbeiter,Mode=OneWay}"
+                                                   FontSize="16"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center" />
                                     </StackPanel>
 
                                 </StackPanel>
@@ -525,13 +525,12 @@
                                                VerticalAlignment="Top"
                                                FontSize="20" />
 
-                                        <Label
-                                            Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.TimeStampAnmeldung,Mode=OneWay,FallbackValue=NN,TargetNullValue=NN}"
-                                            HorizontalAlignment="Center"
-                                            Margin="0,0,0,10"
-                                            ToolTip="Datum und Uhrzeit wann die Gruppe angemeldet oder angelegt wurde"
-                                            VerticalAlignment="Top"
-                                            FontSize="16" />
+                                        <Label Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.TimeStampAnmeldung,Mode=OneWay,FallbackValue=NN,TargetNullValue=NN}"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,10"
+                                               ToolTip="Datum und Uhrzeit wann die Gruppe angemeldet oder angelegt wurde"
+                                               VerticalAlignment="Top"
+                                               FontSize="16" />
 
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical"
@@ -560,9 +559,9 @@
                                                 <DataTemplate>
                                                     <StackPanel Orientation="Horizontal">
                                                         <iconPacks:PackIconModern Width="22"
-                                                            Height="22"
-                                                            VerticalAlignment="Center"
-                                                            Kind="PageCopy" />
+                                                                                  Height="22"
+                                                                                  VerticalAlignment="Center"
+                                                                                  Kind="PageCopy" />
                                                         <TextBlock Margin="0 0 0 0"
                                                                    VerticalAlignment="Center"
                                                                    Text="{Binding}" />
@@ -647,39 +646,35 @@
                             Grid.Row="0"
                             Grid.Column="0"
                             Grid.ColumnSpan="2">
-                    <Label
-                        Content="Gruppen"
-                        HorizontalAlignment="Center"
-                        Margin="0,0,0,10"
-                        VerticalAlignment="Center"
-                        FontSize="24"
-                        FontWeight="Bold" />
+                    <Label Content="Gruppen"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,10"
+                           VerticalAlignment="Center"
+                           FontSize="24"
+                           FontWeight="Bold" />
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
-                        <Label
-                            Content="Bezahlte Wehren ausblenden"
-                            ToolTip="Bei Auswahl werden alle Wehren ausgeblendet, die bereits vollständig bezahlt haben."
-                            HorizontalAlignment="Center"
-                            Margin="0,0,0,0"
-                            VerticalAlignment="Center"
-                            FontSize="16" />
-                        <CheckBox
-                            ToolTip="Bei Auswahl werden alle Wehren ausgeblendet, die bereits vollständig bezahlt haben.."
-                            Checked="FertigeGruppenAusblenden"
-                            Unchecked="FertigeGruppenAusblenden"
-                            x:Name="FertigeGruppenAusblenden_Checkbox"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Margin="0,0,0,0" />
+                        <Label Content="Bezahlte Wehren ausblenden"
+                               ToolTip="Bei Auswahl werden alle Wehren ausgeblendet, die bereits vollständig bezahlt haben."
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="16" />
+                        <CheckBox ToolTip="Bei Auswahl werden alle Wehren ausgeblendet, die bereits vollständig bezahlt haben.."
+                                  Checked="FertigeGruppenAusblenden"
+                                  Unchecked="FertigeGruppenAusblenden"
+                                  x:Name="FertigeGruppenAusblenden_Checkbox"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  Margin="0,0,0,0" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
-                        <Label
-                            Content="Sortieren nach:"
-                            HorizontalAlignment="Center"
-                            Margin="0,0,0,0"
-                            VerticalAlignment="Center"
-                            FontSize="16" />
+                        <Label Content="Sortieren nach:"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="16" />
                         <ComboBox x:Name="sortComboBox"
                                   SelectedIndex="0"
                                   SelectionChanged="sortComboBox_SelectionChanged"

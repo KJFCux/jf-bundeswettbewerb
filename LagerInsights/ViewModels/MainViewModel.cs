@@ -17,6 +17,7 @@ public class MainViewModel : INotifyPropertyChanged
     private ObservableCollection<Art> artList;
     private Settings einstellungen;
     private ObservableCollection<Jugendfeuerwehr> gruppen;
+    private ObservableCollection<string> zeltdoerfer;
 
 
     private ICommand removeGroupCommand;
@@ -36,6 +37,8 @@ public class MainViewModel : INotifyPropertyChanged
             Art.OFFENESGEWAESSER,
             Art.KEINEVORGABEZEIT
         };
+        Zeltdoerfer = new ObservableCollection<string>(Einstellungen.Zeltdoerfer);
+
     }
 
     public ObservableCollection<Art> ArtList
@@ -113,6 +116,16 @@ public class MainViewModel : INotifyPropertyChanged
             //}
         }
     }
+    public ObservableCollection<string> Zeltdoerfer
+    {
+        get => zeltdoerfer;
+        set
+        {
+            zeltdoerfer = value;
+            OnPropertyChanged(nameof(Zeltdoerfer));
+        }
+    }
+
 
     public List<PersonTeilnehmendenliste> PersonenTeilnehmendenliste => alleTeilnehmenden();
     public List<PersonTeilnehmendenliste> PersonenMitGeburtstagBeimZeltlager => personenMitGeburtstagBeimWettbewerb();
@@ -146,6 +159,11 @@ public class MainViewModel : INotifyPropertyChanged
     public void OverrideSettings(Settings einstellungenNew)
     {
         Einstellungen = einstellungenNew;
+        Zeltdoerfer.Clear();
+        foreach (var zeltdorf in einstellungenNew.Zeltdoerfer)
+        {
+            Zeltdoerfer.Add(zeltdorf);
+        }
         OnPropertyChanged(nameof(Einstellungen));
     }
 

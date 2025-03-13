@@ -10,7 +10,7 @@
         WindowStartupLocation="CenterScreen"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="Einstellungen"
-        Height="800"
+        Height="1020"
         Width="1020"
         SnapsToDevicePixels="True"
         SizeChanged="Window_SizeChanged">
@@ -126,7 +126,13 @@
                                        FontSize="18"
                                        Height="40"
                                        FontWeight="Bold" />
-
+                                <Label Content="Zeltdörfer:"
+                                       HorizontalAlignment="Right"
+                                       Margin="10,10,0,10"
+                                       VerticalAlignment="Center"
+                                       FontSize="18"
+                                       Height="40"
+                                       FontWeight="Bold" />
                             </StackPanel>
                             <StackPanel Grid.Column="2"
                                         Grid.Row="0">
@@ -201,9 +207,9 @@
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal">
                                                     <iconPacks:PackIconMaterial Width="22"
-                                                        Height="22"
-                                                        VerticalAlignment="Center"
-                                                        Kind="Upload" />
+                                                                                Height="22"
+                                                                                VerticalAlignment="Center"
+                                                                                Kind="Upload" />
                                                     <TextBlock Margin="4 0 0 0"
                                                                VerticalAlignment="Center"
                                                                Text="{Binding}" />
@@ -270,9 +276,9 @@
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal">
                                                     <iconPacks:PackIconMaterial Width="22"
-                                                        Height="22"
-                                                        VerticalAlignment="Center"
-                                                        Kind="Upload" />
+                                                                                Height="22"
+                                                                                VerticalAlignment="Center"
+                                                                                Kind="Upload" />
                                                     <TextBlock Margin="4 0 0 0"
                                                                VerticalAlignment="Center"
                                                                Text="{Binding}" />
@@ -299,9 +305,9 @@
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal">
                                                     <iconPacks:PackIconMaterial Width="22"
-                                                        Height="22"
-                                                        VerticalAlignment="Center"
-                                                        Kind="Upload" />
+                                                                                Height="22"
+                                                                                VerticalAlignment="Center"
+                                                                                Kind="Upload" />
                                                     <TextBlock Margin="4 0 0 0"
                                                                VerticalAlignment="Center"
                                                                Text="{Binding}" />
@@ -310,6 +316,33 @@
                                         </Button.ContentTemplate>
                                     </Button>
 
+                                </StackPanel>
+                                <StackPanel>
+                                    <ListBox ItemsSource="{Binding Zeltdoerfer}"
+                                             SelectionMode="Multiple"
+                                             Margin="10,10,0,10"
+                                             x:Name="ZeltdorfListBox"
+                                             Height="100"
+                                             Width="200"
+                                             MinWidth="200"
+                                             MaxWidth="800"
+                                             BorderThickness="1"
+                                             BorderBrush="DimGray"
+                                             HorizontalAlignment="Left"
+                                             VerticalAlignment="Center" />
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Left"
+                                                Margin="10,10,0,10">
+                                        <TextBox Width="200"
+                                                 ToolTip="Neues Zeltdorf hinzufügen"
+                                                 x:Name="TextBoxZeltdorf"
+                                                 Margin="0,0,10,0" />
+                                        <Button Content="Hinzufügen"
+                                                Click="ButtonAddZeltdorf_Click"/>
+                                        <Button Content="Entfernen"
+                                                Click="ButtonRemoveZeltdorf_Click"
+                                                Margin="10,0,0,0" />
+                                    </StackPanel>
                                 </StackPanel>
                             </StackPanel>
                         </Grid>

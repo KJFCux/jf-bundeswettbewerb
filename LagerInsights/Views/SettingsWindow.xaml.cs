@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -146,6 +147,50 @@ public partial class SettingsWindow : Window
             LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name,
                 EventLogEntryType.Error);
             MessageBox.Show($"Fehler beim Festlegen von Einstellungen\n{ex}", "Fehler: Einstellungen",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+    private void ButtonAddZeltdorf_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var viewModel = (MainViewModel)DataContext;
+
+            string neuesZeltdorf = TextBoxZeltdorf.Text;
+            if (!viewModel.Zeltdoerfer.Contains(neuesZeltdorf))
+            {
+                // Füge das Element in der ListBox und den Einstellungen hinzu
+                viewModel.Zeltdoerfer.Add(neuesZeltdorf);
+                viewModel.Einstellungen.Zeltdoerfer.Add(neuesZeltdorf);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
+            MessageBox.Show($"Fehler beim hinzufügen eines Zeltdorfes\n{ex}", "Fehler: Neues Zeltdorf",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void ButtonRemoveZeltdorf_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var viewModel = (MainViewModel)DataContext;
+
+            var selectedZeltdoerfer = ZeltdorfListBox.SelectedItems.Cast<string>().ToList();
+            foreach (var zeltdorf in selectedZeltdoerfer)
+            {
+                // Entferne das Element aus der ListBox und den Einstellungen
+                viewModel.Zeltdoerfer.Remove(zeltdorf);
+                viewModel.Einstellungen.Zeltdoerfer.Remove(zeltdorf);
+            }
+        }
+        catch (Exception ex)
+        {
+            LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
+            MessageBox.Show($"Fehler beim löschen eines Zeltdorfes\n{ex}", "Fehler: Lösche Zeltdorf",
                 MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
