@@ -1,0 +1,2369 @@
+﻿<mah:MetroWindow x:Class="BWB_Auswertung.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                 xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:local="clr-namespace:BWB_Auswertung"
+                 Title="DJF Bundeswettbewerb Auswertungsprogramm"
+                 Width="1600"
+                 Height="900"
+                 GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
+                 ResizeMode="CanResizeWithGrip"
+                 WindowStartupLocation="CenterScreen"
+                 WindowState="Maximized"
+                 mc:Ignorable="d"
+                 DataContext="{Binding RelativeSource={RelativeSource Self}}"
+                 Closing="Window_Closing"
+                 SnapsToDevicePixels="True"
+                 SizeChanged="Window_SizeChanged">
+    <Window.LayoutTransform>
+        <ScaleTransform ScaleX="{Binding ScaleFactor}"
+                        ScaleY="{Binding ScaleFactor}" />
+    </Window.LayoutTransform>
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Save"
+                        Executed="CommandSaving"
+                        CanExecute="CommandSaving_CanExecute" />
+    </Window.CommandBindings>
+    <Window.Resources>
+        <local:AgeToColorConverter x:Key="AgeToColorConverter" />
+        <local:BirthdayToColorConverter x:Key="BirthdayToColorConverter" />
+    </Window.Resources>
+
+    <mah:MetroWindow.LeftWindowCommands>
+        <mah:WindowCommands>
+            <Button x:Name="LaunchWebsiteButton"
+                    Click="LaunchWebsite_Click"
+                    ToolTip="Öffne die Webseite">
+                <Button.ContentTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconOcticons Width="22"
+                                                        Height="22"
+                                                        VerticalAlignment="Center"
+                                                        Kind="Flame" />
+                            <TextBlock Margin="4 0 0 0"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </Button.ContentTemplate>
+            </Button>
+        </mah:WindowCommands>
+    </mah:MetroWindow.LeftWindowCommands>
+
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+
+            <Menu Background="{DynamicResource MahApps.Brushes.Accent}">
+
+                <MenuItem Header="Datei"
+                          Background="{DynamicResource MahApps.Brushes.Accent}"
+                          Foreground="{DynamicResource MahApps.Brushes.IdealForeground}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconModern Width="22"
+                                                  Height="22"
+                                                  VerticalAlignment="Center"
+                                                  Kind="Folder" />
+                    </MenuItem.Icon>
+                    <MenuItem x:Name="Importieren"
+                              Header="Importieren"
+                              ToolTip="Gruppendaten aus anderem Export oder der Online Abfrage Importieren"
+                              Click="Import_Click"
+                              Foreground="{DynamicResource MahApps.Brushes.Text}">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconMaterial Width="22"
+                                                        Height="22"
+                                                        VerticalAlignment="Center"
+                                                        Kind="ApplicationImport" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem x:Name="Exportieren"
+                              Header="Exportieren"
+                              ToolTip="Gruppendaten Exportieren"
+                              Click="Export_Click"
+                              Foreground="{DynamicResource MahApps.Brushes.Text}">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconMaterial Width="22"
+                                                        Height="22"
+                                                        VerticalAlignment="Center"
+                                                        Kind="ApplicationExport" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem x:Name="ImportierenExcel"
+                              Header="Excel Importieren"
+                              ToolTip="Meldebögen im Excel Format Importieren"
+                              Click="ImportExcel_Click"
+                              Foreground="{DynamicResource MahApps.Brushes.Text}">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconMaterial Width="22"
+                                                        Height="22"
+                                                        VerticalAlignment="Center"
+                                                        Kind="MicrosoftExcel" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Auswertung"
+                          Background="{DynamicResource MahApps.Brushes.Accent}"
+                          Foreground="{DynamicResource MahApps.Brushes.IdealForeground}"
+                          Click="OpenEvaluation_Click">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Width="22"
+                                                    Height="22"
+                                                    VerticalAlignment="Center"
+                                                    Kind="ChartBox" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </Menu>
+            <Button x:Name="EinstellungenButton"
+                    Content="Einstellungen"
+                    ToolTip="Einstellungen für das BWB-Auswertungsprogramm"
+                    Click="OpenSettingsButton_Click">
+                <Button.ContentTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconModern Width="22"
+                                                      Height="22"
+                                                      VerticalAlignment="Center"
+                                                      Kind="Settings" />
+                            <TextBlock Margin="4 0 0 0"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </Button.ContentTemplate>
+            </Button>
+            <Menu>
+                <MenuItem Header="Info">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconModern Width="22"
+                                                  Height="22"
+                                                  VerticalAlignment="Center"
+                                                  Kind="InformationCircle" />
+                    </MenuItem.Icon>
+                    <MenuItem Header="Über"
+                              Click="About_Click">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconFontAwesome Width="22"
+                                                           Height="22"
+                                                           Kind="BuildingRegular" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Hilfe"
+                              Click="Hilfe_Click">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconModern Width="22"
+                                                      Height="22"
+                                                      Kind="Question" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Github"
+                              Click="Github_Click"
+                              ToolTip="Öffne die Github Seite des Projektes">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconModern Width="22"
+                                                      Height="22"
+                                                      Kind="SocialGithubOctocat" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Version"
+                              Click="version_Click">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconCodicons Width="22"
+                                                        Height="22"
+                                                        Kind="Versions" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
+    <!--  INHALTSFENSTER  -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <TabControl>
+                <TabItem Header="Gruppe">
+                    <Grid Background="white">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Vertical"
+                                    Grid.Column="0"
+                                    Grid.Row="0">
+                            <GroupBox Header="Daten zur Jugendfeuerwehr">
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Start-Nummer:"
+                                               HorizontalAlignment="Left"
+                                               Margin="20,10,20,10"
+                                               VerticalAlignment="Top"
+                                               ToolTip="Die Startnummer wird nach Reihenfolge der Startzeit für den A-Teil automatisch vergeben. Vergabe erfolgt aufsteigend in dieser Reihenfolge: Startzeit A-Teil, Startbahn A-Teil, Gruppenname"
+                                               FontSize="24" />
+                                        <Label Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.StartNr,Mode=OneWay}"
+                                               Margin="0,10,40,10"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               ToolTip="Die Startnummer wird nach Reihenfolge der Startzeit für den A-Teil automatisch vergeben"
+                                               FontSize="20" />
+
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Feuerwehr:"
+                                               ToolTip="Name der Feuerwehr (BSP.: FF Musterstadt)"
+                                               HorizontalAlignment="Left"
+                                               Margin="20,10,20,10"
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+                                        <TextBox TextWrapping="Wrap"
+                                                 Text="{Binding SelectedItem.Feuerwehr, ElementName=gruppenListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 ToolTip="Name der Feuerwehr (BSP.: FF Musterstadt)"
+                                                 MinWidth="600"
+                                                 MaxWidth="800"
+                                                 FontSize="24"
+                                                 Margin="105,0,0,0"
+                                                 Height="44" />
+                                    </StackPanel>
+                                    <!--Organisationseinheit-->
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Gruppen-Name:"
+                                               HorizontalAlignment="Left"
+                                               ToolTip="Name der Gruppe (BSP.: Musterstadt 1)"
+                                               Margin="20,10,20,10"
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+                                        <TextBox TextWrapping="Wrap"
+                                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.GruppenName,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 ToolTip="Name der Gruppe (BSP.: Musterstadt 1)"
+                                                 Margin="50,10,20,10"
+                                                 MinWidth="600"
+                                                 MaxWidth="800"
+                                                 FontSize="24"
+                                                 Height="44" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <StackPanel Orientation="Vertical">
+                                            <Label Content="Organisationseinheit:"
+                                                   HorizontalAlignment="Left"
+                                                   Margin="20,10,0,0"
+                                                   ToolTip="Untergeordnete Organisationseinheit. Bei Kreisentscheiden z.B. die Gemeinde aus der die Gruppe kommt."
+                                                   VerticalAlignment="Center"
+                                                   FontSize="24" />
+                                            <Label Content="(Kreis, Abschnitt, Gemeinde, ...)"
+                                                   HorizontalAlignment="Left"
+                                                   Margin="20,0,0,10"
+                                                   ToolTip="Untergeordnete Organisationseinheit. Bei Kreisentscheiden z.B. die Gemeinde aus der die Gruppe kommt."
+                                                   VerticalAlignment="Center"
+                                                   FontSize="14" />
+                                        </StackPanel>
+                                        <TextBox TextWrapping="Wrap"
+                                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Organisationseinheit,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 Margin="18,10,20,10"
+                                                 ToolTip="Untergeordnete Organisationseinheit. Bei Kreisentscheiden z.B. die Gemeinde aus der die Gruppe kommt."
+                                                 MinWidth="600"
+                                                 MaxWidth="800"
+                                                 FontSize="24"
+                                                 Height="44" />
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Gesamt Alter:"
+                                               HorizontalAlignment="Left"
+                                               Margin="20,10,20,10"
+                                               ToolTip="Gesamtes Alter der Gruppe aufsummiert. Die Ersatzperson zählt hier nicht mit."
+                                               VerticalAlignment="Top"
+                                               FontSize="20" />
+                                        <Label   Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.GesamtAlter,Mode=OneWay}"
+                                                 Margin="0,10,20,10"
+                                                 ToolTip="Gesamtes Alter der Gruppe aufsummiert. Die Ersatzperson zählt hier nicht mit."
+                                                 VerticalAlignment="Center"
+                                                 FontSize="20" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                            </GroupBox>
+                            <GroupBox Header="Auswertung">
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Platzierung:"
+                                               HorizontalAlignment="Left"
+                                               Margin="20,10,20,10"
+                                               ToolTip="Die Platzierung wird entsprechend der Wettbewerbsregeln für den Bundeswettbewerb automatisch berechnet"
+                                               VerticalAlignment="Top"
+                                               FontSize="24"
+                                               FontWeight="Bold" />
+
+                                        <Label Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.Platz,Mode=OneWay, TargetNullValue=0}"
+                                               Margin="0,10,40,10"
+                                               ToolTip="Die Platzierung wird entsprechend der Wettbewerbsregeln für den Bundeswettbewerb automatisch berechnet"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="20"
+                                               FontWeight="Bold" />
+                                        <CheckBox Grid.Column="4"
+                                                  Grid.Row="3"
+                                                  Content="Gruppe ohne Wertung"
+                                                  Margin="40,20,0,0"
+                                                  ToolTip="Die Gruppe kann von einer Wertung ausgenommen werden. In diesem Fall wird die Gruppe an das Ende der Platzierungsliste gesetzt."
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Top"
+                                                  FontSize="20"
+                                                  FontWeight="Bold"
+                                                  IsChecked="{Binding ElementName=gruppenListBox, Path=SelectedItem.OhneWertung, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=false}" />
+                                        <TextBox TextWrapping="Wrap"
+                                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Losentscheid,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 Margin="80,10,20,10"
+                                                 Width="40"
+                                                 FontSize="24"
+                                                 ToolTip="Für den Fall einer Punktgleichheit, auch nach den Entscheidungskriterien der Wettbewerbsordnung, kann hier ein vorgenommener Losentscheid eingetragen werden. Wird hier nichts eingetragen wird bei Punktgleichheit nach Auswertung aller anderen Kriterien automatisch ein Losentscheid vorgenommen."
+                                                 Height="40" />
+                                        <Label Content="Losentscheid"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,10,20,10"
+                                               VerticalAlignment="Center"
+                                               FontSize="20"
+                                               ToolTip="Für den Fall einer Punktgleichheit, auch nach den Entscheidungskriterien der Wettbewerbsordnung, kann hier ein vorgenommener Losentscheid eingetragen werden. Wird hier nichts eingetragen, wird bei Punktgleichheit nach Auswertung aller anderen Kriterien automatisch ein Losentscheid vorgenommen."
+                                               FontWeight="Bold" />
+                                        <TextBlock Margin="0,10,20,10"
+                                                   TextWrapping="Wrap"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="12"
+                                                   Text=""
+                                                   Width="458" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Vorgabezeit A-Teil:"
+                                               HorizontalAlignment="Left"
+                                               ToolTip="Die Vorgabezeit für den A-Teil ergibt sich aus der Einstellung Unterflurhydrant oder Offenes Gewässer"
+                                               Margin="20,10,0,10"
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+                                        <Label HorizontalAlignment="Left"
+                                               Margin="0,10,40,10"
+                                               ToolTip="Die Vorgabezeit für den A-Teil ergibt sich aus der Einstellung Unterflurhydrant oder Offenes Gewässer"
+                                               VerticalAlignment="Top"
+                                               FontSize="24">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Einstellungen.Vorgabezeit}" />
+                                                <TextBlock Text=" Sekunden" />
+                                            </StackPanel>
+                                        </Label>
+                                        <Label Content="Sollzeit B-Teil:"
+                                               HorizontalAlignment="Left"
+                                               Margin="20,10,0,10"
+                                               ToolTip="Die Sollzeit für den B-Teil wird entsprechend der Wettbewerbsordnung berechnet. Die Ersatzperson zählt nicht."
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+                                        <Label HorizontalAlignment="Left"
+                                               Margin="0,10,40,10"
+                                               ToolTip="Die Sollzeit für den B-Teil wird entsprechend der Wettbewerbsordnung berechnet. Die Ersatzperson zählt nicht."
+                                               VerticalAlignment="Top"
+                                               FontSize="24">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.SollZeitBTeilInMinutenString,Mode=OneWay }" />
+                                                <TextBlock Text=" Minuten" />
+                                            </StackPanel>
+                                        </Label>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Punkte A-Teil:"
+                                               HorizontalAlignment="Left"
+                                               Margin="20,10,0,10"
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+                                        <Label   Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.PunkteATeil,Mode=OneWay}"
+                                                 Margin="0,10,20,10"
+                                                 VerticalAlignment="Center"
+                                                 FontSize="24" />
+                                        <Label Content="Punkte B-Teil:"
+                                               HorizontalAlignment="Left"
+                                               Margin="20,10,0,10"
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+                                        <Label   Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.PunkteBTeil,Mode=OneWay}"
+                                                 Margin="0,10,20,10"
+                                                 VerticalAlignment="Center"
+                                                 FontSize="24" />
+                                        <Label Content="Gesamteindruck:"
+                                               HorizontalAlignment="Left"
+                                               Margin="20,10,0,10"
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+                                        <Label   Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.Gesamteindruck,Mode=OneWay}"
+                                                 Margin="0,10,20,10"
+                                                 VerticalAlignment="Center"
+                                                 FontSize="24" />
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Punkte Gesamt:"
+                                               HorizontalAlignment="Left"
+                                               Margin="20,10,0,10"
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+                                        <Label   Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.GesamtPunkte,Mode=OneWay}"
+                                                 Margin="0,10,20,10"
+                                                 VerticalAlignment="Center"
+                                                 FontSize="24"
+                                                 FontWeight="Bold" />
+
+                                    </StackPanel>
+
+
+                                </StackPanel>
+
+                            </GroupBox>
+                        </StackPanel>
+                        <!--Group Box, Alles für die Bahn-->
+                        <StackPanel Orientation="Vertical"
+                                    Grid.Column="1"
+                                    Grid.Row="0"
+                                    Grid.RowSpan="3">
+                            <GroupBox Header="Wettbewerbsbahnen">
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Vertical"
+                                                Margin="10,10,10,10">
+                                        <Label Content="Bahnnummer A-Teil:"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,10,0,10"
+                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+                                        <mah:NumericUpDown Minimum="1"
+                                                           Interval="1"
+                                                           Width="100"
+                                                           FontSize="20"
+                                                           Value="{Binding ElementName=gruppenListBox, Path=SelectedItem.WettbewerbsbahnATeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Label Content="Startzeit A-Teil:"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,10,0,10"
+                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+                                        <mah:TimePicker SelectedDateTime="{Binding ElementName=gruppenListBox, Path=SelectedItem.StartzeitATeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                        Culture="de-DE"
+                                                        FontSize="20"
+                                                        SelectedTimeFormat="Short" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical"
+                                                Margin="10,10,10,10">
+
+                                        <Label Content="Bahnnummer B-Teil:"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,10,0,10"
+                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+
+                                        <mah:NumericUpDown Minimum="1"
+                                                           Interval="1"
+                                                           Width="100"
+                                                           FontSize="20"
+                                                           Value="{Binding ElementName=gruppenListBox, Path=SelectedItem.WettbewerbsbahnBTeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Label Content="Startzeit B-Teil:"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,10,0,10"
+                                               ToolTip="Durch das eingeben der Startzeiten können die Gruppen nach diesen sortiert werden. Außerdem werden verschiedene Exportfunktionen möglich."
+                                               VerticalAlignment="Top"
+                                               FontSize="24" />
+                                        <mah:TimePicker SelectedDateTime="{Binding ElementName=gruppenListBox, Path=SelectedItem.StartzeitBTeil,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                        Culture="de-DE"
+                                                        FontSize="20"
+                                                        SelectedTimeFormat="Short" />
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                            </GroupBox>
+                            <GroupBox Header="Anmeldeinformationen">
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Vertical"
+                                                Margin="10,10,10,10">
+                                        <Label Content="Zeitpunkt der Anmeldung:"
+                                               HorizontalAlignment="center"
+                                               Margin="0,10,0,0"
+                                               ToolTip="Datum und Uhrzeit wann die Gruppe angemeldet oder angelegt wurde"
+                                               VerticalAlignment="Top"
+                                               FontSize="20" />
+
+                                        <Label Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.TimeStampAnmeldung,Mode=OneWay,FallbackValue=NN,TargetNullValue=NN}"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,10"
+                                               ToolTip="Datum und Uhrzeit wann die Gruppe angemeldet oder angelegt wurde"
+                                               VerticalAlignment="Top"
+                                               FontSize="16" />
+
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical"
+                                                Margin="10,0,10,10">
+                                        <Label Content="URL dieser Anmeldung:"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,0"
+                                               ToolTip="Mit der URL kann auch nachträglich noch eine Anmeldung bearbeitet werden."
+                                               VerticalAlignment="Top"
+                                               FontSize="20" />
+                                        <TextBlock HorizontalAlignment="Center"
+                                                   Margin="0,0,0,0"
+                                                   Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.UrlderAnmeldung,Mode=OneWay,FallbackValue=NN,TargetNullValue=NN}"
+                                                   TextWrapping="Wrap"
+                                                   x:Name="UrlderAnmeldung"
+                                                   ToolTip="Anhand des Dateinamens kann die URL für die Bearbeitung einer Anmeldung ermittelt werden."
+                                                   VerticalAlignment="Top"
+                                                   FontSize="12" />
+
+                                        <Button Content=""
+                                                Width="40"
+                                                Height="40"
+                                                ToolTip="Anmelde URL kopieren"
+                                                Click="AnmeldeURLKopieren_Click">
+                                            <Button.ContentTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <iconPacks:PackIconModern Width="22"
+                                                                                  Height="22"
+                                                                                  VerticalAlignment="Center"
+                                                                                  Kind="PageCopy" />
+                                                        <TextBlock Margin="0 0 0 0"
+                                                                   VerticalAlignment="Center"
+                                                                   Text="{Binding}" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </Button.ContentTemplate>
+                                        </Button>
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                            </GroupBox>
+                        </StackPanel>
+
+
+
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Teilnehmende">
+                    <Grid Background="White"
+                          Name="TeilnehmendenGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="80" />
+                        </Grid.ColumnDefinitions>
+                        <!--Blauer Hintergrund für Ersatzmann-->
+                        <Rectangle Grid.Column="0"
+                                   Grid.ColumnSpan="6"
+                                   Grid.Row="10"
+                                   Grid.RowSpan="1"
+                                   Fill="{DynamicResource MahApps.Brushes.Accent4}" />
+                        <!--Labels für die Pos-->
+                        <Label Grid.Row="0"
+                               Grid.Column="0"
+                               Content="Pos"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="1"
+                               Grid.Column="0"
+                               Content="1"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="2"
+                               Grid.Column="0"
+                               Content="2"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="3"
+                               Grid.Column="0"
+                               Content="3"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="4"
+                               Grid.Column="0"
+                               Content="4"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="5"
+                               Grid.Column="0"
+                               Content="5"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="6"
+                               Grid.Column="0"
+                               Content="6"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="7"
+                               Grid.Column="0"
+                               Content="7"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="8"
+                               Grid.Column="0"
+                               Content="8"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="9"
+                               Grid.Column="0"
+                               Content="9"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <ComboBox x:Name="ersatzComboBox"
+                                  SelectedIndex="0"
+                                  Grid.Row="10"
+                                  Grid.Column="0"
+                                  Margin="0,0,0,0"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Right"
+                                  FontSize="30"
+                                  FontWeight="Bold"
+                                  SelectionChanged="ersatzComboBox_SelectionChanged"
+                                  Width="Auto">
+                            <ComboBoxItem Content="E" />
+                            <ComboBoxItem Content="1" />
+                            <ComboBoxItem Content="2" />
+                            <ComboBoxItem Content="3" />
+                            <ComboBoxItem Content="4" />
+                            <ComboBoxItem Content="5" />
+                            <ComboBoxItem Content="6" />
+                            <ComboBoxItem Content="7" />
+                            <ComboBoxItem Content="8" />
+                            <ComboBoxItem Content="9" />
+                        </ComboBox>
+                        <Label Grid.Row="0"
+                               Grid.Column="1"
+                               Content="Vorname"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="0"
+                               Grid.Column="2"
+                               Content="Nachname"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="0"
+                               Grid.Column="3"
+                               Content="W/M/D"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="24"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="0"
+                               Grid.Column="4"
+                               Content="Geburtsdatum"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="0"
+                               Grid.Column="5"
+                               Content="Alter"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <!--Vornamen-->
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="1"
+                                 TabIndex="1"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[0].Vorname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="2"
+                                 TabIndex="5"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[1].Vorname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="3"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[2].Vorname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="13" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="4"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[3].Vorname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="17" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="5"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[4].Vorname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="21" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="6"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[5].Vorname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="25" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="7"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[6].Vorname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="29" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="8"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[7].Vorname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="33" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="9"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[8].Vorname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="37" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="10"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[9].Vorname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="41" />
+
+                        <!--NACHNAMEN-->
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="1"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[0].Nachname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="2" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="2"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[1].Nachname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="6" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="3"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[2].Nachname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="14" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="4"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[3].Nachname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="18" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="5"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[4].Nachname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="22" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="6"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[5].Nachname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="26" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="7"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[6].Nachname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="30" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="8"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[7].Nachname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="34" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="9"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[8].Nachname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="38" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="10"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[9].Nachname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="42" />
+                        <!--Geschlecht-->
+                        <TextBox Grid.Column="3"
+                                 Grid.Row="1"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[0].Geschlecht, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="80"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="3" />
+                        <TextBox Grid.Column="3"
+                                 Grid.Row="2"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[1].Geschlecht, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="80"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="7" />
+                        <TextBox Grid.Column="3"
+                                 Grid.Row="3"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[2].Geschlecht, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="80"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="15" />
+                        <TextBox Grid.Column="3"
+                                 Grid.Row="4"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[3].Geschlecht, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="80"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="19" />
+                        <TextBox Grid.Column="3"
+                                 Grid.Row="5"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[4].Geschlecht, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="80"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="23" />
+                        <TextBox Grid.Column="3"
+                                 Grid.Row="6"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[5].Geschlecht, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="80"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="27" />
+                        <TextBox Grid.Column="3"
+                                 Grid.Row="7"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[6].Geschlecht, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="80"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="31" />
+                        <TextBox Grid.Column="3"
+                                 Grid.Row="8"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[7].Geschlecht, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="80"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="35" />
+                        <TextBox Grid.Column="3"
+                                 Grid.Row="9"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[8].Geschlecht, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="80"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="39" />
+                        <TextBox Grid.Column="3"
+                                 Grid.Row="10"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[9].Geschlecht, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="80"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 TabIndex="43" />
+
+                        <TextBox Grid.Column="4"
+                                 Grid.Row="1"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[0].Geburtsdatum, StringFormat=d, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="180"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[0].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="4" />
+                        <TextBox Grid.Column="4"
+                                 Grid.Row="2"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[1].Geburtsdatum, StringFormat=d, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="180"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[1].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="8" />
+                        <TextBox Grid.Column="4"
+                                 Grid.Row="3"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[2].Geburtsdatum, StringFormat=d, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="180"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[2].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="16" />
+                        <TextBox Grid.Column="4"
+                                 Grid.Row="4"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[3].Geburtsdatum, StringFormat=d, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="180"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[3].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="20" />
+                        <TextBox Grid.Column="4"
+                                 Grid.Row="5"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[4].Geburtsdatum, StringFormat=d, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="180"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[4].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="24" />
+                        <TextBox Grid.Column="4"
+                                 Grid.Row="6"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[5].Geburtsdatum, StringFormat=d, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="180"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[5].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="28" />
+                        <TextBox Grid.Column="4"
+                                 Grid.Row="7"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[6].Geburtsdatum, StringFormat=d, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="180"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[6].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="32" />
+                        <TextBox Grid.Column="4"
+                                 Grid.Row="8"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[7].Geburtsdatum, StringFormat=d, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="180"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[7].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="36" />
+                        <TextBox Grid.Column="4"
+                                 Grid.Row="9"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[8].Geburtsdatum, StringFormat=d, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="180"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[8].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="40" />
+                        <TextBox Grid.Column="4"
+                                 Grid.Row="10"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[9].Geburtsdatum, StringFormat=d, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="180"
+                                 Width="Auto"
+                                 FontSize="30"
+                                 Foreground="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[9].Geburtsdatum, Converter={StaticResource BirthdayToColorConverter}}"
+                                 TabIndex="44" />
+                        <!--Alter-->
+                        <Label Grid.Row="1"
+                               Grid.Column="5"
+                               Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[0].Alter, Mode=OneWay}"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30">
+                            <Label.Foreground>
+                                <Binding ElementName="gruppenListBox"
+                                         Path="SelectedItem.Persons[0].Alter"
+                                         Mode="OneWay"
+                                         Converter="{StaticResource AgeToColorConverter}" />
+                            </Label.Foreground>
+                        </Label>
+                        <Label Grid.Row="2"
+                               Grid.Column="5"
+                               Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[1].Alter, Mode=OneWay}"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30">
+                            <Label.Foreground>
+                                <Binding ElementName="gruppenListBox"
+                                         Path="SelectedItem.Persons[1].Alter"
+                                         Mode="OneWay"
+                                         Converter="{StaticResource AgeToColorConverter}" />
+                            </Label.Foreground>
+                        </Label>
+                        <Label Grid.Row="3"
+                               Grid.Column="5"
+                               Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[2].Alter, Mode=OneWay}"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30">
+                            <Label.Foreground>
+                                <Binding ElementName="gruppenListBox"
+                                         Path="SelectedItem.Persons[2].Alter"
+                                         Mode="OneWay"
+                                         Converter="{StaticResource AgeToColorConverter}" />
+                            </Label.Foreground>
+                        </Label>
+                        <Label Grid.Row="4"
+                               Grid.Column="5"
+                               Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[3].Alter, Mode=OneWay}"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30">
+                            <Label.Foreground>
+                                <Binding ElementName="gruppenListBox"
+                                         Path="SelectedItem.Persons[3].Alter"
+                                         Mode="OneWay"
+                                         Converter="{StaticResource AgeToColorConverter}" />
+                            </Label.Foreground>
+                        </Label>
+                        <Label Grid.Row="5"
+                               Grid.Column="5"
+                               Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[4].Alter, Mode=OneWay}"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30">
+                            <Label.Foreground>
+                                <Binding ElementName="gruppenListBox"
+                                         Path="SelectedItem.Persons[4].Alter"
+                                         Mode="OneWay"
+                                         Converter="{StaticResource AgeToColorConverter}" />
+                            </Label.Foreground>
+                        </Label>
+                        <Label Grid.Row="6"
+                               Grid.Column="5"
+                               Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[5].Alter, Mode=OneWay}"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30">
+                            <Label.Foreground>
+                                <Binding ElementName="gruppenListBox"
+                                         Path="SelectedItem.Persons[5].Alter"
+                                         Mode="OneWay"
+                                         Converter="{StaticResource AgeToColorConverter}" />
+                            </Label.Foreground>
+                        </Label>
+                        <Label Grid.Row="7"
+                               Grid.Column="5"
+                               Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[6].Alter, Mode=OneWay}"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30">
+                            <Label.Foreground>
+                                <Binding ElementName="gruppenListBox"
+                                         Path="SelectedItem.Persons[6].Alter"
+                                         Mode="OneWay"
+                                         Converter="{StaticResource AgeToColorConverter}" />
+                            </Label.Foreground>
+                        </Label>
+                        <Label Grid.Row="8"
+                               Grid.Column="5"
+                               Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[7].Alter, Mode=OneWay}"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30">
+                            <Label.Foreground>
+                                <Binding ElementName="gruppenListBox"
+                                         Path="SelectedItem.Persons[7].Alter"
+                                         Mode="OneWay"
+                                         Converter="{StaticResource AgeToColorConverter}" />
+                            </Label.Foreground>
+                        </Label>
+                        <Label Grid.Row="9"
+                               Grid.Column="5"
+                               Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[8].Alter, Mode=OneWay}"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30">
+                            <Label.Foreground>
+                                <Binding ElementName="gruppenListBox"
+                                         Path="SelectedItem.Persons[8].Alter"
+                                         Mode="OneWay"
+                                         Converter="{StaticResource AgeToColorConverter}" />
+                            </Label.Foreground>
+                        </Label>
+                        <Label Grid.Row="10"
+                               Grid.Column="5"
+                               Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.Persons[9].Alter, Mode=OneWay}"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30">
+                            <Label.Foreground>
+                                <Binding ElementName="gruppenListBox"
+                                         Path="SelectedItem.Persons[9].Alter"
+                                         Mode="OneWay"
+                                         Converter="{StaticResource AgeToColorConverter}" />
+                            </Label.Foreground>
+                        </Label>
+                        <!--Letzter Abschnitt bei Teilnehmenden-->
+
+                        <Label Grid.Row="11"
+                               Grid.Column="5"
+                               Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.GesamtAlter, Mode=OneWay}"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"></Label>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="A-Teil">
+                    <Grid Background="White"
+                          Name="ATeilGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0"
+                                   Grid.Column="0"
+                                   TextWrapping="WrapWithOverflow"
+                                   Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.GruppenName, Mode=OneWay, FallbackValue='Keine Gruppe gewählt'}"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource MahApps.Brushes.Highlight}" />
+                        <Label Grid.Row="1"
+                               Grid.Column="0"
+                               Content="Gruppenführer/Me"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="2"
+                               Grid.Column="0"
+                               Content="Maschinist"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="3"
+                               Grid.Column="0"
+                               Content="Angriffstrupp"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="4"
+                               Grid.Column="0"
+                               Content="Wassertrupp"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="5"
+                               Grid.Column="0"
+                               Content="Schlauchtrupp"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="30"
+                               FontWeight="Bold" />
+
+                        <Label Grid.Row="0"
+                               Grid.Column="1"
+                               Content="Eindruck"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="0"
+                               Grid.Column="2"
+                               Content="Fehler"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+                        <!--Eindruck Bereich-->
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="1"
+                                 TabIndex="1"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.EindruckGfMe, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="2"
+                                 TabIndex="5"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.EindruckMa, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="3"
+                                 TabIndex="9"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.EindruckA, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="4"
+                                 TabIndex="12"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.EindruckW, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="5"
+                                 TabIndex="15"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.EindruckS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+
+                        <!-- Fehler Bereich-->
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="1"
+                                 TabIndex="2"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerGfMe, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="2"
+                                 TabIndex="6"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerMa, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="3"
+                                 TabIndex="10"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerA, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="4"
+                                 TabIndex="13"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerW, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="5"
+                                 TabIndex="16"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <Rectangle Grid.Column="3"
+                                   Grid.Row="0"
+                                   Grid.RowSpan="7"
+                                   HorizontalAlignment="Center"
+                                   Width="10"
+                                   Fill="{DynamicResource MahApps.Brushes.AccentBase}"
+                                   Height="{Binding ElementName=ATeilGrid, Path=ActualHeight}"
+                                   VerticalAlignment="Bottom" />
+
+                        <!--Zeit Bereich-->
+                        <Label Grid.Row="0"
+                               Grid.Column="4"
+                               Content="Zeit"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+
+                        <StackPanel Orientation="Vertical"
+                                    Grid.Row="1"
+                                    Grid.RowSpan="6"
+                                    Grid.Column="4"
+                                    Grid.ColumnSpan="1">
+
+                            <Label Grid.Row="1"
+                                   Grid.Column="4"
+                                   Content="Gesamtzeit"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="36"
+                                   FontWeight="Bold" />
+                            <Label Grid.Row="1"
+                                   Grid.Column="4"
+                                   Content="Minuten  :  Sekunden"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="20"
+                                   FontWeight="Bold" />
+                            <StackPanel Orientation="Horizontal"
+                                        Grid.Column="4"
+                                        Grid.Row="2"
+                                        HorizontalAlignment="Center">
+                                <TextBox Grid.Column="4"
+                                         Grid.Row="2"
+                                         TabIndex="3"
+                                         HorizontalAlignment="Center"
+                                         TextWrapping="Wrap"
+                                         Margin="0,20,0,10"
+                                         Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.ZeitATeil1Minuten, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         VerticalAlignment="Center"
+                                         Height="60"
+                                         Width="120"
+                                         FontSize="30"
+                                         ToolTip="Minuten von der ersten Zeit" />
+                                <Label Grid.Row="0"
+                                       Grid.Column="4"
+                                       Content=":"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,0"
+                                       VerticalAlignment="Center"
+                                       FontSize="30" />
+                                <TextBox Grid.Column="4"
+                                         Grid.Row="2"
+                                         TabIndex="4"
+                                         HorizontalAlignment="Center"
+                                         TextWrapping="Wrap"
+                                         Margin="0,20,0,10"
+                                         Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.ZeitATeil1Sekunden, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         VerticalAlignment="Center"
+                                         Height="60"
+                                         Width="120"
+                                         FontSize="30"
+                                         ToolTip="Sekunden von der ersten Zeit" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                        Grid.Column="4"
+                                        Grid.Row="2"
+                                        HorizontalAlignment="Center">
+                                <TextBox Grid.Column="4"
+                                         Grid.Row="2"
+                                         TabIndex="7"
+                                         HorizontalAlignment="Center"
+                                         TextWrapping="Wrap"
+                                         Margin="0,20,0,10"
+                                         Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.ZeitATeil2Minuten, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         VerticalAlignment="Center"
+                                         Height="60"
+                                         Width="120"
+                                         FontSize="30"
+                                         ToolTip="Minuten von der zweiten Zeit" />
+                                <Label Grid.Row="0"
+                                       Grid.Column="4"
+                                       Content=":"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,0"
+                                       VerticalAlignment="Center"
+                                       FontSize="30" />
+                                <TextBox Grid.Column="4"
+                                         Grid.Row="2"
+                                         TabIndex="8"
+                                         HorizontalAlignment="Center"
+                                         TextWrapping="Wrap"
+                                         Margin="0,20,0,10"
+                                         Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.ZeitATeil2Sekunden, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         VerticalAlignment="Center"
+                                         Height="60"
+                                         Width="120"
+                                         FontSize="30"
+                                         ToolTip="Sekunden von der zweiten Zeit" />
+                            </StackPanel>
+                            <Label Grid.Row="1"
+                                   Grid.Column="4"
+                                   Content="Knotenzeit"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,50,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="36"
+                                   FontWeight="Bold" />
+                            <Label Grid.Row="1"
+                                   Grid.Column="4"
+                                   Content="In Sekunden"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="20"
+                                   FontWeight="Bold" />
+                            <TextBox TabIndex="11"
+                                     HorizontalAlignment="Center"
+                                     TextWrapping="Wrap"
+                                     Margin="10,10,0,10"
+                                     Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.ZeitKnoten1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     VerticalAlignment="Center"
+                                     Height="60"
+                                     MinWidth="180"
+                                     Width="Auto"
+                                     FontSize="36"
+                                     ToolTip="Erste Knotenzeit in Sekunden" />
+                            <TextBox TabIndex="14"
+                                     HorizontalAlignment="Center"
+                                     TextWrapping="Wrap"
+                                     Margin="10,10,0,10"
+                                     Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.ZeitKnoten2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     VerticalAlignment="Center"
+                                     Height="60"
+                                     MinWidth="180"
+                                     Width="Auto"
+                                     FontSize="36"
+                                     ToolTip="Zweite Knotenzeit in Sekunden" />
+
+                            <CheckBox Grid.Column="4"
+                                      Grid.Row="3"
+                                      Content="Disqualifikation A-Teil"
+                                      Margin="0,20,0,0"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Top"
+                                      FontSize="20"
+                                      FontWeight="Bold"
+                                      IsChecked="{Binding ElementName=gruppenListBox, Path=SelectedItem.DisqualifikationA, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=false}" />
+                        </StackPanel>
+                        <!--Blauer Hitnergrund für Auswertung-->
+                        <Rectangle Grid.Column="0"
+                                   Grid.ColumnSpan="3"
+                                   Grid.Row="6"
+                                   Grid.RowSpan="1"
+                                   Fill="{DynamicResource MahApps.Brushes.Accent4}" />
+                        <Label Grid.Row="6"
+                               Grid.Column="1"
+                               Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.ATeilGesamteindruck, Mode=OneWay, StringFormat=N3}"
+                               HorizontalAlignment="Center"
+                               Margin="0,10,0,0"
+                               VerticalAlignment="Top"
+                               FontSize="24"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="6"
+                               Grid.Column="2"
+                               Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerATeil, Mode=OneWay}"
+                               HorizontalAlignment="Center"
+                               Margin="0,10,0,0"
+                               VerticalAlignment="Top"
+                               FontSize="24"
+                               FontWeight="Bold" />
+
+                    </Grid>
+                </TabItem>
+                <TabItem Header="B-Teil">
+                    <Grid Background="White"
+                          Name="BTeilGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0"
+                                   Grid.Column="0"
+                                   TextWrapping="WrapWithOverflow"
+                                   Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.GruppenName, Mode=OneWay, FallbackValue='Keine Gruppe gewählt'}"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource MahApps.Brushes.Highlight}" />
+                        <Label Grid.Row="1"
+                               Grid.Column="0"
+                               Content="Läufer 1"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="2"
+                               Grid.Column="0"
+                               Content="Läufer 2"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="3"
+                               Grid.Column="0"
+                               Content="Läufer 3"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="4"
+                               Grid.Column="0"
+                               Content="Läufer 4"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="5"
+                               Grid.Column="0"
+                               Content="Läufer 5"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="6"
+                               Grid.Column="0"
+                               Content="Läufer 6"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="7"
+                               Grid.Column="0"
+                               Content="Läufer 7"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="8"
+                               Grid.Column="0"
+                               Content="Läufer 8"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="9"
+                               Grid.Column="0"
+                               Content="Läufer 9"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="0"
+                               Grid.Column="1"
+                               Content="Eindruck"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="0"
+                               Grid.Column="2"
+                               Content="Fehler"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+                        <Label Grid.Row="0"
+                               Grid.Column="3"
+                               Content="Zeit"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+                        <!--B-Teil Eindruck Bereich-->
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="1"
+                                 TabIndex="1"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.EindruckLauefer1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="2"
+                                 TabIndex="5"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.EindruckLauefer2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="3"
+                                 TabIndex="9"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.EindruckLauefer3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="4"
+                                 TabIndex="11"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.EindruckLauefer4, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="5"
+                                 TabIndex="13"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.EindruckLauefer5, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="6"
+                                 TabIndex="15"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.EindruckLauefer6, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="7"
+                                 TabIndex="17"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.EindruckLauefer7, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="8"
+                                 TabIndex="19"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.EindruckLauefer8, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="1"
+                                 Grid.Row="9"
+                                 TabIndex="21"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.EindruckLauefer9, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+
+                        <!-- B-Teil Fehler Bereich-->
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="1"
+                                 TabIndex="2"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerLauefer1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="2"
+                                 TabIndex="6"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerLauefer2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="3"
+                                 TabIndex="10"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerLauefer3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="4"
+                                 TabIndex="12"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerLauefer4, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="5"
+                                 TabIndex="14"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerLauefer5, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="6"
+                                 TabIndex="16"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerLauefer6, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="7"
+                                 TabIndex="18"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerLauefer7, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="8"
+                                 TabIndex="20"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerLauefer8, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <TextBox Grid.Column="2"
+                                 Grid.Row="9"
+                                 TabIndex="22"
+                                 HorizontalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerLauefer9, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 Height="60"
+                                 MinWidth="300"
+                                 Width="Auto"
+                                 FontSize="36" />
+                        <!--Zeit Bereich-->
+                        <Rectangle Grid.Column="3"
+                                   Grid.Row="0"
+                                   Grid.RowSpan="10"
+                                   HorizontalAlignment="Center"
+                                   Width="10"
+                                   Fill="{DynamicResource MahApps.Brushes.AccentBase}"
+                                   Height="{Binding ElementName=BTeilGrid, Path=ActualHeight}"
+                                   VerticalAlignment="Bottom" />
+
+                        <!--Zeit Bereich-->
+                        <Label Grid.Row="0"
+                               Grid.Column="4"
+                               Content="Zeit"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="36"
+                               FontWeight="Bold" />
+
+                        <StackPanel Orientation="Vertical"
+                                    Grid.Row="1"
+                                    Grid.RowSpan="9"
+                                    Grid.Column="4"
+                                    Grid.ColumnSpan="1">
+                            <Label Grid.Row="0"
+                                   Grid.Column="4"
+                                   Content="Minuten  :  Sekunden"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,10,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="20"
+                                   FontWeight="Bold" />
+                            <StackPanel Orientation="Horizontal"
+                                        Grid.Column="4"
+                                        Grid.Row="2"
+                                        HorizontalAlignment="Center">
+                                <TextBox Grid.Column="4"
+                                         Grid.Row="2"
+                                         TabIndex="3"
+                                         HorizontalAlignment="Center"
+                                         TextWrapping="Wrap"
+                                         Margin="0,20,0,10"
+                                         Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.ZeitBTeil1Minuten, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         VerticalAlignment="Center"
+                                         Height="60"
+                                         Width="90"
+                                         FontSize="30"
+                                         ToolTip="Minuten von der ersten Zeit" />
+                                <Label Grid.Row="0"
+                                       Grid.Column="4"
+                                       Content=":"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,0"
+                                       VerticalAlignment="Center"
+                                       FontSize="30" />
+                                <TextBox Grid.Column="4"
+                                         Grid.Row="2"
+                                         TabIndex="4"
+                                         HorizontalAlignment="Center"
+                                         TextWrapping="Wrap"
+                                         Margin="0,20,0,10"
+                                         Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.ZeitBTeil1Sekunden, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         VerticalAlignment="Center"
+                                         Height="60"
+                                         Width="90"
+                                         FontSize="30"
+                                         ToolTip="Sekunden von der ersten Zeit" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                        Grid.Column="4"
+                                        Grid.Row="2"
+                                        HorizontalAlignment="Center">
+                                <TextBox Grid.Column="4"
+                                         Grid.Row="2"
+                                         TabIndex="7"
+                                         HorizontalAlignment="Center"
+                                         TextWrapping="Wrap"
+                                         Margin="0,20,0,10"
+                                         Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.ZeitBTeil2Minuten, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         VerticalAlignment="Center"
+                                         Height="60"
+                                         Width="90"
+                                         FontSize="30"
+                                         ToolTip="Minuten von der zweiten Zeit" />
+                                <Label Grid.Row="0"
+                                       Grid.Column="4"
+                                       Content=":"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,0"
+                                       VerticalAlignment="Center"
+                                       FontSize="30" />
+                                <TextBox Grid.Column="4"
+                                         Grid.Row="2"
+                                         TabIndex="8"
+                                         HorizontalAlignment="Center"
+                                         TextWrapping="Wrap"
+                                         Margin="0,20,0,10"
+                                         Text="{Binding ElementName=gruppenListBox, Path=SelectedItem.ZeitBTeil2Sekunden, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         VerticalAlignment="Center"
+                                         Height="60"
+                                         Width="90"
+                                         FontSize="30"
+                                         ToolTip="Sekunden von der zweiten Zeit" />
+                            </StackPanel>
+                            <Label Grid.Row="0"
+                                   Grid.Column="4"
+                                   Content="Disqualifikation"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,40,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="20"
+                                   FontWeight="Bold" />
+                            <CheckBox Grid.Column="4"
+                                      Grid.Row="3"
+                                      Content="B-Teil"
+                                      Margin="0,0,0,0"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Top"
+                                      FontSize="20"
+                                      FontWeight="Bold"
+                                      IsChecked="{Binding ElementName=gruppenListBox, Path=SelectedItem.DisqualifikationB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=false}" />
+                            <Rectangle Grid.Column="4"
+                                       Grid.Row="0"
+                                       Grid.RowSpan="1"
+                                       HorizontalAlignment="Center"
+                                       Width="150"
+                                       Height="5"
+                                       Margin="20"
+                                       Fill="{DynamicResource MahApps.Brushes.AccentBase}"
+                                       VerticalAlignment="Bottom" />
+                            <Label Grid.Row="0"
+                                   Grid.Column="4"
+                                   Content="Gesamteindruck"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,40,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="24"
+                                   FontWeight="Bold" />
+                            <Label Grid.Row="0"
+                                   Grid.Column="4"
+                                   Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.BTeilGesamteindruck, StringFormat=N2, Mode=OneWay}"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,5,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="20"
+                                   FontWeight="Bold" />
+                            <Label Grid.Row="0"
+                                   Grid.Column="4"
+                                   Content="Fehlerpunkte"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,40,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="24"
+                                   FontWeight="Bold" />
+                            <Label Grid.Row="0"
+                                   Grid.Column="4"
+                                   Content="{Binding ElementName=gruppenListBox, Path=SelectedItem.FehlerBTeil, Mode=OneWay}"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,5,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="20"
+                                   FontWeight="Bold" />
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+
+        </Grid>
+        <!-- Rechter Listenbereich -->
+        <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+                BorderThickness="4"
+                Grid.Column="1">
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Vertical"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2">
+                    <Label Grid.Row="0"
+                           Grid.Column="0"
+                           Content="Gruppen"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,10"
+                           VerticalAlignment="Center"
+                           FontSize="24"
+                           FontWeight="Bold" />
+                    <StackPanel Orientation="Horizontal"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                HorizontalAlignment="Center">
+                        <Label Grid.Row="0"
+                               Grid.Column="0"
+                               Content="Fertige Gruppen ausblenden: "
+                               ToolTip="Bei Auswahl werden alle Gruppen ausgeblendet die bereits vollständig ausgefüllt sind."
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="16" />
+                        <CheckBox ToolTip="Bei Auswahl werden alle Gruppen ausgeblendet die bereits vollständig ausgefüllt sind."
+                                  Checked="FertigeGruppenAusblenden"
+                                  Unchecked="FertigeGruppenAusblenden"
+                                  x:Name="FertigeGruppenAusblenden_Checkbox"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  Margin="0,0,0,0" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                HorizontalAlignment="Center">
+                        <Label Grid.Row="0"
+                               Grid.Column="0"
+                               Content="Sortieren nach:"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="16" />
+                        <ComboBox x:Name="sortComboBox"
+                                  SelectedIndex="0"
+                                  Grid.Row="0"
+                                  Grid.Column="0"
+                                  Grid.ColumnSpan="2"
+                                  SelectionChanged="sortComboBox_SelectionChanged"
+                                  Width="120">
+                            <ComboBoxItem Content="Name" />
+                            <ComboBoxItem Content="Startzeit A" />
+                            <ComboBoxItem Content="Startzeit B" />
+                            <ComboBoxItem Content="Punkte" />
+                            <ComboBoxItem Content="Gesamt Alter" />
+                        </ComboBox>
+                    </StackPanel>
+
+                </StackPanel>
+
+                <Separator Grid.Row="1"
+                           Margin="10,10,10,10"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="2" />
+                <ListBox Grid.Column="0"
+                         Grid.ColumnSpan="2"
+                         Grid.Row="2"
+                         ItemsSource="{Binding Gruppen}"
+                         SelectionChanged="gruppenListBox_SelectionChanged"
+                         x:Name="gruppenListBox"
+                         PreviewKeyDown="gruppenListBox_KeyDown"
+                         Loaded="gruppenListBox_Loaded">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding StartNr}" />
+                                <TextBlock Text=" | " />
+                                <TextBlock Text="{Binding GruppenName}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Separator Grid.Row="3"
+                           Margin="10,10,10,10"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="2" />
+
+                <Button Grid.Column="0"
+                        Grid.Row="4"
+                        Content="Hinzufügen"
+                        ToolTip="Hinzufügen einer Gruppe"
+                        Click="ButtonAddGroup_Click">
+                    <Button.ContentTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconModern Width="22"
+                                                          Height="22"
+                                                          VerticalAlignment="Center"
+                                                          Kind="Add" />
+                                <TextBlock Margin="4 0 0 0"
+                                           VerticalAlignment="Center"
+                                           Text="{Binding}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </Button.ContentTemplate>
+                </Button>
+                <Button Grid.Column="1"
+                        Grid.Row="4"
+                        Content="Löschen"
+                        ToolTip="Löschen einer Gruppe"
+                        Command="{Binding RemoveGroupCommand}"
+                        CommandParameter="{Binding ElementName=gruppenListBox, Path=SelectedItem}">
+                    <Button.ContentTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconModern Width="22"
+                                                          Height="22"
+                                                          VerticalAlignment="Center"
+                                                          Kind="Delete" />
+                                <TextBlock Margin="4 0 0 0"
+                                           VerticalAlignment="Center"
+                                           Text="{Binding}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </Button.ContentTemplate>
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
+
+</mah:MetroWindow>
