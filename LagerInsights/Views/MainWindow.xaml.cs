@@ -158,6 +158,7 @@ public partial class MainWindow : MetroWindow
         }
     }
 
+
     private void About_Click(object sender, RoutedEventArgs e)
     {
         try
@@ -684,7 +685,7 @@ public partial class MainWindow : MetroWindow
                 var view = CollectionViewSource.GetDefaultView(gruppenListBox.ItemsSource);
                 view.Filter = item =>
                 {
-                    if (item is Jugendfeuerwehr gruppe) return !(gruppe.GezahlterBeitrag >= gruppe.ZuBezahlenderBetrag);
+                    if (item is Jugendfeuerwehr gruppe) return !(gruppe.GezahlterBeitrag >= gruppe.ZuBezahlenderBetrag && gruppe.Einverstaendniserklaerung == true);
                     return true;
                 };
             }
@@ -723,6 +724,21 @@ public partial class MainWindow : MetroWindow
             LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
         }
     }
+
+    private void LaunchAnmeldung_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo(UrlderAnmeldung.Text) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
+            MessageBox.Show($"Webseitenaufruf fehlgeschlagen\n{ex}", "Fehler: Webseitenaufruf", MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
+    }
+
 
     private void AnmeldeURLKopieren_Click(object sender, RoutedEventArgs e)
     {

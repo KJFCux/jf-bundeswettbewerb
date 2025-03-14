@@ -36,7 +36,7 @@ public partial class EvaluationView : Window
             try
             {
                 double prozentwert = mainViewModel.Gruppen.Where(x =>
-                    x.GezahlterBeitrag >= x.ZuBezahlenderBetrag).ToList().Count();
+                    x.GezahlterBeitrag >= x.ZuBezahlenderBetrag && x.Einverstaendniserklaerung==true).ToList().Count();
                 var prozentsatz = prozentwert / grundwert * 100d;
                 Bezahlfortschritt.Value = prozentsatz;
                 AnzahlFehlenderGruppen.Content = grundwert - prozentwert;

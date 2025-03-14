@@ -41,10 +41,11 @@
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0">
                         <StatusBar Margin="10,10,10,10"
-                                   Height="40">
+                                   Height="40"
+                                   ToolTip="Gruppen die Bezahlt haben sowie Vollständig ihre Unterlagen eingereicht haben.">
                             <StatusBarItem FontWeight="Bold"
                                            Foreground="{DynamicResource MahApps.Brushes.Text}">
-                                Bereits gezahlte Gruppen:
+                                Bereits fertige Gruppen:
                             </StatusBarItem>
                             <Separator />
                             <StatusBarItem x:Name="StatusBarFortschritt">

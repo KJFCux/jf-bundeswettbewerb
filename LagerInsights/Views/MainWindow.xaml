@@ -549,26 +549,50 @@
                                                    ToolTip="Anhand des Dateinamens kann die URL für die Bearbeitung einer Anmeldung ermittelt werden."
                                                    VerticalAlignment="Top"
                                                    FontSize="12" />
-
-                                        <Button Content=""
-                                                Width="40"
-                                                Height="40"
-                                                ToolTip="Anmelde URL kopieren"
-                                                Click="AnmeldeURLKopieren_Click">
-                                            <Button.ContentTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <iconPacks:PackIconModern Width="22"
-                                                                                  Height="22"
-                                                                                  VerticalAlignment="Center"
-                                                                                  Kind="PageCopy" />
-                                                        <TextBlock Margin="0 0 0 0"
-                                                                   VerticalAlignment="Center"
-                                                                   Text="{Binding}" />
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </Button.ContentTemplate>
-                                        </Button>
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center">
+                                            <Button Content=""
+                                                    Width="40"
+                                                    Height="40"
+                                                    Margin="10,10,10,10"
+                                                    ToolTip="Anmelde URL kopieren"
+                                                    Click="AnmeldeURLKopieren_Click">
+                                                <Button.ContentTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <iconPacks:PackIconModern Width="22"
+                                                                                      Height="22"
+                                                                                      VerticalAlignment="Center"
+                                                                                      Kind="PageCopy" />
+                                                            <TextBlock Margin="0 0 0 0"
+                                                                       VerticalAlignment="Center"
+                                                                       Text="{Binding}" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </Button.ContentTemplate>
+                                            </Button>
+                                            <Button Content=""
+                                                    Width="40"
+                                                    Height="40"
+                                                    Margin="10,10,10,10"
+                                                    ToolTip="Anmeldung öffnen"
+                                                    Click="LaunchAnmeldung_Click">
+                                                <Button.ContentTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <iconPacks:PackIconModern Width="22"
+                                                                                      Height="22"
+                                                                                      VerticalAlignment="Center"
+                                                                                      Kind="Browser" />
+                                                            <TextBlock Margin="0 0 0 0"
+                                                                       VerticalAlignment="Center"
+                                                                       Text="{Binding}" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </Button.ContentTemplate>
+                                            </Button>
+                                        </StackPanel>
                                     </StackPanel>
 
                                 </StackPanel>
@@ -654,8 +678,8 @@
                            FontWeight="Bold" />
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
-                        <Label Content="Bezahlte Wehren ausblenden"
-                               ToolTip="Bei Auswahl werden alle Wehren ausgeblendet, die bereits vollständig bezahlt haben."
+                        <Label Content="Fertige Wehren ausblenden"
+                               ToolTip="Bei Auswahl werden alle Wehren ausgeblendet, die bereits vollständig bezahlt haben und bei denen alle Unterlagen vorliegen."
                                HorizontalAlignment="Center"
                                Margin="0,0,0,0"
                                VerticalAlignment="Center"
