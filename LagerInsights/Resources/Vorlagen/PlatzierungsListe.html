@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+        @page {
+            size: A4;
+            margin: 0cm
+        }
+
+        @media print {
+            html, body {
+                height: 99%;
+                page-break-after: avoid;
+                page-break-before: avoid;
+            }
+        }
+
+        html {
+            width: auto;
+            height: 297mm;
+            margin: 0;
+            -webkit-print-color-adjust: exact;
+        }
+
+        body {
+            width: 210mm;
+            height: 297mm;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 10mm;
+        }
+
+        h2 {
+            font-family: 'Open Sans';
+            color: black;
+            font-size: 18pt;
+        }
+		h3 {
+            font-family: 'Open Sans';
+            color: black;
+            font-size: 14pt;
+        }
+
+        p {
+            font-family: 'Open Sans';
+            color: black;
+            margin: 2mm 0 0 0;
+            font-size: 12pt;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, tr, td {
+            font-family: 'Open Sans';
+            color: black;
+            text-align: left;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+            tr th {
+                border-bottom: 1px solid #bcbcbc;
+            }
+
+        th {
+            padding: 2mm 0 3mm 0;
+            font-size: 12pt;
+        }
+
+        tr td {
+            padding: 1mm 3mm 1mm 0;
+            vertical-align: top;
+            font-size: 12pt;
+        }
+
+        tr:nth-child(even) {
+            background: #f0f0f0;
+        }
+
+        tr:nth-child(odd) {
+            background: #fff;
+        }
+
+        .row {
+            display: flex;
+        }
+
+        .column80 {
+            width: 80%;
+        }
+
+        .column60 {
+            width: 60%;
+        }
+
+        .column40 {
+            width: 40%;
+        }
+
+        .column20 {
+            width: 20%;
+        }
+
+        .column10 {
+            width: 10%;
+        }
+
+        .line-clamp {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            line-clamp: 4;
+            -webkit-box-orient: vertical;
+        }
+
+        .one-line {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div style=" height: 100%; overflow: hidden;">
+    <div class="row">
+        <div class="column80">
+            <h2 style="text-transform: uppercase;">
+                Teilnehmende Gruppen beim
+            </h2>
+            <h3 style="margin-top: -16px;">
+                {titel} am {datum_veranstaltung} in {ort}
+            </h3>
+        </div>
+        <div class="column20" style="text-align: right;">
+            <img src="{logo}" alt="Veranstalter Logo" style="max-height: 100px;max-width: 300px">
+        </div>
+    </div>
+
+    <div class="row" style="width: 190mm; position: absolute; top: 50mm;">
+        <table width="100%" style="table-layout: fixed;">
+            <tr>
+                <th valign="top" style="width: 16%">
+                    Zeltdorf
+                </th>
+                <th valign="top" style="width: 30%">
+                    Jugendfeuerwehr
+                </th>
+                <th valign="top" style="width: 28%">
+                    Ort
+                </th>
+                <th valign="top" style="width: 10%">
+                    Anzahl
+                </th>
+                <th valign="top" style="width: 16%">
+                    Anmeldung
+                </th>
+            </tr>
+            {tabellenzeile}
+        </table>
+    </div>
+    <div style="position: absolute; bottom: 20mm; width: 190mm;">
+        <div class="row" style="width: 100%; justify-content: space-between;">
+            <div>
+                <p style="font-size: 8pt">
+                    Stand: {datum_heute}
+                </p>
+            </div>
+            <div>
+                <p style="font-size: 8pt; text-align: right;">
+                    Seite {akt_seite} von {alle_seiten}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "BWB-Auswertung": {
-      "commandName": "Project",
-      "commandLineArgs": "/v"
-    }
-  }
-}

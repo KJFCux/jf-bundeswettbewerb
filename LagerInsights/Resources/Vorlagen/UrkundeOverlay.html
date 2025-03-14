@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+        @page {
+            size: A4;
+            margin: 0cm
+        }
+
+        @media print {
+            html, body {
+                height: 99%;
+                page-break-after: avoid;
+                page-break-before: avoid;
+            }
+        }
+
+        html {
+            width: auto;
+            height: 297mm;
+            margin: 0;
+            -webkit-print-color-adjust: exact;
+        }
+
+        body {
+            width: 210mm;
+            height: 297mm;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 10mm;
+        }
+
+        h1 {
+            font-family: 'Open Sans';
+            color: black;
+            font-size: 54pt;
+        }
+
+        h2 {
+            font-family: 'Open Sans';
+            color: black;
+            font-size: 36pt;
+        }
+
+        h3 {
+            font-family: 'Open Sans';
+            color: black;
+            font-size: 24pt;
+        }
+
+        p {
+            font-family: 'Open Sans';
+            color: black;
+            margin: 2mm 0 0 0;
+            font-size: 16pt;
+        }
+
+
+        .row {
+            display: flex;
+        }
+
+        .column80 {
+            width: 80%;
+        }
+
+        .column60 {
+            width: 60%;
+        }
+
+        .column50 {
+            width: 50%;
+        }
+
+        .column40 {
+            width: 40%;
+        }
+
+        .column20 {
+            width: 20%;
+        }
+
+        .column10 {
+            width: 10%;
+        }
+
+        .line-clamp {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            line-clamp: 4;
+            -webkit-box-orient: vertical;
+        }
+
+        .one-line {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div style="position: absolute; top: 10mm; left: 10mm; bottom: 10mm; right: 10mm; width: 190mm; height: 277mm; border: solid black 3px;">
+    <div style="width: 98.3%; margin: 1mm; height: 99%; border: solid black 2px;">
+        <h1 style="text-align:center;margin-top: 64mm">Urkunde</h1>
+        <p style="text-align:center">Die Jugendfeuerwehr</p>
+        <h2 style="text-align: center;">
+            {jugendfeuerwehr}
+        </h2>
+        <p style="text-align:center">belegte beim</p>
+        <p style="text-align:center">{veranstaltungstitel}</p>
+        <p style="text-align:center">den</p>
+        <h2 style="text-align: center">
+            {platz}. Platz
+        </h2>
+        <p style="text-align:center">im Bundeswettbewerb der Deutschen Jugendfeuerwehr.</p>
+        <p style="margin-top:10mm; text-align:center; font-size:14px;">{veranstaltungsort}, den {veranstaltungsdatum}</p>
+
+        <div class="row" style="width: 100%; margin-bottom: 10mm; margin-top: 0mm;">
+            <div style="width:50%;">
+                <div style="text-align: center;">
+                    <img src="{unterschriftlinks}" alt="{namelinks} - {funktionlinks}" style="height: 20mm;max-width: 300px">
+                </div>
+                <p style="text-align: center; font-size:14px;">
+                    {namelinks}
+                </p>
+                <p style="text-align: center; font-size:14px;">
+                    {funktionlinks}
+                </p>
+            </div>
+            <div style="width: 50%">
+                <div style="text-align: center;">
+                    <img src="{unterschriftrechts}" alt="{namerechts} - {funktionrechts}" style="height: 20mm;max-width: 300px">
+                </div>
+                <p style="text-align: center; font-size:14px;">
+                    {namerechts}
+                </p>
+                <p style="text-align: center; font-size:14px;">
+                    {funktionrechts}
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

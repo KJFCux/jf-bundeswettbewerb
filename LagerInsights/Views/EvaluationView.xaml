@@ -1,0 +1,454 @@
+﻿<Window x:Class="LagerInsights.Views.EvaluationView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local1="clr-namespace:LagerInsights.Views"
+        mc:Ignorable="d"
+        ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterScreen"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="Auswertung"
+        Height="800"
+        Width="1020"
+        SnapsToDevicePixels="True"
+        SizeChanged="Window_SizeChanged">
+    <Window.LayoutTransform>
+        <ScaleTransform ScaleX="{Binding ScaleFactorEvaluation}"
+                        ScaleY="{Binding ScaleFactorEvaluation}" />
+    </Window.LayoutTransform>
+    <Window.Resources>
+        <local1:WidthConverter x:Key="WidthConverter" />
+    </Window.Resources>
+    <Grid>
+        <Grid.LayoutTransform>
+            <ScaleTransform ScaleX="{Binding ScaleFactorEvaluation}"
+                            ScaleY="{Binding ScaleFactorEvaluation}" />
+        </Grid.LayoutTransform>
+        <TabControl>
+            <TabItem Header="Übersicht">
+                <Grid Background="White"
+                      x:Name="AuswertungsGrid">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="300" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0">
+                        <StatusBar Margin="10,10,10,10"
+                                   Height="40"
+                                   ToolTip="Gruppen die Bezahlt haben sowie Vollständig ihre Unterlagen eingereicht haben.">
+                            <StatusBarItem FontWeight="Bold"
+                                           Foreground="{DynamicResource MahApps.Brushes.Text}">
+                                Bereits fertige Gruppen:
+                            </StatusBarItem>
+                            <Separator />
+                            <StatusBarItem x:Name="StatusBarFortschritt">
+                                <ProgressBar x:Name="Bezahlfortschritt"
+                                             Value="0"
+                                             Height="30"
+                                             Width="{Binding ElementName=StatusBarFortschritt, Path=ActualWidth, Converter={StaticResource WidthConverter}}" />
+                            </StatusBarItem>
+                        </StatusBar>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Noch nicht bezahlte Gruppen:"
+                                   HorizontalAlignment="Left"
+                                   Margin="10,10,0,10"
+                                   VerticalAlignment="Top"
+                                   FontSize="16"
+                                   FontWeight="Bold" />
+                            <Label Content="Anzahl"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Top"
+                                   x:Name="AnzahlFehlenderGruppen" />
+                            <Rectangle HorizontalAlignment="Center"
+                                       Width="2"
+                                       Margin="10,0,10,0"
+                                       Fill="{DynamicResource MahApps.Brushes.AccentBase}"
+                                       Height="20"
+                                       VerticalAlignment="Center" />
+                            <Label Content="Gesamtanzahl an Gruppen:"
+                                   HorizontalAlignment="Left"
+                                   Margin="10,10,0,10"
+                                   VerticalAlignment="Top"
+                                   FontSize="16"
+                                   FontWeight="Bold" />
+                            <Label Content="Anzahl"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Top"
+                                   x:Name="GesamtanzahlGruppen" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Gesamtanzahl Teilnehmende: "
+                                   HorizontalAlignment="Left"
+                                   Margin="10,10,0,10"
+                                   VerticalAlignment="Top"
+                                   FontSize="16"
+                                   FontWeight="Bold" />
+                            <Label Content="NN"
+                                   x:Name="AnzahlTeilnehmende"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Top" />
+                            <Label Content="|"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="NN"
+                                   x:Name="AnzahlWeiblich"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="W"
+                                   HorizontalAlignment="Left"
+                                   Margin="-15,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="|"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="NN"
+                                   x:Name="AnzahlMaennlich"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="M"
+                                   HorizontalAlignment="Left"
+                                   Margin="-15,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="|"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="NN"
+                                   x:Name="AnzahlDivers"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="D"
+                                   HorizontalAlignment="Left"
+                                   Margin="-15,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="|"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="NN"
+                                   x:Name="AnzahlSonstige"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="N"
+                                   HorizontalAlignment="Left"
+                                   Margin="-15,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,-10,0,0">
+                            <Label Content="Zielbetrag insgesamt:"
+                                   HorizontalAlignment="Left"
+                                   Margin="10,10,0,10"
+                                   VerticalAlignment="Top"
+                                   FontSize="16"
+                                   FontWeight="Bold" />
+                            <Label Content="NN"
+                                   x:Name="GesamtBetragZuBezahlen"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="|"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="NN"
+                                   x:Name="GesamtBetragBezahlt"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="bereits bezahlt"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="|"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="NN"
+                                   x:Name="OffenerBetrag"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="offen"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                        </StackPanel>
+                    </StackPanel>
+                    <DockPanel Grid.Row="1">
+                        <Label Content="Geburtstagskinder"
+                               HorizontalAlignment="Center"
+                               Margin="10,0,0,0"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               VerticalAlignment="Top"
+                               DockPanel.Dock="Top" />
+                        <DataGrid AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  ItemsSource="{Binding PersonenMitGeburtstagBeimZeltlager}"
+                                  ColumnWidth="*">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Jugendfeuerwehr"
+                                                    Binding="{Binding Feuerwehr}" />
+                                <DataGridTextColumn Header="Vorname"
+                                                    Binding="{Binding Person.Vorname}" />
+                                <DataGridTextColumn Header="Nachname"
+                                                    Binding="{Binding Person.Nachname}" />
+                                <DataGridTextColumn Header="Geburtsdatum"
+                                                    Binding="{Binding Person.Geburtsdatum, StringFormat={}{0:dd.MM.yyyy}}" />
+                                <DataGridTextColumn Header="Alter"
+                                                    MaxWidth="60"
+                                                    Binding="{Binding Person.Alter}" />
+                                <DataGridTextColumn Header="M/W/D"
+                                                    MaxWidth="70"
+                                                    Binding="{Binding Person.Geschlecht}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                    </DockPanel>
+
+                    <Rectangle Grid.Column="1"
+                               Grid.Row="0"
+                               Grid.RowSpan="2"
+                               HorizontalAlignment="Center"
+                               Width="4"
+                               Fill="{DynamicResource MahApps.Brushes.AccentBase}"
+                               Height="{Binding ElementName=AuswertungsGrid, Path=ActualHeight}"
+                               VerticalAlignment="Center" />
+
+
+                    <StackPanel Grid.Column="2"
+                                Grid.Row="0"
+                                Grid.RowSpan="2">
+                        <Label Content="Export"
+                               HorizontalAlignment="Center"
+                               Margin="10,10,10,10"
+                               FontSize="26"
+                               FontWeight="Bold"
+                               VerticalAlignment="Top" />
+
+                        <Button Content="Gruppenliste"
+                                ToolTip="Exportiert eine Liste aller Gruppen und der Teilnehmeranzahl"
+                                Margin="10,10,10,10"
+                                Click="ExportPDFGruppenliste_Click"
+                                x:Name="ExportPDFPlatzierungsliste_Button">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconModern Width="22"
+                                                                  Height="22"
+                                                                  VerticalAlignment="Center"
+                                                                  Kind="Group" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button Content="Excel Gruppenliste"
+                                ToolTip="Exportiert eine Ausführliche Liste in eine Excel-Datei"
+                                Margin="10,10,10,10"
+                                Click="ExportGruppenExcel_Click"
+                                x:Name="ExportExcelPlatzierungsliste_Button">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconModern Width="22"
+                                                                  Height="22"
+                                                                  VerticalAlignment="Center"
+                                                                  Kind="OfficeExcel" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button Content="Urkunden"
+                                IsEnabled="False"
+                                ToolTip="Speichert das Overlay für alle Urkunden als PDF und erzeugt eine Excel Liste für evtl. Serienbriefe"
+                                Margin="10,10,10,10"
+                                Click="ExportUrkunden_Click"
+                                x:Name="ExportUrkunden_Button">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Width="22"
+                                                                    Height="22"
+                                                                    VerticalAlignment="Center"
+                                                                    Kind="MedalOutline" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button Content="Essgewohnheiten Liste"
+                                ToolTip="Exportiert alle Geburtstagskinder in eine Liste"
+                                Margin="10,10,10,10"
+                                Click="ExportPDFUnvertraeglichkeitenListe_Click"
+                                x:Name="ExportPDFPEssensliste_Button">
+
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Width="22"
+                                                                    Height="22"
+                                                                    VerticalAlignment="Center"
+                                                                    Kind="FoodForkDrink" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button Content="Geburtstagsliste"
+                                ToolTip="Exportiert alle Geburtstagskinder in eine Liste"
+                                Margin="10,10,10,10"
+                                Click="ExportPDFGeburtstagsliste_Click"
+                                x:Name="ExportPDFPGeburtstagsliste_Button">
+
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Width="22"
+                                                                    Height="22"
+                                                                    VerticalAlignment="Center"
+                                                                    Kind="CakeVariant" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Rectangle Margin="20"
+                                   HorizontalAlignment="Center"
+                                   Width="200"
+                                   Fill="{DynamicResource MahApps.Brushes.AccentBase}"
+                                   Height="4"
+                                   VerticalAlignment="Center" />
+
+                        <Button Content="Urkunden Vorlage"
+                                ToolTip="Laden der Urkundenvorlage um diese anzupassen. Der Name der Urkunde darf nicht geändert werden."
+                                Click="ExportUrkundenvorlage_Click"
+                                x:Name="ExportUrkundenvorlage_Button"
+                                Margin="10,10,10,10">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Width="22"
+                                                                    Height="22"
+                                                                    VerticalAlignment="Center"
+                                                                    Kind="FileCertificateOutline" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                    </StackPanel>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="Alle Gruppen">
+                <DataGrid AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          ItemsSource="{Binding Gruppen}"
+                          ColumnWidth="*">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Lager Nr."
+                                            Binding="{Binding LagerNr}"
+                                            MaxWidth="80" />
+                        <DataGridTextColumn Header="Feuerwehr"
+                                            Binding="{Binding Feuerwehr}" />
+                        <DataGridTextColumn Header="Kontakt Name"
+                                            Binding="{Binding Verantwortlicher.FullName}" />
+                        <DataGridTextColumn Header="Kontakt Telefon"
+                                            Binding="{Binding Verantwortlicher.Telefon}" />
+                        <DataGridTextColumn Header="Kontakt E-Mail"
+                                            Binding="{Binding Verantwortlicher.Email}" />
+                        <DataGridTextColumn Header="Anzahl"
+                                            Binding="{Binding AnzahlTeilnehmer}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </TabItem>
+            <TabItem Header="Alle Teilnehmenden">
+                <DataGrid AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          ItemsSource="{Binding PersonenTeilnehmendenliste}"
+                          ColumnWidth="SizeToCells">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Feuerwehr"
+                                            Binding="{Binding Feuerwehr}" />
+                        <DataGridTextColumn Header="Vorname"
+                                            Binding="{Binding Person.Vorname}" />
+                        <DataGridTextColumn Header="Nachname"
+                                            Binding="{Binding Person.Nachname}" />
+                        <DataGridTextColumn Header="Geburtsdatum"
+                                            Binding="{Binding Person.Geburtsdatum, StringFormat={}{0:dd.MM.yyyy}}" />
+                        <DataGridTextColumn Header="Alter"
+                                            Binding="{Binding Person.Alter}" />
+                        <DataGridTextColumn Header="M/W/D"
+                                            Binding="{Binding Person.Geschlecht}" />
+                        <DataGridTextColumn Header="Status"
+                                            Binding="{Binding Person.StatusFriendlyName}" />
+                        <DataGridTextColumn Header="Essgewohnheiten"
+                                            Binding="{Binding Person.Essgewohnheiten}" />
+                        <DataGridTextColumn Header="Unverträglichkeiten"
+                                            Binding="{Binding Person.Unvertraeglichkeiten}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</Window>

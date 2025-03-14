@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 0cm
+        }
+
+        @media print {
+            html, body {
+                height: 99%;
+                page-break-after: avoid;
+                page-break-before: avoid;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+
+        html {
+            width: 297mm;
+            height: auto;
+            margin: 0;
+        }
+
+        body {
+            width: 297mm;
+            height: 210mm;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 10mm;
+        }
+
+        h2 {
+            font-family: 'Open Sans';
+            color: black;
+            font-size: 18pt;
+        }
+
+        h3 {
+            font-family: 'Open Sans';
+            color: black;
+            font-size: 14pt;
+        }
+
+        p {
+            font-family: 'Open Sans';
+            color: black;
+            margin: 2mm 0 0 0;
+            font-size: 12pt;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, tr, td {
+            font-family: 'Open Sans';
+            color: black;
+            text-align: left;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+            tr th {
+                border-bottom: 1px solid #bcbcbc;
+            }
+
+        th {
+            padding: 2mm 0 3mm 0;
+            font-size: 12pt;
+        }
+
+        tr td {
+            padding: 1mm 3mm 1mm 0;
+            vertical-align: top;
+            font-size: 12pt;
+        }
+
+        tr:nth-child(even) {
+            background: #f0f0f0;
+        }
+
+        tr:nth-child(odd) {
+            background: #fff;
+        }
+
+        .row {
+            display: flex;
+        }
+
+        .column80 {
+            width: 80%;
+        }
+
+        .column60 {
+            width: 60%;
+        }
+
+        .column40 {
+            width: 40%;
+        }
+
+        .column20 {
+            width: 20%;
+        }
+
+        .column10 {
+            width: 10%;
+        }
+
+        .line-clamp {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            line-clamp: 4;
+            -webkit-box-orient: vertical;
+        }
+
+        .one-line {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+        .signature-line {
+            position: relative;
+            width: 260px;
+            border-bottom: 2px solid black;
+        }
+    </style>
+</head>
+<body>
+<div style=" height: 100%; overflow: hidden;">
+    <div class="row">
+        <div class="column80">
+            <h2 style="text-transform: uppercase;">
+                Kontrollblatt - {gruppenname}
+            </h2>
+            <h3 style="margin-top: -16px;">
+                {titelderVeranstaltung}
+            </h3>
+        </div>
+        <div class="column20" style="text-align: right;">
+            <img src="{logo}" alt="Veranstalter Logo" style="max-height: 100px;max-width: 300px">
+        </div>
+    </div>
+    <div class="row" style="height: 25mm;">
+        <div class="column60">
+            <div class="row">
+                <p>
+                    Jugendfeuerwehr:
+                </p>
+                <p class="line-clamp" style="padding: 0 10mm 0 5mm;">
+                    {jugendfeuerwehr}
+                </p>
+            </div>
+            <div class="row">
+                <p>
+                    Gruppenname:
+                </p>
+                <p class="line-clamp" style="padding: 0 10mm 0 5mm;">
+                    {gruppenname}
+                </p>
+            </div>
+            <div class="row">
+                <p style="padding-right: 5mm;">
+                    Organisationseinheit:
+                </p>
+                <p class="one-line">
+                    {organisationseinheit}
+                </p>
+            </div>
+            <div class="row">
+                <p style="padding-right: 5mm;">
+                    Startzeit A-Teil:
+                </p>
+                <p class="one-line">
+                    {startzeita}
+                </p>
+                <p>
+                    &nbsp;|&nbsp;
+                </p>
+                <p style="padding-right: 5mm;">
+                    Bahn
+                </p>
+                <p class="one-line">
+                    {bahnnummera}
+                </p>
+            </div>
+            <div class="row">
+                <p style="padding-right: 5mm;">
+                    Startzeit B-Teil:
+                </p>
+                <p class="one-line">
+                    {startzeitb}
+                </p>
+                <p>
+                    &nbsp;|&nbsp;
+                </p>
+                <p style="padding-right: 5mm;">
+                    Bahn
+                </p>
+                <p class="one-line">
+                    {bahnnummerb}
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="column40">
+            <div class="row">
+                <p style="padding-right: 5mm;">
+                    Datum:
+                </p>
+                <p class="one-line">
+                    {veranstaltungsdatum}
+                </p>
+            </div>
+            <div class="row">
+                <p style="padding-right: 5mm;">
+                    Ort:
+                </p>
+                <p class="one-line">
+                    {ort}
+                </p>
+            </div>
+
+            <div class="row">
+                <p style="padding-right: 5mm;">
+                    Start-Nr:
+                </p>
+                <p class="one-line">
+                    {startnummer}
+                </p>
+            </div>
+
+            <div class="row">
+                <p style="padding-right: 5mm;">
+                    Gesamtalter:
+                </p>
+                <p class="one-line">
+                    {gesamtalter}
+                </p>
+            </div>
+            <div class="row">
+                <p style="padding-right: 5mm;">
+                    Sollzeit B-Teil:
+                </p>
+                <p class="one-line">
+                    {sollzeitb}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="width: 277mm; position: absolute; top: 90mm;">
+        <table width="100%" style="table-layout: fixed;">
+            <tr>
+                <th valign="top" style="width: 5%">
+                </th>
+                <th valign="top" style="width: 36%">
+                    Vorname
+                </th>
+                <th valign="top" style="width: 36%">
+                    Nachname
+                </th>
+                <th valign="top" style="width: 10%">
+                    M/W/D
+                </th>
+                <th valign="top" style="width: 20%">
+                    Geburtsdatum
+                </th>
+                <th valign="top" style="width: 20%">
+                    Alter
+                </th>
+            </tr>
+            {tabellenzeile}
+        </table>
+    </div>
+    <div style="position: absolute; top: 195mm; width: 277mm;">
+        <div class="row" style="width: 100%; justify-content: space-between;">
+
+            <div>
+
+                <p style="font-size: 8pt">
+                </p>
+            </div>
+            <div>
+                <div class="signature-line"></div>
+                <p style="font-size: 12pt; text-align: right;">
+                    Unterschrift Jugendwart:in
+                </p>
+            </div>
+        </div>
+    </div>
+    <div style="position: absolute; top: 193mm; width: 277mm;">
+        <div class="row" style="width: 100%; justify-content: space-between;">
+            <div>
+                <p style="font-size: 8pt">
+                    Stand: {datum_heute}
+                </p>
+            </div>
+            <div>
+                <p style="font-size: 8pt; text-align: right;">
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
