@@ -1,0 +1,647 @@
+﻿<Window x:Class="BWB_Auswertung.Views.EvaluationView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BWB_Auswertung"
+        xmlns:local1="clr-namespace:BWB_Auswertung.Views"
+        mc:Ignorable="d"
+        ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterScreen"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="Auswertung"
+        Height="800"
+        Width="1020"
+        SnapsToDevicePixels="True"
+        SizeChanged="Window_SizeChanged">
+    <Window.LayoutTransform>
+        <ScaleTransform ScaleX="{Binding ScaleFactorEvaluation}"
+                        ScaleY="{Binding ScaleFactorEvaluation}" />
+    </Window.LayoutTransform>
+    <Window.Resources>
+        <local1:WidthConverter x:Key="WidthConverter" />
+    </Window.Resources>
+    <Grid>
+        <Grid.LayoutTransform>
+            <ScaleTransform ScaleX="{Binding ScaleFactorEvaluation}"
+                            ScaleY="{Binding ScaleFactorEvaluation}" />
+        </Grid.LayoutTransform>
+        <TabControl>
+            <TabItem Header="Übersicht">
+                <Grid Background="White"
+                      x:Name="AuswertungsGrid">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="300" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0">
+                        <StatusBar Margin="10,10,10,10"
+                                   Height="40">
+                            <StatusBarItem FontWeight="Bold"
+                                           Foreground="{DynamicResource MahApps.Brushes.Text}">
+                                Wettbewerbsfortschritt
+                            </StatusBarItem>
+                            <Separator />
+                            <StatusBarItem x:Name="StatusBarFortschritt">
+                                <ProgressBar x:Name="Wettbewerbsfortschritt"
+                                             Value="0"
+                                             Height="30"
+                                             Width="{Binding ElementName=StatusBarFortschritt, Path=ActualWidth, Converter={StaticResource WidthConverter}}"></ProgressBar>
+                            </StatusBarItem>
+                        </StatusBar>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Noch nicht fertige Gruppen:"
+                                   HorizontalAlignment="Left"
+                                   Margin="10,10,0,10"
+                                   VerticalAlignment="Top"
+                                   FontSize="16"
+                                   FontWeight="Bold" />
+                            <Label Content="Anzahl"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Top"
+                                   x:Name="AnzahlFehlenderGruppen" />
+                            <Rectangle HorizontalAlignment="Center"
+                                       Width="2"
+                                       Margin="10,0,10,0"
+                                       Fill="{DynamicResource MahApps.Brushes.AccentBase}"
+                                       Height="20"
+                                       VerticalAlignment="Center" />
+                            <Label Content="Gesamtanzahl an Gruppen:"
+                                   HorizontalAlignment="Left"
+                                   Margin="10,10,0,10"
+                                   VerticalAlignment="Top"
+                                   FontSize="16"
+                                   FontWeight="Bold" />
+                            <Label Content="Anzahl"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Top"
+                                   x:Name="GesamtanzahlGruppen" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Jüngste Gruppe:"
+                                   HorizontalAlignment="Left"
+                                   Margin="10,10,0,10"
+                                   VerticalAlignment="Top"
+                                   FontSize="16"
+                                   FontWeight="Bold" />
+                            <Label Content="NN"
+                                   x:Name="JuengsteGruppe"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="-"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="NN"
+                                   x:Name="JuengsteGruppeAlter"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="Jahre"
+                                   HorizontalAlignment="Left"
+                                   Margin="-15,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Button Content="Export Jüngste Gruppe"
+                                    ToolTip="Erstellt eine Urkunde für die Jüngste Gruppe als PDF"
+                                    Margin="10,10,10,10"
+                                    Click="ExportUrkundeJuengsteGruppe_Click"
+                                    x:Name="ExportJuengsteGruppe_Button">
+                                <Button.ContentTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconFontAwesome  Width="22"
+                                                                         Height="22"
+                                                                         VerticalAlignment="Center"
+                                                                         Kind="BabyCarriageSolid" />
+                                            <TextBlock Margin="4 0 0 0"
+                                                       VerticalAlignment="Center"
+                                                       Text="{Binding}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </Button.ContentTemplate>
+                            </Button>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,-10,0,0">
+                            <Label Content="Älteste Gruppe:"
+                                   HorizontalAlignment="Left"
+                                   Margin="10,10,0,10"
+                                   VerticalAlignment="Top"
+                                   FontSize="16"
+                                   FontWeight="Bold" />
+                            <Label Content="NN"
+                                   x:Name="AeltesteGruppe"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="-"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="NN"
+                                   x:Name="AeltesteGruppeAlter"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="Jahre"
+                                   HorizontalAlignment="Left"
+                                   Margin="-15,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,-10,0,0">
+                            <Label Content="Bester A-Teil:"
+                                   HorizontalAlignment="Left"
+                                   Margin="10,10,0,10"
+                                   VerticalAlignment="Top"
+                                   FontSize="16"
+                                   FontWeight="Bold" />
+                            <Label Content="NN"
+                                   x:Name="BesterATeilGruppe"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="-"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="NN"
+                                   x:Name="BesterATeilGruppePunkte"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="Punkte"
+                                   HorizontalAlignment="Left"
+                                   Margin="-15,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,-10,0,0">
+                            <Label Content="Schnellster A-Teil:"
+                                   HorizontalAlignment="Left"
+                                   Margin="10,10,0,10"
+                                   VerticalAlignment="Top"
+                                   FontSize="16"
+                                   FontWeight="Bold" />
+                            <Label Content="NN"
+                                   x:Name="SchnellsterATeilGruppe"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="-"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="NN"
+                                   x:Name="SchnellsterATeilGruppeZeit"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="Min:Sek"
+                                   HorizontalAlignment="Left"
+                                   Margin="-15,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,-10,0,0">
+                            <Label Content="Schnellste Knotenzeit:"
+                                   HorizontalAlignment="Left"
+                                   Margin="10,10,0,10"
+                                   VerticalAlignment="Top"
+                                   FontSize="16"
+                                   FontWeight="Bold" />
+                            <Label Content="NN"
+                                   x:Name="SchnellsteKnotenZeitGruppe"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="-"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="NN"
+                                   x:Name="SchnellsteKnotenZeitGruppeZeit"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="Sekunden"
+                                   HorizontalAlignment="Left"
+                                   Margin="-15,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,-10,0,0">
+                            <Label Content="Bester B-Teil:"
+                                   HorizontalAlignment="Left"
+                                   Margin="10,10,0,10"
+                                   VerticalAlignment="Top"
+                                   FontSize="16"
+                                   FontWeight="Bold" />
+                            <Label Content="NN"
+                                   x:Name="BesterBTeilGruppe"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="-"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="NN"
+                                   x:Name="BesterBTeilGruppePunkte"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="Punkte"
+                                   HorizontalAlignment="Left"
+                                   Margin="-15,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,-10,0,0">
+                            <Label Content="Schnellster B-Teil:"
+                                   HorizontalAlignment="Left"
+                                   Margin="10,10,0,10"
+                                   VerticalAlignment="Top"
+                                   FontSize="16"
+                                   FontWeight="Bold" />
+                            <Label Content="NN"
+                                   x:Name="SchnellsterBTeilGruppe"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="-"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="NN"
+                                   x:Name="SchnellsterBTeilGruppeZeit"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                            <Label Content="Min:Sek"
+                                   HorizontalAlignment="Left"
+                                   Margin="-15,10,10,10"
+                                   FontSize="16"
+                                   VerticalAlignment="Top" />
+                        </StackPanel>
+                    </StackPanel>
+                    <DockPanel Grid.Row="1">
+                        <Label Content="Geburtstagskinder"
+                               HorizontalAlignment="Center"
+                               Margin="10,0,0,0"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               VerticalAlignment="Top"
+                               DockPanel.Dock="Top" />
+                        <DataGrid     AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      ItemsSource="{Binding PersonenMitGeburtstagBeimWettbewerb}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Jugendfeuerwehr"
+                                                    Binding="{Binding Feuerwehr}" />
+                                <DataGridTextColumn Header="Gruppenname"
+                                                    Binding="{Binding Gruppenname}" />
+                                <DataGridTextColumn Header="Vorname"
+                                                    Binding="{Binding Person.Vorname}" />
+                                <DataGridTextColumn Header="Nachname"
+                                                    Binding="{Binding Person.Nachname}" />
+                                <DataGridTextColumn Header="Geburtsdatum"
+                                                    Binding="{Binding Person.Geburtsdatum, StringFormat={}{0:dd.MM.yyyy}}" />
+                                <DataGridTextColumn Header="Alter"
+                                                    Binding="{Binding Person.Alter}" />
+                                <DataGridTextColumn Header="M/W/D"
+                                                    Binding="{Binding Person.Geschlecht}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                    </DockPanel>
+
+                    <Rectangle Grid.Column="1"
+                               Grid.Row="0"
+                               Grid.RowSpan="2"
+                               HorizontalAlignment="Center"
+                               Width="4"
+                               Fill="{DynamicResource MahApps.Brushes.AccentBase}"
+                               Height="{Binding ElementName=AuswertungsGrid, Path=ActualHeight}"
+                               VerticalAlignment="Center" />
+
+
+                    <StackPanel Grid.Column="2"
+                                Grid.Row="0"
+                                Grid.RowSpan="2">
+                        <Label Content="Export"
+                               HorizontalAlignment="Center"
+                               Margin="10,10,10,10"
+                               FontSize="26"
+                               FontWeight="Bold"
+                               VerticalAlignment="Top" />
+
+                        <Button Content="Kontrollblätter"
+                                ToolTip="Export der Kontrollbläter für jede Gruppe in eine PDF"
+                                Margin="10,10,10,10"
+                                Click="ExportKontrollblaetter_Click"
+                                x:Name="ExportKontrollblaetter_Button">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Width="22"
+                                                                    Height="22"
+                                                                    VerticalAlignment="Center"
+                                                                    Kind="CheckAll" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button Content="Platzierungsliste"
+                                ToolTip="Exportiert eine Liste der Platzierungen in absteigender und aufsteigender Reihenfolge"
+                                Margin="10,10,10,10"
+                                Click="ExportPDFPlatzierungsliste_Click"
+                                x:Name="ExportPDFPlatzierungsliste_Button">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconModern Width="22"
+                                                                  Height="22"
+                                                                  VerticalAlignment="Center"
+                                                                  Kind="Trophy" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button Content="Excel Platzierungsliste"
+                                ToolTip="Exportiert eine Ausführliche Liste in eine Excel-Datei"
+                                Margin="10,10,10,10"
+                                Click="ExportExcelPlatzierungsliste_Click"
+                                x:Name="ExportExcelPlatzierungsliste_Button">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconModern Width="22"
+                                                                  Height="22"
+                                                                  VerticalAlignment="Center"
+                                                                  Kind="Trophy" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button Content="Excel Wertungsbögen"
+                                ToolTip="Exportiert alle Wertungsbögen in Excel-Dateien. Je nach derzeitigen Eintragungen, sind diese vorausgefüllt"
+                                Margin="10,10,10,10"
+                                Click="ExportExcelWertungsbogen_Click"
+                                x:Uid="ExportExcelWertungsbogen_Button">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Width="22"
+                                                                    Height="22"
+                                                                    VerticalAlignment="Center"
+                                                                    Kind="Abacus" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button Content="Urkunden"
+                                ToolTip="Speichert das Overlay für alle Urkunden als PDF und erzeugt eine Excel Liste für evtl. Serienbriefe"
+                                Margin="10,10,10,10"
+                                Click="ExportUrkunden_Click"
+                                x:Name="ExportUrkunden_Button">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial  Width="22"
+                                                                     Height="22"
+                                                                     VerticalAlignment="Center"
+                                                                     Kind="MedalOutline" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button Content="Gruppen als Excel"
+                                ToolTip="Exportiert alle Gruppendaten in eine Excel Datei"
+                                Margin="10,10,10,10"
+                                Click="ExportGruppenExcel_Click"
+                                x:Name="ExportGruppenExcel_Button">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconModern Width="22"
+                                                                  Height="22"
+                                                                  VerticalAlignment="Center"
+                                                                  Kind="OfficeExcel" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button Content="Geburtstagsliste"
+                                ToolTip="Exportiert alle Geburtstagskinder in eine Liste"
+                                Margin="10,10,10,10"
+                                Click="ExportPDFPGeburtstagsliste_Click"
+                                x:Name="ExportPDFPGeburtstagsliste_Button">
+
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Width="22"
+                                                                    Height="22"
+                                                                    VerticalAlignment="Center"
+                                                                    Kind="CakeVariant" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Rectangle Margin="20"
+                                   HorizontalAlignment="Center"
+                                   Width="200"
+                                   Fill="{DynamicResource MahApps.Brushes.AccentBase}"
+                                   Height="4"
+                                   VerticalAlignment="Center" />
+                        <Button Content="Wettbewerbsordnung"
+                                ToolTip="Speichert die aktuelle Wettbewerbsordnung im Dokumente Ordner"
+                                Margin="10,10,10,10"
+                                Click="ExportWettbewerbsordnung_Click"
+                                x:Name="ExportWettbewerbsordnung_Button">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconModern Width="22"
+                                                                  Height="22"
+                                                                  VerticalAlignment="Center"
+                                                                  Kind="PageFilePdf" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button Content="Urkunden Vorlage"
+                                ToolTip="Laden der Urkundenvorlage um diese anzupassen. Der Name der Urkunde darf nicht geändert werden."
+                                Click="ExportUrkundenvorlage_Click"
+                                x:Name="ExportUrkundenvorlage_Button"
+                                Margin="10,10,10,10">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Width="22"
+                                                                    Height="22"
+                                                                    VerticalAlignment="Center"
+                                                                    Kind="FileCertificateOutline" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button Content="Meldebogen Blanko"
+                                ToolTip="Speichert einen Blanko Meldebogen, zum Manuellen ausfüllen"
+                                Click="ExportMeldebogenBlanko_Click"
+                                x:Name="ExportMeldebogenBlanko_Button"
+                                Margin="10,10,10,10">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Width="22"
+                                                                    Height="22"
+                                                                    VerticalAlignment="Center"
+                                                                    Kind="AccountMultiplePlus" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                    </StackPanel>
+
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Alle Gruppen">
+                <DataGrid     AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              ItemsSource="{Binding Gruppen}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Start-Nr"
+                                            Binding="{Binding StartNr}" />
+                        <DataGridTextColumn Header="Feuerwehr"
+                                            Binding="{Binding Feuerwehr}" />
+                        <DataGridTextColumn Header="Gruppenname"
+                                            Binding="{Binding GruppenName}" />
+                        <DataGridTextColumn Header="Platz"
+                                            Binding="{Binding Platz}" />
+                        <DataGridTextColumn Header="Gesamtpunkte"
+                                            Binding="{Binding GesamtPunkte}" />
+                        <DataGridTextColumn Header="Pkt. A-Teil"
+                                            Binding="{Binding PunkteATeil}" />
+                        <DataGridTextColumn Header="Zeit A-Teil"
+                                            Binding="{Binding DurchschnittszeitATeil}" />
+                        <DataGridTextColumn Header="Zeittakt"
+                                            Binding="{Binding DurchschnittszeitKnotenATeil}" />
+                        <DataGridTextColumn Header="Fehler A-Teil"
+                                            Binding="{Binding FehlerATeil}" />
+                        <DataGridTextColumn Header="Eindruck A-Teil"
+                                            Binding="{Binding ATeilGesamteindruck}" />
+                        <DataGridTextColumn Header="Pkt. B-Teil"
+                                            Binding="{Binding PunkteBTeil}" />
+                        <DataGridTextColumn Header="Zeit B-Teil"
+                                            Binding="{Binding DurchschnittszeitBTeil}" />
+                        <DataGridTextColumn Header="Sollzeit B-Teil"
+                                            Binding="{Binding SollZeitBTeilInSekunden}" />
+                        <DataGridTextColumn Header="Fehler B-Teil"
+                                            Binding="{Binding FehlerBTeil}" />
+                        <DataGridTextColumn Header="Eindruck B-Teil"
+                                            Binding="{Binding BTeilGesamteindruck}" />
+                        <DataGridTextColumn Header="Alter"
+                                            Binding="{Binding GesamtAlter}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </TabItem>
+            <TabItem Header="Alle Teilnehmenden">
+                <DataGrid     AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              ItemsSource="{Binding PersonenTeilnehmendenliste}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Gruppenname"
+                                            Binding="{Binding Gruppenname}" />
+                        <DataGridTextColumn Header="Vorname"
+                                            Binding="{Binding Person.Vorname}" />
+                        <DataGridTextColumn Header="Nachname"
+                                            Binding="{Binding Person.Nachname}" />
+                        <DataGridTextColumn Header="Geburtsdatum"
+                                            Binding="{Binding Person.Geburtsdatum, StringFormat={}{0:dd.MM.yyyy}}" />
+                        <DataGridTextColumn Header="Alter"
+                                            Binding="{Binding Person.Alter}" />
+                        <DataGridTextColumn Header="M/W/D"
+                                            Binding="{Binding Person.Geschlecht}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</Window>
