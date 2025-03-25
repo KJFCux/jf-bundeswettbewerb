@@ -20,7 +20,7 @@ public enum Status
     [Description("2. Geschwisterkind")] [XmlEnum("2Geschwister")]
     BGESCHWISTERKIND,
 
-    [Description("3. Geschwisterkind")] [XmlEnum("4Geschwister")]
+    [Description("3. Geschwisterkind")] [XmlEnum("WeitereGeschwister")]
     CGESCHWISTERKIND,
 
     [Description("Betreuer")] [XmlEnum("Betreuer")]

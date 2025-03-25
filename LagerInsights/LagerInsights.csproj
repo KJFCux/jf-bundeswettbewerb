@@ -11,8 +11,8 @@
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<NeutralLanguage>de-DE</NeutralLanguage>
 		<StartupObject>LagerInsights.App</StartupObject>
-		<AssemblyVersion>1.0.12</AssemblyVersion>
-		<FileVersion>1.0.12</FileVersion>
+		<AssemblyVersion>1.0.13</AssemblyVersion>
+		<FileVersion>1.0.13</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -84,7 +84,7 @@
 		<NugetTools>$(PkgNuGet_CommandLine)\tools</NugetTools>
 		<SquirrelTools>$(Pkgsquirrel_windows)\tools</SquirrelTools>
 
-		<Version>1.0.12</Version>
+		<Version>1.0.13</Version>
 
 		<NuspecFile>$(ProjectDir)ReleaseSpec.nuspec</NuspecFile>
 	</PropertyGroup>
