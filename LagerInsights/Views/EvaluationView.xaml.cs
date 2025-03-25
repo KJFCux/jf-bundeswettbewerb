@@ -365,15 +365,15 @@ public partial class EvaluationView : Window
             await Task.WhenAll(tasks);
 
             if (tasks.All(task => task.Result))
-                ShowExportMessageBox("Export der Platzierungslisten abgeschlossen!\nZielverzeichnis öffnen?",
-                    "Export Platzierungslisten", exportPath);
+                ShowExportMessageBox("Export der Gruppenliste abgeschlossen!\nZielverzeichnis öffnen?",
+                    "Export Gruppenliste", exportPath);
             ((Button)sender).IsEnabled = true;
         }
         catch (Exception ex)
         {
             ((Button)sender).IsEnabled = true;
             LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
-            MessageBox.Show($"Export der Platzierungslisten fehlgeschlagen!\n{ex}", "Fehler: Export Platzierungslisten",
+            MessageBox.Show($"Export der Gruppenliste fehlgeschlagen!\n{ex}", "Fehler: Export Gruppenliste",
                 MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
