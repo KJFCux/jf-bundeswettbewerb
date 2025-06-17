@@ -486,55 +486,62 @@ public partial class MainWindow : MetroWindow
 
             // Deserialisieren der XML-Datei und Hinzufügen der deserialisierten Gruppen zum ViewModel
             var jugendfeuerwehr = DeserializeXML<Jugendfeuerwehr>.Deserialize<Jugendfeuerwehr>(file);
-
-            if (jugendfeuerwehr != null)
+            if (jugendfeuerwehr == null)
             {
-                //Schauen ob bereits vorhanden und alten Eintrag löschen
-                if (ueberrschreiben)
-                {
-                    var gefundeneGruppen = viewModel.Gruppen.Where(x => x.Feuerwehr.Equals(jugendfeuerwehr.Feuerwehr))
-                        .ToList();
+                LOGGING.Write("Die Datei konnte nicht korrekt geparst werden. Überprüfen Sie die Struktur und den Inhalt der XML-Datei.", MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
+                MessageBox.Show($"Die Datei konnte nicht korrekt geparst werden. Überprüfen Sie die Struktur und den Inhalt der XML-Datei.", "Fehler: SFTP Sync", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
 
-                    foreach (var gefundeneGruppe in gefundeneGruppen)
-                    {
-                        // Der gezahlte Betrag soll nur überschrieben werden, wenn der Zeitstempel neuer ist
-                        if (gefundeneGruppe.TimeStampGezahlterBeitrag != null &&
-                            (jugendfeuerwehr.TimeStampGezahlterBeitrag == null || gefundeneGruppe.TimeStampGezahlterBeitrag > jugendfeuerwehr.TimeStampGezahlterBeitrag))
-                        {
-                            jugendfeuerwehr.GezahlterBeitrag = gefundeneGruppe.GezahlterBeitrag;
-                        }
-
-                        // Das Zeltdorf soll nur überschrieben werden, wenn der Zeitstempel neuer ist
-                        if (gefundeneGruppe.TimeStampZeltdorf != null &&
-                            (jugendfeuerwehr.TimeStampZeltdorf == null || gefundeneGruppe.TimeStampZeltdorf > jugendfeuerwehr.TimeStampZeltdorf))
-                        {
-                            jugendfeuerwehr.Zeltdorf = gefundeneGruppe.Zeltdorf;
-                        }
-
-                        // Die Einverständniserklärung soll nur überschrieben werden, wenn der Zeitstempel neuer ist
-                        if (gefundeneGruppe.TimeStampEinverstaendniserklaerung != null &&
-                            (jugendfeuerwehr.TimeStampEinverstaendniserklaerung == null || gefundeneGruppe.TimeStampEinverstaendniserklaerung > jugendfeuerwehr.TimeStampEinverstaendniserklaerung))
-                        {
-                            jugendfeuerwehr.Einverstaendniserklaerung = gefundeneGruppe.Einverstaendniserklaerung;
-                        }
-
-                        //Hinweis an Benutzer das die Gruppe existiert
-                        if (showOverrideInfo)
-                            MessageBox.Show(
-                                $"Die JF {jugendfeuerwehr.Feuerwehr} aus {jugendfeuerwehr.Organisationseinheit} Existierte bereits und wurde überschrieben!\nURL der Anmeldung neu: {jugendfeuerwehr.UrlderAnmeldung}\nURL der Anmeldung alt: {gefundeneGruppe.UrlderAnmeldung}",
-                                "Anmeldung wurde überschrieben!", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                        // Alte Gruppe löschen
-                        viewModel.RemoveSelectedGroup(gefundeneGruppe, false);
-                    }
-                }
-
-                //Neuen Eintrag importieren
-                viewModel.AddGroup(jugendfeuerwehr);
+                throw new InvalidDataException("Die Datei konnte nicht korrekt geparst werden. Überprüfen Sie die Struktur und den Inhalt der XML-Datei.");
             }
+
+            //Schauen ob bereits vorhanden und alten Eintrag löschen
+            if (ueberrschreiben)
+            {
+                var gefundeneGruppen = viewModel.Gruppen.Where(x => x.Feuerwehr.Equals(jugendfeuerwehr.Feuerwehr))
+                    .ToList();
+
+                foreach (var gefundeneGruppe in gefundeneGruppen)
+                {
+                    // Der gezahlte Betrag soll nur überschrieben werden, wenn der Zeitstempel neuer ist
+                    if (gefundeneGruppe.TimeStampGezahlterBeitrag != null &&
+                        (jugendfeuerwehr.TimeStampGezahlterBeitrag == null || gefundeneGruppe.TimeStampGezahlterBeitrag > jugendfeuerwehr.TimeStampGezahlterBeitrag))
+                    {
+                        jugendfeuerwehr.GezahlterBeitrag = gefundeneGruppe.GezahlterBeitrag;
+                    }
+
+                    // Das Zeltdorf soll nur überschrieben werden, wenn der Zeitstempel neuer ist
+                    if (gefundeneGruppe.TimeStampZeltdorf != null &&
+                        (jugendfeuerwehr.TimeStampZeltdorf == null || gefundeneGruppe.TimeStampZeltdorf > jugendfeuerwehr.TimeStampZeltdorf))
+                    {
+                        jugendfeuerwehr.Zeltdorf = gefundeneGruppe.Zeltdorf;
+                    }
+
+                    // Die Einverständniserklärung soll nur überschrieben werden, wenn der Zeitstempel neuer ist
+                    if (gefundeneGruppe.TimeStampEinverstaendniserklaerung != null &&
+                        (jugendfeuerwehr.TimeStampEinverstaendniserklaerung == null || gefundeneGruppe.TimeStampEinverstaendniserklaerung > jugendfeuerwehr.TimeStampEinverstaendniserklaerung))
+                    {
+                        jugendfeuerwehr.Einverstaendniserklaerung = gefundeneGruppe.Einverstaendniserklaerung;
+                    }
+
+                    //Hinweis an Benutzer das die Gruppe existiert
+                    if (showOverrideInfo)
+                        MessageBox.Show(
+                            $"Die JF {jugendfeuerwehr.Feuerwehr} aus {jugendfeuerwehr.Organisationseinheit} Existierte bereits und wurde überschrieben!\nURL der Anmeldung neu: {jugendfeuerwehr.UrlderAnmeldung}\nURL der Anmeldung alt: {gefundeneGruppe.UrlderAnmeldung}",
+                            "Anmeldung wurde überschrieben!", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+                    // Alte Gruppe löschen
+                    viewModel.RemoveSelectedGroup(gefundeneGruppe, false);
+                }
+            }
+
+            //Neuen Eintrag importieren
+            viewModel.AddGroup(jugendfeuerwehr);
+
         }
         catch (Exception ex)
         {
+            if (ex is InvalidDataException) throw;
             LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
         }
     }
@@ -554,7 +561,7 @@ public partial class MainWindow : MetroWindow
 
             //Upload Pfad erstellen
             var uploadlocalPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                AppDomain.CurrentDomain.FriendlyName, "ftp", "upload");
+               AppDomain.CurrentDomain.FriendlyName, "ftp", "upload");
             _ = Directory.CreateDirectory(uploadlocalPath);
 
             // Liste zum Speichern der Dateipfade
@@ -591,7 +598,6 @@ public partial class MainWindow : MetroWindow
             // Heruntergeladene Daten importieren.
             //Hier wird auch sichergestellt das immer nur die neuesten Werte aus beiden Anmeldungen behalten werden.
             foreach (var file in filePaths) OpenDeserializerForFile(file, true, false);
-
             // Alle Dateien zum Server hochladen 
             List<string> dateienZumUpload = new List<string>();
             foreach (var gruppe in viewModel.Gruppen)
@@ -614,7 +620,7 @@ public partial class MainWindow : MetroWindow
                 foreach (var datei in dateienZumUpload)
                 {
                     sftp.UploadFile(File.OpenRead(Path.Combine(uploadlocalPath, datei)),
-                        $"{einstellungen.Pfad}/{datei}", true);
+                       $"{einstellungen.Pfad}/{datei}", true);
                 }
                 sftp.Disconnect();
 

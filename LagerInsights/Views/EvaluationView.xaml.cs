@@ -36,7 +36,7 @@ public partial class EvaluationView : Window
             try
             {
                 double prozentwert = mainViewModel.Gruppen.Where(x =>
-                    x.GezahlterBeitrag >= x.ZuBezahlenderBetrag && x.Einverstaendniserklaerung==true).ToList().Count();
+                    x.GezahlterBeitrag >= x.ZuBezahlenderBetrag && x.Einverstaendniserklaerung == true).ToList().Count();
                 var prozentsatz = prozentwert / grundwert * 100d;
                 Bezahlfortschritt.Value = prozentsatz;
                 AnzahlFehlenderGruppen.Content = grundwert - prozentwert;
@@ -631,6 +631,39 @@ public partial class EvaluationView : Window
 
             LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
             MessageBox.Show($"Export der Urkundenvorlage fehlgeschlagen!\n{ex}", "Fehler: Export Urkundenvorlage",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+
+    private void KopiereEMailAdressen_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            ((Button)sender).IsEnabled = false;
+            var viewModel = (MainViewModel)DataContext;
+
+            // Alle E-Mail-Adressen der Teilnehmenden sammeln  
+            var emailAdressen = viewModel.Gruppen
+                .Select(g => g.Verantwortlicher.Email)
+                .Where(email => !string.IsNullOrWhiteSpace(email))
+                .Distinct();
+
+            // Semikolon-separierten String erstellen  
+            var emailString = string.Join(";", emailAdressen);
+
+            // In die Zwischenablage kopieren  
+            Clipboard.SetText(emailString);
+
+            MessageBox.Show("Die E-Mail-Adressen wurden in die Zwischenablage kopiert und können nun in Outlook eingefügt werden.",
+                "E-Mail-Adressen kopiert", MessageBoxButton.OK, MessageBoxImage.Information);
+            ((Button)sender).IsEnabled = true;
+        }
+        catch (Exception ex)
+        {
+            ((Button)sender).IsEnabled = true;
+            LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
+            MessageBox.Show($"Das Kopieren der E-Mail-Adressen ist fehlgeschlagen!\n{ex}", "Fehler: Kopieren der E-Mail-Adressen",
                 MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }

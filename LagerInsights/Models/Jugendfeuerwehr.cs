@@ -26,7 +26,10 @@ public class Jugendfeuerwehr : INotifyPropertyChanged
 
     public DateTime? TimeStampAnmeldung { get; set; }
     public DateTime? TimeStampAenderung { get; set; }
+
     private decimal? gezahlterBeitrag;
+
+    [XmlIgnore]
     public decimal? GezahlterBeitrag
     {
         get => gezahlterBeitrag;
@@ -40,11 +43,60 @@ public class Jugendfeuerwehr : INotifyPropertyChanged
             }
         }
     }
+    [XmlElement("GezahlterBeitrag")]
+    public string GezahlterBeitragRaw
+    {
+        get => GezahlterBeitrag?.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                GezahlterBeitrag = null;
+            else if (decimal.TryParse(value, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var result))
+                GezahlterBeitrag = result;
+            else
+                GezahlterBeitrag = null;
+        }
+    }
+
+    [XmlIgnore]
     public DateTime? TimeStampGezahlterBeitrag { get; set; } //Änderungszeitpunkt des gezahlten Beitrages zum Abgleich mit den Versionen
+
+    [XmlElement("TimeStampGezahlterBeitrag")]
+    public string TimeStampGezahlterBeitragRaw
+    {
+        get => TimeStampGezahlterBeitrag?.ToString("o");
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                TimeStampGezahlterBeitrag = null;
+            else if (DateTime.TryParse(value, null, System.Globalization.DateTimeStyles.RoundtripKind, out var result))
+                TimeStampGezahlterBeitrag = result;
+            else
+                TimeStampGezahlterBeitrag = null;
+        }
+    }
+
 
 
     private bool? einverstaendniserklaerung;
 
+
+    [XmlElement("Einverstaendniserklaerung")]
+    public string EinverstaendniserklaerungRaw
+    {
+        get => Einverstaendniserklaerung?.ToString().ToLower();
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                Einverstaendniserklaerung = null;
+            else if (bool.TryParse(value, out var result))
+                Einverstaendniserklaerung = result;
+            else
+                Einverstaendniserklaerung = null;
+        }
+    }
+
+    [XmlIgnore]
     public bool? Einverstaendniserklaerung
     {
         get => einverstaendniserklaerung;
@@ -58,7 +110,27 @@ public class Jugendfeuerwehr : INotifyPropertyChanged
             }
         }
     }
+
+
+    [XmlIgnore]
     public DateTime? TimeStampEinverstaendniserklaerung { get; set; } //Änderungszeitpunkt der Einverständniserklärung zum Abgleich mit den Versionen
+
+    [XmlElement("TimeStampEinverstaendniserklaerung")]
+    public string TimeStampEinverstaendniserklaerungRaw
+    {
+        get => TimeStampEinverstaendniserklaerung?.ToString("o");
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                TimeStampEinverstaendniserklaerung = null;
+            else if (DateTime.TryParse(value, null, System.Globalization.DateTimeStyles.RoundtripKind, out var result))
+                TimeStampEinverstaendniserklaerung = result;
+            else
+                TimeStampEinverstaendniserklaerung = null;
+        }
+    }
+
+
 
     private string? zeltdorf;
 
@@ -75,9 +147,10 @@ public class Jugendfeuerwehr : INotifyPropertyChanged
             }
         }
     }
-
+    [XmlIgnore]
     public DateTime? TimeStampZeltdorf { get; set; } //Änderungszeitpunkt des Zeltdorfes zum Abgleich mit den Versionen
 
+    [XmlIgnore]
     public decimal? Teilnehmerbeitrag
     {
         get => teilnehmerbeitrag;
@@ -90,7 +163,35 @@ public class Jugendfeuerwehr : INotifyPropertyChanged
             }
         }
     }
+    [XmlElement("Teilnehmerbeitrag")]
+    public string TeilnehmerbeitragRaw
+    {
+        get => Teilnehmerbeitrag?.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                Teilnehmerbeitrag = null;
+            else if (decimal.TryParse(value, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var result))
+                Teilnehmerbeitrag = result;
+            else
+                Teilnehmerbeitrag = null;
+        }
+    }
 
+    [XmlElement("TimeStampZeltdorf")]
+    public string TimeStampZeltdorfRaw
+    {
+        get => TimeStampZeltdorf?.ToString("o");
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                TimeStampZeltdorf = null;
+            else if (DateTime.TryParse(value, null, System.Globalization.DateTimeStyles.RoundtripKind, out var result))
+                TimeStampZeltdorf = result;
+            else
+                TimeStampZeltdorf = null;
+        }
+    }
 
     public string FeuerwehrOhneSonderzeichen
     {

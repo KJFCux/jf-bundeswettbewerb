@@ -21,7 +21,6 @@ public class DeserializeXML<T> where T : class
         catch (Exception ex)
         {
             LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
-
             return default;
         }
     }
