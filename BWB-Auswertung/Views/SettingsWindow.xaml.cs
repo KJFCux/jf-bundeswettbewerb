@@ -3,10 +3,13 @@ using BWB_Auswertung.Models;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,6 +21,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Renci.SshNet;
 
 namespace BWB_Auswertung.Views
 {
@@ -44,9 +48,9 @@ namespace BWB_Auswertung.Views
         {
             try
             {
-                MainViewModel viewModel = (MainViewModel)this.DataContext;
+                MainViewModel viewModel = (MainViewModel)DataContext;
                 WriteFile.writeText(System.IO.Path.Combine(settingsPath, "settings.xml"), SerializeXML<Gruppe>.Serialize(viewModel.Einstellungen));
-                this.Close();
+                Close();
             }
             catch (Exception ex)
             {
@@ -155,6 +159,82 @@ namespace BWB_Auswertung.Views
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Fehler beim Festlegen von Einstellungen\n{ex}", "Fehler: Einstellungen", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void TesteVerbindung_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var viewModel = (MainViewModel)DataContext;
+                var einstellungen = viewModel.Einstellungen;
+
+                using (var sftp = new SftpClient(einstellungen.Hostname, 22, einstellungen.Username,
+                           einstellungen.Password))
+                {
+                    sftp.Connect();
+                    if (sftp.IsConnected)
+                        MessageBox.Show("Verbindung erfolgreich!", "Erfolg", MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+                    else
+                        MessageBox.Show("Verbindung fehlgeschlagen!", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                    sftp.Disconnect();
+                }
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name,
+                    EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim Verbinden mit SFTP\n{ex}", "Fehler: Einstellungen",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        //Fenster Skalieren
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            try
+            {
+                var viewModel = (MainViewModel)DataContext;
+
+                // Annahme: Mindestgröße für die Skalierung festlegen
+                double minWindowSize = 1020; // Minimale Fensterbreite
+
+                // Berechne den Skalierungsfaktor basierend auf der aktuellen Fensterbreite
+                var scaleFactor = Math.Min(1, ActualWidth / minWindowSize);
+
+                // Setze den Skalierungsfaktor im ViewModel
+                viewModel.ScaleFactorSettings = scaleFactor;
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
+            }
+        }
+
+        private void DecimalTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Prüfen, ob die Eingabe ein gültiger Dezimalwert ist
+            e.Handled = !IsTextAllowed(e.Text);
+        }
+
+        private static bool IsTextAllowed(string text)
+        {
+            // Verwenden Sie Regex, um nur Zahlen und Dezimaltrennzeichen zuzulassen
+            return Regex.IsMatch(text, @"^[0-9]*(?:\.[0-9]*)?$");
+        }
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            var passwordBox = sender as PasswordBox;
+            if (passwordBox != null)
+            {
+                var viewModel = (MainViewModel)DataContext;
+                viewModel.Einstellungen.Password = passwordBox.Password;
+            }
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
         }
     }
 }

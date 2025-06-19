@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Markup;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using Windows.Networking;
 
 namespace BWB_Auswertung.Models
 {
@@ -17,6 +20,20 @@ namespace BWB_Auswertung.Models
     [Serializable]
     public class Settings
     {
+
+        public Settings()
+        {
+            Veranstaltungsleitung = string.Empty;
+            Veranstaltungsort = string.Empty;
+            Veranstaltungstitel = string.Empty;
+            Art = Art.OFFENESGEWAESSER;
+            Veranstaltungsdatum = DateTime.Today;
+            Hostname = string.Empty;
+            Pfad = string.Empty;
+            Username = string.Empty;
+            Password = string.Empty;
+        }
+
         public string Veranstaltungsort { get; set; }
 
         public DateTime Veranstaltungsdatum { get; set; }
@@ -37,7 +54,14 @@ namespace BWB_Auswertung.Models
         public string Funktionrechts { get; set; }
         public string Unterschriftrechts { get; set; }
 
+        //FTP Daten
+        public string Hostname { get; set; }
 
+        public string Pfad { get; set; }
+
+        public string Username { get; set; }
+
+        public string Password { get; set; }
 
 
         public int Vorgabezeit
@@ -54,14 +78,7 @@ namespace BWB_Auswertung.Models
             }
         }
 
-        public Settings()
-        {
-            Veranstaltungsleitung = string.Empty;
-            Veranstaltungsort = string.Empty;
-            Veranstaltungstitel = string.Empty;
-            Art = Art.OFFENESGEWAESSER;
-            Veranstaltungsdatum = DateTime.Today;
-        }
+
     }
 
     public class EnumerationExtension : MarkupExtension

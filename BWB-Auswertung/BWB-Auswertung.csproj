@@ -11,8 +11,8 @@
 	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 	<NeutralLanguage>de-DE</NeutralLanguage>
 	<StartupObject>BWB_Auswertung.App</StartupObject>
-	<AssemblyVersion>1.0.10</AssemblyVersion>
-	<FileVersion>1.0.10</FileVersion>
+	<AssemblyVersion>1.0.11</AssemblyVersion>
+	<FileVersion>1.0.11</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -81,13 +81,14 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="SSH.NET" Version="2025.0.0" />
 	</ItemGroup>
 
 	<PropertyGroup>
 		<NugetTools>$(PkgNuGet_CommandLine)\tools</NugetTools>
 		<SquirrelTools>$(Pkgsquirrel_windows)\tools</SquirrelTools>
 
-		<Version>1.0.10</Version>
+		<Version>1.0.11</Version>
 
 		<NuspecFile>$(ProjectDir)ReleaseSpec.nuspec</NuspecFile>
 	</PropertyGroup>

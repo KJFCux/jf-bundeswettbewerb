@@ -22,6 +22,9 @@ using System.Text.Json;
 using System.Net.Http;
 using ControlzEx.Standard;
 using System.Text.RegularExpressions;
+using System.Reflection;
+using Renci.SshNet;
+using System.Web;
 
 namespace BWB_Auswertung
 {
@@ -500,7 +503,7 @@ namespace BWB_Auswertung
             }
         }
 
-        private void OpenDeserializerForFile(string file, bool ueberrschreiben = false)
+        private void OpenDeserializerForFile(string file, bool ueberrschreiben = false, bool showOverrideInfo = true)
         {
             try
             {
@@ -508,39 +511,188 @@ namespace BWB_Auswertung
 
                 // Deserialisieren der XML-Datei und Hinzufügen der deserialisierten Gruppen zum ViewModel
                 Gruppe gruppe = DeserializeXML<Gruppe>.Deserialize<Gruppe>(file);
-
-                if (gruppe != null)
+                if (gruppe == null)
                 {
-                    //Schauen ob bereits vorhanden und alten Eintrag löschen
-                    if (ueberrschreiben)
+                    LOGGING.Write("Die Datei konnte nicht korrekt geparst werden. Überprüfen Sie die Struktur und den Inhalt der XML-Datei.", MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
+                    MessageBox.Show($"Die Datei konnte nicht korrekt geparst werden. Überprüfen Sie die Struktur und den Inhalt der XML-Datei.", "Fehler: SFTP Sync", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+
+                    throw new InvalidDataException("Die Datei konnte nicht korrekt geparst werden. Überprüfen Sie die Struktur und den Inhalt der XML-Datei.");
+                }
+
+
+                //Schauen ob bereits vorhanden und alten Eintrag löschen
+                if (ueberrschreiben)
+                {
+                    var gefundeneGruppen = viewModel.Gruppen.Where(x => x.GruppenName.Equals(gruppe.GruppenName)).ToList();
+
+                    foreach (var gefundeneGruppe in gefundeneGruppen)
                     {
-                        var gefundeneGruppen = viewModel.Gruppen.Where(x => x.GruppenName.Equals(gruppe.GruppenName)).ToList();
+                        //Die Startzeiten/Bahnen sollen nicht überschrieben werden, sofern sie im Import nicht gesetzt sind
+                        if (gruppe.StartzeitATeil == DateTime.MinValue) gruppe.StartzeitATeil = gefundeneGruppe.StartzeitATeil;
+                        if (gruppe.StartzeitBTeil == DateTime.MinValue) gruppe.StartzeitBTeil = gefundeneGruppe.StartzeitBTeil;
+                        if (gruppe.WettbewerbsbahnATeil == null) gruppe.WettbewerbsbahnATeil = gefundeneGruppe.WettbewerbsbahnATeil;
+                        if (gruppe.WettbewerbsbahnBTeil == null) gruppe.WettbewerbsbahnBTeil = gefundeneGruppe.WettbewerbsbahnBTeil;
 
-                        foreach (var gefundeneGruppe in gefundeneGruppen)
-                        {
-                            //Die Startzeiten/Bahnen sollen nicht überschrieben werden, sofern sie im Import nicht gesetzt sind
-                            if (gruppe.StartzeitATeil == DateTime.MinValue) gruppe.StartzeitATeil = gefundeneGruppe.StartzeitATeil;
-                            if (gruppe.StartzeitBTeil == DateTime.MinValue) gruppe.StartzeitBTeil = gefundeneGruppe.StartzeitBTeil;
-                            if (gruppe.WettbewerbsbahnATeil == null) gruppe.WettbewerbsbahnATeil = gefundeneGruppe.WettbewerbsbahnATeil;
-                            if (gruppe.WettbewerbsbahnBTeil == null) gruppe.WettbewerbsbahnBTeil = gefundeneGruppe.WettbewerbsbahnBTeil;
-
-                            //Hinweis an Benutzer das die Gruppe existiert
+                        //Hinweis an Benutzer das die Gruppe existiert
+                        if (showOverrideInfo)
                             MessageBox.Show($"Die Gruppe {gruppe.GruppenName} von der Ortswehr {gruppe.Feuerwehr} aus {gruppe.Organisationseinheit} Existierte bereits und wurde überschrieben!\nURL der Anmeldung neu: {gruppe.UrlderAnmeldung}\nURL der Anmeldung alt: {gefundeneGruppe.UrlderAnmeldung}", "Gruppe wurde überschrieben!", MessageBoxButton.OK, MessageBoxImage.Warning);
 
-                            // Alte Gruppe löschen
-                            viewModel.RemoveSelectedGroup(gefundeneGruppe, false);
-                        }
-
-
+                        // Alte Gruppe löschen
+                        viewModel.RemoveSelectedGroup(gefundeneGruppe, false);
                     }
-                    //Neuen Eintrag importieren
-                    viewModel.AddGroup(gruppe);
+
+
                 }
+                //Neuen Eintrag importieren
+                viewModel.AddGroup(gruppe);
+
             }
             catch (Exception ex)
             {
+                if (ex is InvalidDataException) throw;
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
             }
+        }
+
+        private void SyncmitFtp_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // SFTP Einstellungen aus dem Model laden
+                var viewModel = (MainViewModel)DataContext;
+                var einstellungen = viewModel.Einstellungen;
+                if (!TesteVerbindung_Click())
+                {
+                    MessageBox.Show("Bitte prüfe die FTP Einstellungen", "Verbindung fehlgeschlagen!",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                //Download Pfad erstellen
+                var downloadLocalPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    AppDomain.CurrentDomain.FriendlyName, "ftp", "download");
+                _ = Directory.CreateDirectory(downloadLocalPath);
+
+                //Upload Pfad erstellen
+                var uploadlocalPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                   AppDomain.CurrentDomain.FriendlyName, "ftp", "upload");
+                _ = Directory.CreateDirectory(uploadlocalPath);
+
+                // Liste zum Speichern der Dateipfade
+                List<string> filePaths = new();
+
+                using (var sftp = new SftpClient(einstellungen.Hostname, 22, einstellungen.Username,
+                           einstellungen.Password))
+                {
+                    sftp.Connect();
+
+                    var files = sftp.ListDirectory(einstellungen.Pfad);
+
+                    //Alle Dateien herunterladen
+                    foreach (var file in files)
+                    {
+                        if (!file.IsDirectory && file.Name.EndsWith(".xml") &&
+                            !file.Name.Contains(
+                                "_")) //Mit _ gefolgt von Timestamp werden die Revisionen angelegt. Diese nicht herunterladen.
+                        {
+                            var localFilePath =
+                                Path.Combine(downloadLocalPath, file.Name);
+                            using (Stream fileStream = File.Create(localFilePath))
+                            {
+                                sftp.DownloadFile(file.FullName, fileStream);
+                            }
+
+                            filePaths.Add(localFilePath);
+                        }
+                    }
+
+                    sftp.Disconnect();
+                }
+
+                // Heruntergeladene Daten importieren.
+                //Hier wird auch sichergestellt das immer nur die neuesten Werte aus beiden Anmeldungen behalten werden.
+                foreach (var file in filePaths) OpenDeserializerForFile(file, true, false);
+                // Alle Dateien zum Server hochladen 
+                List<string> dateienZumUpload = new List<string>();
+                foreach (var gruppe in viewModel.Gruppen)
+                {
+                    string dateiname = gruppe.FeuerwehrOhneSonderzeichen;
+                    string extracted = ExtractAnmeldungParameter(gruppe.UrlderAnmeldung);
+                    if (extracted != "")
+                        dateiname = extracted;
+
+                    var datei = Path.Combine($"{dateiname}.xml");
+                    WriteFile.writeText(Path.Combine(uploadlocalPath, datei), SerializeXML<Gruppe>.Serialize(gruppe));
+                    dateienZumUpload.Add(datei);
+                }
+                using (var sftp = new SftpClient(einstellungen.Hostname, 22, einstellungen.Username,
+                           einstellungen.Password))
+                {
+                    sftp.Connect();
+
+                    //Alle Dateien hochladen
+                    foreach (var datei in dateienZumUpload)
+                    {
+                        sftp.UploadFile(File.OpenRead(Path.Combine(uploadlocalPath, datei)),
+                           $"{einstellungen.Pfad}/{datei}", true);
+                    }
+                    sftp.Disconnect();
+
+                }
+
+                //Filterung entfernen
+                FertigeGruppenAusblenden_Checkbox.IsChecked = false;
+
+                //Importiertes einsortieren
+                viewModel.Sort(sortComboBox.SelectedIndex);
+
+
+                MessageBox.Show("Anmeldungen erfolgreich Synchronisiert!", "SFTP Sync erfolgreich", MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim Herunterladen der Dateien\n{ex}", "Fehler: SFTP Sync", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+        private bool TesteVerbindung_Click()
+        {
+            try
+            {
+                var viewModel = (MainViewModel)DataContext;
+                var einstellungen = viewModel.Einstellungen;
+
+                using (var sftp = new SftpClient(einstellungen.Hostname, 22, einstellungen.Username,
+                           einstellungen.Password))
+                {
+                    sftp.Connect();
+                    if (sftp.IsConnected)
+                    {
+                        sftp.Disconnect();
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name,
+                    EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim Verbinden mit SFTP\n{ex}", "Fehler: Einstellungen",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+
+            }
+        }
+
+        private string ExtractAnmeldungParameter(string url)
+        {
+            var uri = new Uri(url);
+            var query = HttpUtility.ParseQueryString(uri.Query);
+            return query["anmeldung"] ?? "";
         }
 
         private void LoadSettings()
@@ -673,6 +825,31 @@ namespace BWB_Auswertung
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
             }
+        }
+
+        private void LaunchAnmeldung_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo(UrlderAnmeldung.Text) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
+                MessageBox.Show($"Webseitenaufruf fehlgeschlagen\n{ex}", "Fehler: Webseitenaufruf", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+        private void DecimalTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Prüfen, ob die Eingabe ein gültiger Dezimalwert ist
+            e.Handled = !IsTextAllowed(e.Text);
+        }
+
+        private static bool IsTextAllowed(string text)
+        {
+            // Verwenden Sie Regex, um nur Zahlen und Dezimaltrennzeichen zuzulassen
+            return Regex.IsMatch(text, @"^[0-9]*(?:\.[0-9]*)?$");
         }
     }
 

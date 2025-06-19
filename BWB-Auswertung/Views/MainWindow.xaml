@@ -104,6 +104,18 @@
                                                         Kind="MicrosoftExcel" />
                         </MenuItem.Icon>
                     </MenuItem>
+                    <MenuItem x:Name="SyncmitFtp"
+                              Header="Sync mit FTP"
+                              ToolTip="Daten von FTP Server laden"
+                              Click="SyncmitFtp_Click"
+                              Foreground="{DynamicResource MahApps.Brushes.Text}">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconMaterial Width="22"
+                                                        Height="22"
+                                                        VerticalAlignment="Center"
+                                                        Kind="ServerNetwork" />
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Auswertung"
                           Background="{DynamicResource MahApps.Brushes.Accent}"
@@ -523,26 +535,50 @@
                                                    ToolTip="Anhand des Dateinamens kann die URL für die Bearbeitung einer Anmeldung ermittelt werden."
                                                    VerticalAlignment="Top"
                                                    FontSize="12" />
-
-                                        <Button Content=""
-                                                Width="40"
-                                                Height="40"
-                                                ToolTip="Anmelde URL kopieren"
-                                                Click="AnmeldeURLKopieren_Click">
-                                            <Button.ContentTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <iconPacks:PackIconModern Width="22"
-                                                                                  Height="22"
-                                                                                  VerticalAlignment="Center"
-                                                                                  Kind="PageCopy" />
-                                                        <TextBlock Margin="0 0 0 0"
-                                                                   VerticalAlignment="Center"
-                                                                   Text="{Binding}" />
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </Button.ContentTemplate>
-                                        </Button>
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center">
+                                            <Button Content=""
+                                                    Width="40"
+                                                    Height="40"
+                                                    Margin="10,10,10,10"
+                                                    ToolTip="Anmelde URL kopieren"
+                                                    Click="AnmeldeURLKopieren_Click">
+                                                <Button.ContentTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <iconPacks:PackIconModern Width="22"
+                                                                                      Height="22"
+                                                                                      VerticalAlignment="Center"
+                                                                                      Kind="PageCopy" />
+                                                            <TextBlock Margin="0 0 0 0"
+                                                                       VerticalAlignment="Center"
+                                                                       Text="{Binding}" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </Button.ContentTemplate>
+                                            </Button>
+                                            <Button Content=""
+                                                    Width="40"
+                                                    Height="40"
+                                                    Margin="10,10,10,10"
+                                                    ToolTip="Anmeldung öffnen"
+                                                    Click="LaunchAnmeldung_Click">
+                                                <Button.ContentTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <iconPacks:PackIconModern Width="22"
+                                                                                      Height="22"
+                                                                                      VerticalAlignment="Center"
+                                                                                      Kind="Browser" />
+                                                            <TextBlock Margin="0 0 0 0"
+                                                                       VerticalAlignment="Center"
+                                                                       Text="{Binding}" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </Button.ContentTemplate>
+                                            </Button>
+                                        </StackPanel>
                                     </StackPanel>
 
                                 </StackPanel>
