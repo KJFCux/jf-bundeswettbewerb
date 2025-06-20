@@ -59,7 +59,7 @@ namespace BWB_Auswertung.Models
             Vorname = string.Empty;
             Nachname = string.Empty;
             Geschlecht = Gender.N;
-            Geburtsdatum = new DateTime(DateTime.Now.Year,1,1);
+            Geburtsdatum = new DateTime(DateTime.Now.AddYears(-11).Year,1,1);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

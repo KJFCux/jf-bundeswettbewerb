@@ -528,11 +528,16 @@ namespace BWB_Auswertung
 
                     foreach (var gefundeneGruppe in gefundeneGruppen)
                     {
-                        //Die Startzeiten/Bahnen sollen nicht überschrieben werden, sofern sie im Import nicht gesetzt sind
-                        if (gruppe.StartzeitATeil == DateTime.MinValue) gruppe.StartzeitATeil = gefundeneGruppe.StartzeitATeil;
-                        if (gruppe.StartzeitBTeil == DateTime.MinValue) gruppe.StartzeitBTeil = gefundeneGruppe.StartzeitBTeil;
-                        if (gruppe.WettbewerbsbahnATeil == null) gruppe.WettbewerbsbahnATeil = gefundeneGruppe.WettbewerbsbahnATeil;
-                        if (gruppe.WettbewerbsbahnBTeil == null) gruppe.WettbewerbsbahnBTeil = gefundeneGruppe.WettbewerbsbahnBTeil;
+                        // Verhindern, dass vorhandene Bewertungen oder Startzeiten überschrieben werden.
+                        // Nur die Personen und Namen werden aus dem Import übernommen
+
+                        Gruppe gruppeTemp = gefundeneGruppe;
+                        gruppeTemp.Persons = gruppe.Persons;
+                        gruppeTemp.Feuerwehr = gruppe.Feuerwehr;
+                        gruppeTemp.GruppenName = gruppe.GruppenName;
+                        gruppeTemp.Organisationseinheit = gruppe.Organisationseinheit;
+
+                        gruppe = gruppeTemp;
 
                         //Hinweis an Benutzer das die Gruppe existiert
                         if (showOverrideInfo)
