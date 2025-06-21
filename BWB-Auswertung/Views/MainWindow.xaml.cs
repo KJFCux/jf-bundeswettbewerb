@@ -772,11 +772,11 @@ namespace BWB_Auswertung
                         if (item is Gruppe gruppe)
                         {
                             return ((gruppe.ATeilGesamteindruck < 1)
-                                     && (gruppe.BTeilGesamteindruck < 1)
-                                     && (gruppe.PunkteBTeil < 1)
-                                     && (gruppe.DurchschnittszeitKnotenATeil < 1)
-                                     && (gruppe.DurchschnittszeitBTeil < 1)
-                                     && (gruppe.DurchschnittszeitATeil < 1)
+                                     || (gruppe.BTeilGesamteindruck < 1)
+                                     || (gruppe.PunkteBTeil < 1)
+                                     || (gruppe.DurchschnittszeitKnotenATeil < 1)
+                                     || (gruppe.DurchschnittszeitBTeil < 1)
+                                     || (gruppe.DurchschnittszeitATeil < 1)
                                      );
                         }
                         return false;
@@ -856,6 +856,23 @@ namespace BWB_Auswertung
             // Verwenden Sie Regex, um nur Zahlen und Dezimaltrennzeichen zuzulassen
             return Regex.IsMatch(text, @"^[0-9]*(?:\.[0-9]*)?$");
         }
+
+        private bool _focusedByPointer;
+
+        private void TextBox_PointerPressed(object sender, MouseButtonEventArgs e)
+        {
+            _focusedByPointer = true;
+        }
+
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (!_focusedByPointer)
+            {
+                (sender as TextBox)?.SelectAll();
+            }
+            _focusedByPointer = false;
+        }
+
     }
 
     public class AgeToColorConverter : IValueConverter

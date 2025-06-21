@@ -671,7 +671,8 @@ namespace BWB_Auswertung.Models
         }
         public string GruppennameOhneSonderzeichen
         {
-            get {
+            get
+            {
                 Regex rgx = new Regex("[^a-zA-Z0-9öäüÄÜÖß ]");
                 return rgx.Replace(GruppenName, "");
             }
