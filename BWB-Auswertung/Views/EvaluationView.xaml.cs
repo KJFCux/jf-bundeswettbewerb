@@ -34,7 +34,7 @@ namespace BWB_Auswertung.Views
                 double grundwert = mainViewModel.Gruppen.Count();
                 try
                 {
-                    double prozentwert = mainViewModel.Gruppen.Where(x => 
+                    double prozentwert = mainViewModel.Gruppen.Where(x =>
                     ((x.ATeilGesamteindruck > 0)
                     && (x.BTeilGesamteindruck > 0)
                     && (x.PunkteBTeil > 0)
@@ -43,7 +43,7 @@ namespace BWB_Auswertung.Views
                     && (x.DurchschnittszeitKnotenATeil > 0)
                     && (x.SollZeitBTeilInSekunden > 0))
                     ||
-                    x.OhneWertung==true
+                    x.OhneWertung == true
                     ).ToList().Count();
                     double prozentsatz = prozentwert / grundwert * 100d;
                     Wettbewerbsfortschritt.Value = prozentsatz;
@@ -527,7 +527,7 @@ namespace BWB_Auswertung.Views
                 }
 
                 List<string> pfade = new List<string>();
-                foreach (Gruppe gruppe in viewModel.Gruppen.OrderByDescending(x => x.Platz))
+                foreach (Gruppe gruppe in viewModel.Gruppen.OrderByDescending(x => x.StartzeitATeil))
                 {
                     string aktuelleUrkunde = urkundeOverlay;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using NPOI.HPSF;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
@@ -19,6 +20,8 @@ public class ExcelMerger
                 {
                     ISheet inputSheet = inputWorkbook.GetSheetAt(i);
                     string sheetName = Path.GetFileNameWithoutExtension(filePath) + "_" + inputSheet.SheetName;
+                    if (sheetName.Length > 31)
+                        sheetName = sheetName.Substring(0, 31);
                     ISheet outputSheet = outputWorkbook.CreateSheet(sheetName);
 
                     CopySheet(inputSheet, outputSheet);

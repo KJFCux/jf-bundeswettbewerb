@@ -5,6 +5,7 @@ using System.Linq;
 using BWB_Auswertung.Models;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using Renci.SshNet;
 
 namespace BWB_Auswertung.IO
 {
@@ -155,7 +156,6 @@ namespace BWB_Auswertung.IO
                         row++;
                     }
 
-
                     using (FileStream writeFileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
                     {
                         workbook.Write(writeFileStream);
@@ -241,12 +241,25 @@ namespace BWB_Auswertung.IO
             try
             {
                 List<string> excelPfade = new();
+                Dictionary<string, string> uploadFiles = new();
                 string gesamtXlsxPfad = Path.Combine(filePath, $"Wertungsbogen-Gesamtübersicht.xlsx");
-                string pdfPfad = Path.Combine(filePath, $"Wertungsbogen-Gesamtübersicht.pdf");
+
+                //Upload Pfad erstellen
+                var uploadlocalPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    AppDomain.CurrentDomain.FriendlyName, "ftp", "uploadExcel");
+                _ = Directory.CreateDirectory(uploadlocalPath);
+                foreach (var file in Directory.GetFiles(uploadlocalPath))
+                {
+                    File.Delete(file);
+                }
 
                 foreach (Gruppe gruppe in gruppen)
                 {
-                    string excelpath = Path.Combine(filePath, $"Wertungsbogen-{gruppe.GruppennameOhneSonderzeichen}.xlsx");
+                    string filename = $"{gruppe.GruppennameOhneSonderzeichen}-Wertungsbogen";
+                    string excelpath = Path.Combine(filePath, $"{filename}.xlsx");
+                    string excelpathFTP = Path.Combine(uploadlocalPath, $"{gruppe.AnmeldungUID}.xlsx");
+                    uploadFiles.Add(gruppe.AnmeldungUID, excelpathFTP);
+
                     excelPfade.Add(excelpath);
                     WriteFile.ByteArrayToFile(excelpath, BWB_Auswertung.Properties.Resources.Auswertungsbogen);
 
@@ -256,97 +269,118 @@ namespace BWB_Auswertung.IO
                         ISheet sheet = workbook.GetSheetAt(0);
 
                         //Gruppenname/Jugendfeuerwehr
-                        SetCellValue(sheet, "C", 2, gruppe.GruppenName);
-                        SetCellValue(sheet, "C", 3, gruppe.Organisationseinheit ?? "");
-                        SetCellValue(sheet, "M", 2, gruppe.StartNr.ToString());
-                        SetCellValue(sheet, "M", 3, gruppe.Platz.ToString());
-                        SetCellValue(sheet, "A", 4, $"{settings.Veranstaltungstitel} am {settings.Veranstaltungsdatum:d} in {settings.Veranstaltungsort}");
+                        SetCellValue(sheet, "C", 1, gruppe.GruppenName);
+                        SetCellValue(sheet, "C", 2, gruppe.Organisationseinheit ?? "");
+                        SetCellValue(sheet, "M", 1, gruppe.StartNr.ToString());
+                        SetCellValue(sheet, "M", 2, gruppe.Platz.ToString());
+                        SetCellValue(sheet, "A", 3, $"{settings.Veranstaltungstitel} am {settings.Veranstaltungsdatum:d} in {settings.Veranstaltungsort}");
 
                         //Eindrücke A Teil
-                        SetCellValue(sheet, "G", 10, gruppe.EindruckGfMe.ToString());
-                        SetCellValue(sheet, "G", 11, gruppe.EindruckMa.ToString());
-                        SetCellValue(sheet, "G", 12, gruppe.EindruckA.ToString());
-                        SetCellValue(sheet, "G", 13, gruppe.EindruckW.ToString());
-                        SetCellValue(sheet, "G", 14, gruppe.EindruckS.ToString());
+                        SetCellValue(sheet, "G", 9, gruppe.EindruckGfMe.ToString());
+                        SetCellValue(sheet, "G", 10, gruppe.EindruckMa.ToString());
+                        SetCellValue(sheet, "G", 11, gruppe.EindruckA.ToString());
+                        SetCellValue(sheet, "G", 12, gruppe.EindruckW.ToString());
+                        SetCellValue(sheet, "G", 13, gruppe.EindruckS.ToString());
 
                         //Fehler A
-                        SetCellValue(sheet, "J", 10, gruppe.FehlerGfMe.ToString());
-                        SetCellValue(sheet, "J", 11, gruppe.FehlerMa.ToString());
-                        SetCellValue(sheet, "J", 12, gruppe.FehlerA.ToString());
-                        SetCellValue(sheet, "J", 13, gruppe.FehlerW.ToString());
-                        SetCellValue(sheet, "J", 14, gruppe.FehlerS.ToString());
-                        SetCellValue(sheet, "J", 15, gruppe.FehlerATeil.ToString());
+                        SetCellValue(sheet, "J", 9, gruppe.FehlerGfMe.ToString());
+                        SetCellValue(sheet, "J", 10, gruppe.FehlerMa.ToString());
+                        SetCellValue(sheet, "J", 11, gruppe.FehlerA.ToString());
+                        SetCellValue(sheet, "J", 12, gruppe.FehlerW.ToString());
+                        SetCellValue(sheet, "J", 13, gruppe.FehlerS.ToString());
+                        SetCellValue(sheet, "J", 14, gruppe.FehlerATeil.ToString());
 
                         //Eindruck B-Teil
-                        SetCellValue(sheet, "G", 23, gruppe.EindruckLauefer1.ToString());
-                        SetCellValue(sheet, "G", 24, gruppe.EindruckLauefer2.ToString());
-                        SetCellValue(sheet, "G", 25, gruppe.EindruckLauefer3.ToString());
-                        SetCellValue(sheet, "G", 26, gruppe.EindruckLauefer4.ToString());
-                        SetCellValue(sheet, "G", 27, gruppe.EindruckLauefer5.ToString());
-                        SetCellValue(sheet, "G", 28, gruppe.EindruckLauefer6.ToString());
-                        SetCellValue(sheet, "G", 29, gruppe.EindruckLauefer7.ToString());
-                        SetCellValue(sheet, "G", 30, gruppe.EindruckLauefer8.ToString());
-                        SetCellValue(sheet, "G", 31, gruppe.EindruckLauefer9.ToString());
+                        SetCellValue(sheet, "G", 22, gruppe.EindruckLauefer1.ToString());
+                        SetCellValue(sheet, "G", 23, gruppe.EindruckLauefer2.ToString());
+                        SetCellValue(sheet, "G", 24, gruppe.EindruckLauefer3.ToString());
+                        SetCellValue(sheet, "G", 25, gruppe.EindruckLauefer4.ToString());
+                        SetCellValue(sheet, "G", 26, gruppe.EindruckLauefer5.ToString());
+                        SetCellValue(sheet, "G", 27, gruppe.EindruckLauefer6.ToString());
+                        SetCellValue(sheet, "G", 28, gruppe.EindruckLauefer7.ToString());
+                        SetCellValue(sheet, "G", 29, gruppe.EindruckLauefer8.ToString());
+                        SetCellValue(sheet, "G", 30, gruppe.EindruckLauefer9.ToString());
 
                         //Fehler B-Teil
-                        SetCellValue(sheet, "J", 23, gruppe.FehlerLauefer1.ToString());
-                        SetCellValue(sheet, "J", 24, gruppe.FehlerLauefer2.ToString());
-                        SetCellValue(sheet, "J", 25, gruppe.FehlerLauefer3.ToString());
-                        SetCellValue(sheet, "J", 26, gruppe.FehlerLauefer4.ToString());
-                        SetCellValue(sheet, "J", 27, gruppe.FehlerLauefer5.ToString());
-                        SetCellValue(sheet, "J", 28, gruppe.FehlerLauefer6.ToString());
-                        SetCellValue(sheet, "J", 29, gruppe.FehlerLauefer7.ToString());
-                        SetCellValue(sheet, "J", 30, gruppe.FehlerLauefer8.ToString());
-                        SetCellValue(sheet, "J", 31, gruppe.FehlerLauefer9.ToString());
-                        SetCellValue(sheet, "J", 32, gruppe.FehlerBTeil.ToString());
-                        SetCellValue(sheet, "L", 32, gruppe.FehlerBTeil.ToString());
+                        SetCellValue(sheet, "J", 22, gruppe.FehlerLauefer1.ToString());
+                        SetCellValue(sheet, "J", 23, gruppe.FehlerLauefer2.ToString());
+                        SetCellValue(sheet, "J", 24, gruppe.FehlerLauefer3.ToString());
+                        SetCellValue(sheet, "J", 25, gruppe.FehlerLauefer4.ToString());
+                        SetCellValue(sheet, "J", 26, gruppe.FehlerLauefer5.ToString());
+                        SetCellValue(sheet, "J", 27, gruppe.FehlerLauefer6.ToString());
+                        SetCellValue(sheet, "J", 28, gruppe.FehlerLauefer7.ToString());
+                        SetCellValue(sheet, "J", 29, gruppe.FehlerLauefer8.ToString());
+                        SetCellValue(sheet, "J", 30, gruppe.FehlerLauefer9.ToString());
+                        SetCellValue(sheet, "J", 31, gruppe.FehlerBTeil.ToString());
+                        SetCellValue(sheet, "L", 31, gruppe.FehlerBTeil.ToString());
 
                         //Punkte und co
-                        SetCellValue(sheet, "K", 38, gruppe.GesamtPunkte.ToString());
-                        SetCellValue(sheet, "L", 19, gruppe.PunkteATeil.ToString());
-                        SetCellValue(sheet, "L", 15, gruppe.PunkteATeil.ToString());
+                        SetCellValue(sheet, "K", 37, gruppe.GesamtPunkte.ToString());
+                        SetCellValue(sheet, "L", 18, gruppe.PunkteATeil.ToString());
+                        SetCellValue(sheet, "L", 14, gruppe.PunkteATeil.ToString());
 
                         double differenzATeil = (Globals.SECONDS_ATEIL - gruppe.DurchschnittszeitATeil);
-                        SetCellValue(sheet, "L", 17, differenzATeil <= 0 ? differenzATeil.ToString() : "0");
+                        SetCellValue(sheet, "L", 16, differenzATeil <= 0 ? differenzATeil.ToString() : "0");
 
-                        SetCellValue(sheet, "L", 19, gruppe.PunkteATeil.ToString());
-                        SetCellValue(sheet, "L", 35, gruppe.PunkteBTeil.ToString());
-                        SetCellValue(sheet, "N", 35, gruppe.PunkteATeil.ToString());
-                        SetCellValue(sheet, "L", 18, gruppe.DurchschnittszeitKnotenATeil.ToString());
-                        SetCellValue(sheet, "I", 18, gruppe.DurchschnittszeitKnotenATeil.ToString());
-                        SetCellValue(sheet, "F", 18, gruppe.DurchschnittszeitKnotenATeil.ToString());
-                        SetCellValue(sheet, "I", 16, gruppe.DurchschnittszeitATeil.ToString());
-                        SetCellValue(sheet, "B", 17, settings.Vorgabezeit.ToString());
+                        SetCellValue(sheet, "L", 18, gruppe.PunkteATeil.ToString());
+                        SetCellValue(sheet, "L", 34, gruppe.PunkteBTeil.ToString());
+                        SetCellValue(sheet, "N", 34, gruppe.PunkteATeil.ToString());
+                        SetCellValue(sheet, "L", 17, gruppe.DurchschnittszeitKnotenATeil.ToString());
+                        SetCellValue(sheet, "I", 17, gruppe.DurchschnittszeitKnotenATeil.ToString());
+                        SetCellValue(sheet, "F", 17, gruppe.DurchschnittszeitKnotenATeil.ToString());
+                        SetCellValue(sheet, "I", 15, gruppe.DurchschnittszeitATeil.ToString());
+                        SetCellValue(sheet, "B", 16, settings.Vorgabezeit.ToString());
 
                         TimeSpan zeitateilspan = TimeSpan.FromSeconds(Convert.ToInt32(gruppe.DurchschnittszeitATeil));
-                        SetCellValue(sheet, "D", 16, zeitateilspan.ToString(@"hh\:mm\:ss"));
+                        SetCellValue(sheet, "D", 15, zeitateilspan.ToString(@"hh\:mm\:ss"));
 
-                        SetCellValue(sheet, "G", 33, gruppe.SollZeitBTeilInSekunden.ToString());
-                        SetCellValue(sheet, "G", 34, gruppe.DurchschnittszeitBTeil.ToString());
+                        SetCellValue(sheet, "G", 32, gruppe.SollZeitBTeilInSekunden.ToString());
+                        SetCellValue(sheet, "G", 33, gruppe.DurchschnittszeitBTeil.ToString());
 
                         TimeSpan sollzeitbteilspan = TimeSpan.FromSeconds(Convert.ToInt32(gruppe.SollZeitBTeilInSekunden));
-                        SetCellValue(sheet, "B", 33, sollzeitbteilspan.ToString(@"hh\:mm\:ss"));
+                        SetCellValue(sheet, "B", 32, sollzeitbteilspan.ToString(@"hh\:mm\:ss"));
 
                         TimeSpan zeitbteilspan = TimeSpan.FromSeconds(Convert.ToInt32(gruppe.DurchschnittszeitBTeil));
-                        SetCellValue(sheet, "B", 34, zeitbteilspan.ToString(@"hh\:mm\:ss"));
+                        SetCellValue(sheet, "B", 33, zeitbteilspan.ToString(@"hh\:mm\:ss"));
 
-                        SetCellValue(sheet, "K", 34, (gruppe.DurchschnittszeitBTeil - gruppe.SollZeitBTeilInSekunden).ToString());
-                        SetCellValue(sheet, "M", 37, gruppe.Gesamteindruck.ToString());
+                        SetCellValue(sheet, "K", 33, (gruppe.DurchschnittszeitBTeil - gruppe.SollZeitBTeilInSekunden).ToString());
+                        SetCellValue(sheet, "M", 36, gruppe.Gesamteindruck.ToString());
 
                         using (FileStream writeFileStream = new FileStream(excelpath, FileMode.Create, FileAccess.Write))
+                        {
+                            workbook.Write(writeFileStream);
+                        }
+                        using (FileStream writeFileStream = new FileStream(excelpathFTP, FileMode.Create, FileAccess.Write))
                         {
                             workbook.Write(writeFileStream);
                         }
                     }
                 }
 
-                //Alle Excel Dateien zusätzlich in ein gebündeltes Workbook laden
+                EnsureFtpDirectoryExists(new SftpClient(settings.Hostname, 22, settings.Username,
+                        settings.Password), $"{settings.Pfad}/Wertungsbögen");
+
+                using (var sftp = new SftpClient(settings.Hostname, 22, settings.Username,
+                           settings.Password))
+                {
+                    sftp.Connect();
+
+                    //Alle Dateien hochladen
+
+                    foreach (var uploadFile in uploadFiles)
+                    {
+                        using (var fileStream = File.OpenRead(uploadFile.Value))
+                        {
+                            sftp.UploadFile(fileStream, $"{settings.Pfad}/Wertungsbögen/{uploadFile.Key}.xlsx", true);
+                        }
+                    }
+                    sftp.Disconnect();
+
+                }
+
+                //Zusammenführen der Excel Dateien
                 ExcelMerger merger = new ExcelMerger();
                 merger.MergeExcelFiles(excelPfade, gesamtXlsxPfad);
-
-                //Anschließende Konvertierung der Gesamt Excel Datei in eine PDF
-                XlsxToPdfConverter converter = new XlsxToPdfConverter();
-                converter.ConvertXlsxToPdf(gesamtXlsxPfad, pdfPfad);
 
                 return true;
             }
@@ -354,6 +388,25 @@ namespace BWB_Auswertung.IO
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 return false;
+            }
+        }
+
+        private static void EnsureFtpDirectoryExists(SftpClient sftp, string directoryPath)
+        {
+            try
+            {
+                sftp.Connect();
+
+                if (!sftp.Exists(directoryPath))
+                {
+                    sftp.CreateDirectory(directoryPath);
+                }
+                sftp.Disconnect();
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                throw;
             }
         }
     }

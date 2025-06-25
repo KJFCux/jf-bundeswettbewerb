@@ -623,7 +623,7 @@ namespace BWB_Auswertung
                 foreach (var gruppe in viewModel.Gruppen)
                 {
                     string dateiname = gruppe.FeuerwehrOhneSonderzeichen;
-                    string extracted = ExtractAnmeldungParameter(gruppe.UrlderAnmeldung);
+                    string extracted = gruppe.AnmeldungUID;
                     if (extracted != "")
                         dateiname = extracted;
 
@@ -693,12 +693,6 @@ namespace BWB_Auswertung
             }
         }
 
-        private string ExtractAnmeldungParameter(string url)
-        {
-            var uri = new Uri(url);
-            var query = HttpUtility.ParseQueryString(uri.Query);
-            return query["anmeldung"] ?? "";
-        }
 
         private void LoadSettings()
         {

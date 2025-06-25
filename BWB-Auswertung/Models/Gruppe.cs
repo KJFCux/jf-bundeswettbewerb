@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace BWB_Auswertung.Models
 {
@@ -29,6 +30,20 @@ namespace BWB_Auswertung.Models
         public DateTime StartzeitBTeil { get; set; }
 
         public string? UrlderAnmeldung { get; set; }
+        public string AnmeldungUID
+        {
+            get
+            {
+                if (UrlderAnmeldung != null)
+                {
+                    var uri = new Uri(UrlderAnmeldung);
+                    var query = HttpUtility.ParseQueryString(uri.Query);
+                    return query["anmeldung"] ?? Guid.NewGuid().ToString();
+                }
+
+                return Guid.NewGuid().ToString();
+            }
+        }
 
         public DateTime? TimeStampAnmeldung { get; set; }
         public DateTime? TimeStampAenderung { get; set; }
@@ -673,8 +688,25 @@ namespace BWB_Auswertung.Models
         {
             get
             {
-                Regex rgx = new Regex("[^a-zA-Z0-9öäüÄÜÖß ]");
-                return rgx.Replace(GruppenName, "");
+                Dictionary<string, string> replacements = new Dictionary<string, string>
+               {
+                   { "ä", "ae" },
+                   { "ö", "oe" },
+                   { "ü", "ue" },
+                   { "Ä", "Ae" },
+                   { "Ö", "Oe" },
+                   { "Ü", "Ue" },
+                   { "ß", "ss" }
+               };
+
+                string result = GruppenName;
+                foreach (var replacement in replacements)
+                {
+                    result = result.Replace(replacement.Key, replacement.Value);
+                }
+
+                Regex rgx = new Regex("[^a-zA-Z0-9]");
+                return rgx.Replace(result, "");
             }
         }
         public string FeuerwehrOhneSonderzeichen
