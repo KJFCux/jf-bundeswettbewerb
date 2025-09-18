@@ -526,6 +526,21 @@ namespace BWB_Auswertung.Views
                     urkundeOverlay = urkundeOverlay.Replace("{unterschriftrechts}", $"data:image/jpeg;base64,{Bilder.readBase64(viewModel.Einstellungen.Unterschriftrechts)}");
                 }
 
+                //Wenn abgefragt, Platz durch Leerzeichen ersetzen um diese Manuell nachtragen können
+
+                MessageBoxResult resultPlatz = MessageBox.Show(
+                   "Durch Klicken auf Ja werden die Urkunden mit dem errechneten Platz erstellt. Bei Klicken auf Nein ohne, wodurch diese später nachgetragen werden können.",
+                   "Urkunden mit Platzierung erstellen?",
+                   MessageBoxButton.YesNo,
+                   MessageBoxImage.Question
+                );
+
+                if (resultPlatz == MessageBoxResult.No)
+                {
+                    urkundeOverlay = urkundeOverlay.Replace("{platz}", "  ");
+                }
+
+
                 List<string> pfade = new List<string>();
                 foreach (Gruppe gruppe in viewModel.Gruppen.OrderByDescending(x => x.StartzeitATeil))
                 {
