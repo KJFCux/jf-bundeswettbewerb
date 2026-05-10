@@ -520,10 +520,24 @@ namespace BWB_Auswertung.Views
                 urkundeOverlay = urkundeOverlay.Replace("{funktionlinks}", viewModel.Einstellungen.Funktionlinks);
                 urkundeOverlay = urkundeOverlay.Replace("{funktionrechts}", viewModel.Einstellungen.Funktionrechts);
 
+                string blankoUnterschrift = $"data:image/png;base64,{Convert.ToBase64String(BWB_Auswertung.Properties.Resources.Blanko_Unterschrift)}";
+
                 if (File.Exists(viewModel.Einstellungen.Unterschriftlinks))
                 {
                     urkundeOverlay = urkundeOverlay.Replace("{unterschriftlinks}", $"data:image/jpeg;base64,{Bilder.readBase64(viewModel.Einstellungen.Unterschriftlinks)}");
+                }
+                else
+                {
+                    urkundeOverlay = urkundeOverlay.Replace("{unterschriftlinks}", blankoUnterschrift);
+                }
+
+                if (File.Exists(viewModel.Einstellungen.Unterschriftrechts))
+                {
                     urkundeOverlay = urkundeOverlay.Replace("{unterschriftrechts}", $"data:image/jpeg;base64,{Bilder.readBase64(viewModel.Einstellungen.Unterschriftrechts)}");
+                }
+                else
+                {
+                    urkundeOverlay = urkundeOverlay.Replace("{unterschriftrechts}", blankoUnterschrift);
                 }
 
                 //Wenn abgefragt, Platz durch Leerzeichen ersetzen um diese Manuell nachtragen können
@@ -606,10 +620,24 @@ namespace BWB_Auswertung.Views
                 urkundeOverlay = urkundeOverlay.Replace("{funktionlinks}", viewModel.Einstellungen.Funktionlinks);
                 urkundeOverlay = urkundeOverlay.Replace("{funktionrechts}", viewModel.Einstellungen.Funktionrechts);
 
+                string blankoUnterschrift = $"data:image/png;base64,{Convert.ToBase64String(BWB_Auswertung.Properties.Resources.Blanko_Unterschrift)}";
+
                 if (File.Exists(viewModel.Einstellungen.Unterschriftlinks))
                 {
                     urkundeOverlay = urkundeOverlay.Replace("{unterschriftlinks}", $"data:image/jpeg;base64,{Bilder.readBase64(viewModel.Einstellungen.Unterschriftlinks)}");
+                }
+                else
+                {
+                    urkundeOverlay = urkundeOverlay.Replace("{unterschriftlinks}", blankoUnterschrift);
+                }
+
+                if (File.Exists(viewModel.Einstellungen.Unterschriftrechts))
+                {
                     urkundeOverlay = urkundeOverlay.Replace("{unterschriftrechts}", $"data:image/jpeg;base64,{Bilder.readBase64(viewModel.Einstellungen.Unterschriftrechts)}");
+                }
+                else
+                {
+                    urkundeOverlay = urkundeOverlay.Replace("{unterschriftrechts}", blankoUnterschrift);
                 }
 
                 var juengsteGruppe = viewModel.Gruppen.OrderBy(x => x.GesamtAlterinTagen).First();

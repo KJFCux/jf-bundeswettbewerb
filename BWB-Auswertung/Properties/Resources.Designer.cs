@@ -89,7 +89,17 @@ namespace BWB_Auswertung.Properties {
                 return ((byte[])(obj));
             }
         }
-        
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        internal static byte[] Blanko_Unterschrift {
+            get {
+                object obj = ResourceManager.GetObject("Blanko_Unterschrift", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
