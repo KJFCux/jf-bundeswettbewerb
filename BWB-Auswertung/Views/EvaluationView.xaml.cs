@@ -448,6 +448,151 @@ namespace BWB_Auswertung.Views
             }
         }
 
+        private async void ExportPDFStartreihenfolge_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                ((Button)sender).IsEnabled = false;
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+
+                List<Task<bool>> tasks = new List<Task<bool>>
+                {
+                    helperExportPDFStartreihenfolge(viewModel.Gruppen.ToList(), "A"),
+                    helperExportPDFStartreihenfolge(viewModel.Gruppen.ToList(), "B")
+                };
+                await Task.WhenAll(tasks);
+
+                if (tasks.All(task => task.Result))
+                {
+                    ShowExportMessageBox("Export der Startreihenfolgen abgeschlossen!\nZielverzeichnis öffnen?",
+                        "Export Startreihenfolgen", exportPath);
+                }
+                ((Button)sender).IsEnabled = true;
+            }
+            catch (Exception ex)
+            {
+                ((Button)sender).IsEnabled = true;
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Export der Startreihenfolgen fehlgeschlagen!\n{ex}", "Fehler: Export Startreihenfolgen", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async Task<bool> helperExportPDFStartreihenfolge(List<Gruppe> gruppen, string teil)
+        {
+            try
+            {
+                string htmlVorlage = BWB_Auswertung.Properties.Resources.Startreihenfolge;
+                string htmlZeileVorlage = BWB_Auswertung.Properties.Resources.StartreihenfolgeTabellenzeile;
+                PDF pDF = new PDF();
+                List<string> pfade = new List<string>();
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+                Settings einstellungen = viewModel.Einstellungen;
+
+                string titelHaupt = $"Startreihenfolge {teil}-Teil";
+                string dateiname = $"Startreihenfolge {teil}-Teil";
+
+                if (File.Exists(einstellungen.Logopfad))
+                {
+                    htmlVorlage = htmlVorlage.Replace("{logo}", $"data:image/jpeg;base64,{Bilder.readBase64(einstellungen.Logopfad)}");
+                }
+                else
+                {
+                    htmlVorlage = htmlVorlage.Replace("{logo}", $"data:image/svg+xml;base64,{Convert.ToBase64String(BWB_Auswertung.Properties.Resources.Deutsche_Jugendfeuerwehr)}");
+                }
+                htmlVorlage = htmlVorlage.Replace("{titel_haupt}", titelHaupt);
+                htmlVorlage = htmlVorlage.Replace("{datum_heute}", DateTime.Now.ToString("dd.MM.yyyy HH:mm"));
+                htmlVorlage = htmlVorlage.Replace("{titel}", einstellungen.Veranstaltungstitel);
+                htmlVorlage = htmlVorlage.Replace("{datum_veranstaltung}", einstellungen.Veranstaltungsdatum.ToString("dd.MM.yyyy"));
+                htmlVorlage = htmlVorlage.Replace("{ort}", einstellungen.Veranstaltungsort);
+
+                //Sortierung: Startzeit aufsteigend, dann Bahn aufsteigend (Gruppen ohne Startzeit ans Ende)
+                List<Gruppe> sortiert;
+                if (teil == "A")
+                {
+                    sortiert = gruppen
+                        .OrderBy(g => g.StartzeitATeil == default ? DateTime.MaxValue : g.StartzeitATeil)
+                        .ThenBy(g => g.WettbewerbsbahnATeil ?? int.MaxValue)
+                        .ToList();
+                }
+                else
+                {
+                    sortiert = gruppen
+                        .OrderBy(g => g.StartzeitBTeil == default ? DateTime.MaxValue : g.StartzeitBTeil)
+                        .ThenBy(g => g.WettbewerbsbahnBTeil ?? int.MaxValue)
+                        .ToList();
+                }
+
+                string tabelle = string.Empty;
+                int anzahlSeiten = 1;
+                int maxProSeite = 25;
+                int seitenindex = 1;
+                int alleSeiten = Convert.ToInt32(Math.Ceiling(sortiert.Count / (float)maxProSeite));
+                if (alleSeiten < 1) alleSeiten = 1;
+
+                foreach (Gruppe gruppe in sortiert)
+                {
+                    if (seitenindex > maxProSeite)
+                    {
+                        string seitenHtml = htmlVorlage;
+                        seitenHtml = seitenHtml.Replace("{tabellenzeile}", tabelle);
+                        seitenHtml = seitenHtml.Replace("{akt_seite}", anzahlSeiten.ToString());
+                        seitenHtml = seitenHtml.Replace("{alle_seiten}", alleSeiten.ToString());
+                        string pfadinIf = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
+                        if (!await pDF.ConvertHtmlFileToPdf(seitenHtml, pfadinIf, false))
+                        {
+                            MessageBox.Show($"Export der Startreihenfolge fehlgeschlagen!", "Fehler: Export Startreihenfolge", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return false;
+                        }
+                        pfade.Add(pfadinIf);
+
+                        tabelle = string.Empty;
+                        seitenindex = 1;
+                        anzahlSeiten++;
+                    }
+
+                    DateTime startzeit = teil == "A" ? gruppe.StartzeitATeil : gruppe.StartzeitBTeil;
+                    int? bahn = teil == "A" ? gruppe.WettbewerbsbahnATeil : gruppe.WettbewerbsbahnBTeil;
+
+                    string startzeitText = startzeit == default ? string.Empty : startzeit.ToString("HH:mm");
+                    string bahnText = bahn.HasValue ? bahn.Value.ToString() : string.Empty;
+                    string startNrText = gruppe.StartNr.HasValue ? $"{gruppe.StartNr}." : string.Empty;
+
+                    string currentZeile = htmlZeileVorlage;
+                    currentZeile = currentZeile.Replace("{startnummer}", startNrText);
+                    currentZeile = currentZeile.Replace("{gruppenname}", $"{gruppe.GruppenName}");
+                    currentZeile = currentZeile.Replace("{startzeit}", startzeitText);
+                    currentZeile = currentZeile.Replace("{startbahn}", bahnText);
+
+                    tabelle += currentZeile;
+                    seitenindex++;
+                }
+
+                htmlVorlage = htmlVorlage.Replace("{tabellenzeile}", tabelle);
+                htmlVorlage = htmlVorlage.Replace("{akt_seite}", anzahlSeiten.ToString());
+                htmlVorlage = htmlVorlage.Replace("{alle_seiten}", anzahlSeiten.ToString());
+                string pfad = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
+                bool erfolgreich = await pDF.ConvertHtmlFileToPdf(htmlVorlage, pfad, false);
+                if (!erfolgreich)
+                {
+                    MessageBox.Show($"Export der Startreihenfolge fehlgeschlagen!", "Fehler: Export Startreihenfolge", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+                pfade.Add(pfad);
+
+                pDF.MergePdfFiles(pfade, System.IO.Path.Combine(exportPath, $"{dateiname}.pdf"), true,
+                    titel: titelHaupt,
+                    subject: $"Startreihenfolge {teil}-Teil für den {einstellungen.Veranstaltungstitel} am {einstellungen.Veranstaltungsdatum.ToShortDateString()} in {einstellungen.Veranstaltungsort}.",
+                    author: einstellungen.Veranstaltungsleitung);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Export der Startreihenfolge fehlgeschlagen!\n{ex}", "Fehler: Export Startreihenfolge", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+        }
+
         private void ExportExcelPlatzierungsliste_Click(object sender, RoutedEventArgs e)
         {
             try

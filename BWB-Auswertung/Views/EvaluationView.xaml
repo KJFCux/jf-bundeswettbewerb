@@ -376,7 +376,25 @@
                                FontSize="26"
                                FontWeight="Bold"
                                VerticalAlignment="Top" />
-
+						<Button Content="Startreihenfolge"
+													   ToolTip="Exportiert je eine Liste der Startreihenfolge für A-Teil und B-Teil, sortiert nach Startzeit und Bahn."
+													   Margin="10,10,10,10"
+													   Click="ExportPDFStartreihenfolge_Click"
+													   x:Name="ExportPDFStartreihenfolge_Button">
+							<Button.ContentTemplate>
+								<DataTemplate>
+									<StackPanel Orientation="Horizontal">
+										<iconPacks:PackIconMaterial Width="22"
+                                                                    Height="22"
+                                                                    VerticalAlignment="Center"
+                                                                    Kind="ClockOutline" />
+										<TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+									</StackPanel>
+								</DataTemplate>
+							</Button.ContentTemplate>
+						</Button>
                         <Button Content="Kontrollblätter"
                                 ToolTip="Export der Kontrollbläter für jede Gruppe in eine PDF"
                                 Margin="10,10,10,10"
@@ -396,25 +414,25 @@
                                 </DataTemplate>
                             </Button.ContentTemplate>
                         </Button>
-                        <Button Content="Platzierungsliste"
+						<Button Content="Platzierungsliste"
                                 ToolTip="Exportiert eine Liste der Platzierungen in absteigender und aufsteigender Reihenfolge"
                                 Margin="10,10,10,10"
                                 Click="ExportPDFPlatzierungsliste_Click"
                                 x:Name="ExportPDFPlatzierungsliste_Button">
-                            <Button.ContentTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <iconPacks:PackIconModern Width="22"
+							<Button.ContentTemplate>
+								<DataTemplate>
+									<StackPanel Orientation="Horizontal">
+										<iconPacks:PackIconModern Width="22"
                                                                   Height="22"
                                                                   VerticalAlignment="Center"
                                                                   Kind="Trophy" />
-                                        <TextBlock Margin="4 0 0 0"
+										<TextBlock Margin="4 0 0 0"
                                                    VerticalAlignment="Center"
                                                    Text="{Binding}" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </Button.ContentTemplate>
-                        </Button>
+									</StackPanel>
+								</DataTemplate>
+							</Button.ContentTemplate>
+						</Button>
                         <Button Content="Excel Platzierungsliste"
                                 ToolTip="Exportiert eine Ausführliche Liste in eine Excel-Datei"
                                 Margin="10,10,10,10"

@@ -266,7 +266,19 @@ namespace BWB_Auswertung.Properties {
                 return ResourceManager.GetString("PlatzierungsListeTabellenzeile", resourceCulture);
             }
         }
-        
+
+        internal static string Startreihenfolge {
+            get {
+                return ResourceManager.GetString("Startreihenfolge", resourceCulture);
+            }
+        }
+
+        internal static string StartreihenfolgeTabellenzeile {
+            get {
+                return ResourceManager.GetString("StartreihenfolgeTabellenzeile", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
