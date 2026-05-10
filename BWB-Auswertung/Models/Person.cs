@@ -15,9 +15,47 @@ namespace BWB_Auswertung.Models
     {
 
 
-        public string Vorname { get; set; }
-        public string Nachname { get; set; }
-        public Gender Geschlecht { get; set; }
+        private string vorname;
+        public string Vorname
+        {
+            get { return vorname; }
+            set
+            {
+                if (vorname != value)
+                {
+                    vorname = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string nachname;
+        public string Nachname
+        {
+            get { return nachname; }
+            set
+            {
+                if (nachname != value)
+                {
+                    nachname = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private Gender geschlecht;
+        public Gender Geschlecht
+        {
+            get { return geschlecht; }
+            set
+            {
+                if (geschlecht != value)
+                {
+                    geschlecht = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
 
         private DateTime geburtsdatum;
