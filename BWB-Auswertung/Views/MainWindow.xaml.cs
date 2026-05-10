@@ -365,7 +365,8 @@ namespace BWB_Auswertung
         {
             try
             {
-                SettingsWindow neuesFenster = new SettingsWindow();
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+                SettingsWindow neuesFenster = new SettingsWindow(viewModel);
                 bool? result = neuesFenster.ShowDialog();
                 LoadSettings();
             }

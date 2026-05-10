@@ -32,6 +32,14 @@ namespace BWB_Auswertung.Models
             Pfad = string.Empty;
             Username = string.Empty;
             Password = string.Empty;
+
+            AnzahlBahnenATeil = 2;
+            AnzahlBahnenBTeil = 2;
+            StartintervallATeilMinuten = 10;
+            StartintervallBTeilMinuten = 10;
+            StartBeginnATeil = DateTime.Today.AddHours(9);
+            StartBeginnBTeil = DateTime.Today.AddHours(9);
+            MinAbstandCrossTeilMinuten = 30;
         }
 
         public string Veranstaltungsort { get; set; }
@@ -62,6 +70,15 @@ namespace BWB_Auswertung.Models
         public string Username { get; set; }
 
         public string Password { get; set; }
+
+        //Automatische Startzeitenvergabe
+        public int AnzahlBahnenATeil { get; set; }
+        public int AnzahlBahnenBTeil { get; set; }
+        public int StartintervallATeilMinuten { get; set; }
+        public int StartintervallBTeilMinuten { get; set; }
+        public DateTime StartBeginnATeil { get; set; }
+        public DateTime StartBeginnBTeil { get; set; }
+        public int MinAbstandCrossTeilMinuten { get; set; }
 
 
         public int Vorgabezeit

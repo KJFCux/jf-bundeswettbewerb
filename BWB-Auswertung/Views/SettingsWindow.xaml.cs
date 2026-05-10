@@ -1,5 +1,6 @@
 ﻿using BWB_Auswertung.IO;
 using BWB_Auswertung.Models;
+using BWB_Auswertung.Services;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -32,30 +33,180 @@ namespace BWB_Auswertung.Views
     {
         private readonly string ProgrammName = System.AppDomain.CurrentDomain.FriendlyName;
         private string settingsPath;
+        private string? snapshotXml;
+        private bool savedAndClosing = false;
 
-        public SettingsWindow()
+        public SettingsWindow() : this(new MainViewModel())
         {
+        }
 
+        public SettingsWindow(MainViewModel viewModel)
+        {
             InitializeComponent();
-            DataContext = new MainViewModel();
+            DataContext = viewModel;
 
             settingsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ProgrammName, "Einstellungen");
             DirectoryInfo di = Directory.CreateDirectory(settingsPath);
             LoadSettings();
+            CaptureSnapshot();
         }
 
-        private void SaveAndClose_Click(object sender, RoutedEventArgs e)
+        private void CaptureSnapshot()
         {
             try
             {
                 MainViewModel viewModel = (MainViewModel)DataContext;
-                WriteFile.writeText(System.IO.Path.Combine(settingsPath, "settings.xml"), SerializeXML<Gruppe>.Serialize(viewModel.Einstellungen));
-                Close();
+                snapshotXml = SerializeXML<Settings>.Serialize(viewModel.Einstellungen);
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                snapshotXml = null;
+            }
+        }
+
+        private bool HasUnsavedChanges()
+        {
+            try
+            {
+                if (snapshotXml == null) return false;
+                MainViewModel viewModel = (MainViewModel)DataContext;
+                string current = SerializeXML<Settings>.Serialize(viewModel.Einstellungen);
+                return !string.Equals(current, snapshotXml, StringComparison.Ordinal);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool SaveSettings()
+        {
+            try
+            {
+                MainViewModel viewModel = (MainViewModel)DataContext;
+                WriteFile.writeText(System.IO.Path.Combine(settingsPath, "settings.xml"), SerializeXML<Settings>.Serialize(viewModel.Einstellungen));
+                CaptureSnapshot();
+                return true;
             }
             catch (Exception ex)
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Fehler beim speichern von Einstellungen\n{ex}", "Fehler: Einstellungen", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+        }
+
+        private void SaveAndClose_Click(object sender, RoutedEventArgs e)
+        {
+            if (SaveSettings())
+            {
+                savedAndClosing = true;
+                Close();
+            }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (savedAndClosing) return;
+            if (!HasUnsavedChanges()) return;
+
+            MessageBoxResult result = MessageBox.Show(
+                "Es gibt ungespeicherte Änderungen. Sollen diese gespeichert werden?",
+                "Ungespeicherte Änderungen",
+                MessageBoxButton.YesNoCancel,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                if (!SaveSettings())
+                {
+                    e.Cancel = true;
+                }
+            }
+            else if (result == MessageBoxResult.Cancel)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void StartzeitenLoeschen_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MainViewModel viewModel = (MainViewModel)DataContext;
+                if (viewModel.Gruppen == null || viewModel.Gruppen.Count == 0)
+                {
+                    MessageBox.Show("Es sind keine Gruppen vorhanden.",
+                        "Alle Startzeiten löschen", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                MessageBoxResult result = MessageBox.Show(
+                    $"Sollen wirklich bei allen {viewModel.Gruppen.Count} Gruppen die Startzeiten und Bahnen für A- und B-Teil gelöscht werden?\n\nDieser Vorgang kann nicht rückgängig gemacht werden.",
+                    "Alle Startzeiten löschen",
+                    MessageBoxButton.OKCancel,
+                    MessageBoxImage.Warning);
+
+                if (result != MessageBoxResult.OK) return;
+
+                foreach (var gruppe in viewModel.Gruppen)
+                {
+                    gruppe.StartzeitATeil = default;
+                    gruppe.StartzeitBTeil = default;
+                    gruppe.WettbewerbsbahnATeil = null;
+                    gruppe.WettbewerbsbahnBTeil = null;
+                }
+
+                MessageBox.Show($"Startzeiten und Bahnen von {viewModel.Gruppen.Count} Gruppen wurden gelöscht.",
+                    "Alle Startzeiten löschen", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim Löschen der Startzeiten\n{ex}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void AutoStartzeiten_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MainViewModel viewModel = (MainViewModel)DataContext;
+                if (viewModel.Gruppen == null || viewModel.Gruppen.Count == 0)
+                {
+                    MessageBox.Show("Es sind keine Gruppen vorhanden, denen Startzeiten zugewiesen werden könnten.",
+                        "Automatische Startzeitenvergabe", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                AutoStartReihenfolge reihenfolge = ReihenfolgeComboBox.SelectedValue is AutoStartReihenfolge sel
+                    ? sel
+                    : AutoStartReihenfolge.AktuelleSortierung;
+
+                var result = StartzeitenService.AutoAssign(viewModel.Gruppen, viewModel.Einstellungen, reihenfolge);
+
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine($"A-Teil: {result.ZugewieseneA} Startzeit(en) vergeben.");
+                sb.AppendLine($"B-Teil: {result.ZugewieseneB} Startzeit(en) vergeben.");
+                if (result.Warnungen.Count > 0)
+                {
+                    sb.AppendLine();
+                    sb.AppendLine("Warnungen:");
+                    foreach (var w in result.Warnungen)
+                    {
+                        sb.AppendLine($" • {w}");
+                    }
+                }
+
+                MessageBox.Show(sb.ToString(), "Automatische Startzeitenvergabe",
+                    MessageBoxButton.OK,
+                    result.Warnungen.Count > 0 ? MessageBoxImage.Warning : MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler bei der automatischen Startzeitenvergabe\n{ex}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
