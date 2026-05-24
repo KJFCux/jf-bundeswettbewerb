@@ -117,6 +117,18 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
+                <MenuItem Header="LAN-Abgleich"
+                          Background="{DynamicResource MahApps.Brushes.Accent}"
+                          Foreground="{DynamicResource MahApps.Brushes.IdealForeground}"
+                          ToolTip="Vergleicht Eingaben mit einem zweiten Auswertungs-PC im LAN (4-Augen-Prinzip)"
+                          Click="OpenAbgleich_Click">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Width="22"
+                                                    Height="22"
+                                                    VerticalAlignment="Center"
+                                                    Kind="Lan" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem Header="Auswertung"
                           Background="{DynamicResource MahApps.Brushes.Accent}"
                           Foreground="{DynamicResource MahApps.Brushes.IdealForeground}"

@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.IO;
 using Microsoft.Win32;
 using BWB_Auswertung.Views;
+using BWB_Auswertung.Network;
 using System.Text.Json;
 using System.Net.Http;
 using ControlzEx.Standard;
@@ -38,6 +39,10 @@ namespace BWB_Auswertung
         private string dataPath;
         private string settingsPath;
         private string currentVersion = "";
+
+        //LAN-Abgleich
+        private PeerDiscovery? peerDiscovery;
+        private SyncServer? syncServer;
 
         public MainWindow()
         {
@@ -77,8 +82,82 @@ namespace BWB_Auswertung
 
             //Prüfe auf Updates
             _ = CheckForUpdate();
+
+            //LAN-Abgleich Dienste starten (UDP-Discovery + TCP-Server)
+            StartLanServices();
+
             gruppenListBox.SelectedIndex = 0;
             gruppenListBox.Focus();
+        }
+
+        private void StartLanServices()
+        {
+            try
+            {
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+                Settings s = viewModel.Einstellungen;
+                if (s == null || !s.LanAbgleichAktiv) return;
+
+                int discoveryPort = s.LanDiscoveryPort > 0 ? s.LanDiscoveryPort : 47800;
+                int syncPort = s.LanSyncPort > 0 ? s.LanSyncPort : 47801;
+
+                peerDiscovery = new PeerDiscovery(discoveryPort, syncPort, s.Veranstaltungstitel ?? string.Empty);
+                peerDiscovery.Start();
+
+                syncServer = new SyncServer(
+                    syncPort,
+                    () =>
+                    {
+                        //Snapshot MUSS auf dem UI-Thread erstellt werden, weil die
+                        //ObservableCollection/CollectionView und INotifyPropertyChanged-Objekte
+                        //an den Dispatcher gebunden sind.
+                        return Dispatcher.Invoke(() =>
+                        {
+                            var vm = (MainViewModel)this.DataContext;
+                            return vm.Gruppen.ToList();
+                        });
+                    },
+                    () => Dispatcher.Invoke(() => ((MainViewModel)this.DataContext).Einstellungen?.Veranstaltungstitel ?? string.Empty));
+                syncServer.Start();
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write($"StartLanServices: {ex.Message}", System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Warning);
+            }
+        }
+
+        private void StopLanServices()
+        {
+            try { peerDiscovery?.Stop(); } catch { /* ignore */ }
+            try { syncServer?.Stop(); } catch { /* ignore */ }
+            peerDiscovery = null;
+            syncServer = null;
+        }
+
+        private void OpenAbgleich_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MainViewModel viewModel = (MainViewModel)this.DataContext;
+                if (!viewModel.Einstellungen.LanAbgleichAktiv)
+                {
+                    MessageBox.Show("Der LAN-Abgleich ist in den Einstellungen deaktiviert.", "LAN-Abgleich", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+                int syncPort = viewModel.Einstellungen.LanSyncPort > 0 ? viewModel.Einstellungen.LanSyncPort : 47801;
+                AbgleichWindow fenster = new AbgleichWindow(
+                    peerDiscovery,
+                    () => viewModel.Gruppen,
+                    viewModel.Einstellungen.Veranstaltungstitel ?? string.Empty,
+                    syncPort);
+                fenster.Owner = this;
+                fenster.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                MessageBox.Show($"Fehler beim Öffnen des Abgleichs\n{ex}", "Fehler: LAN-Abgleich", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public async Task<bool> CheckForUpdate()
@@ -369,6 +448,10 @@ namespace BWB_Auswertung
                 SettingsWindow neuesFenster = new SettingsWindow(viewModel);
                 bool? result = neuesFenster.ShowDialog();
                 LoadSettings();
+
+                //LAN-Dienste neu starten falls Konfiguration sich geändert hat
+                StopLanServices();
+                StartLanServices();
             }
             catch (Exception ex)
             {
@@ -429,6 +512,7 @@ namespace BWB_Auswertung
         {
             try
             {
+                StopLanServices();
                 SaveData(dataPath, true);
             }
             catch (Exception ex)

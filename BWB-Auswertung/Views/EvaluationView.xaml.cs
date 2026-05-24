@@ -415,7 +415,7 @@ namespace BWB_Auswertung.Views
                     currentTabellenzeile = currentTabellenzeile.Replace("{platz}", $"{gruppe.Platz}.");
                     currentTabellenzeile = currentTabellenzeile.Replace("{gruppenname}", $"{gruppe.GruppenName}");
                     currentTabellenzeile = currentTabellenzeile.Replace("{ort}", $"{gruppe.Organisationseinheit}");
-                    if (gruppe.OhneWertung??false)
+                    if (gruppe.OhneWertung ?? false)
                     {
                         currentTabellenzeile = currentTabellenzeile.Replace("{gesamtpunkte}", $"Disqualifiziert");
                     }

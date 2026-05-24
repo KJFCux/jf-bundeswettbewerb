@@ -40,6 +40,11 @@ namespace BWB_Auswertung.Models
             StartBeginnATeil = DateTime.Today.AddHours(9);
             StartBeginnBTeil = DateTime.Today.AddHours(9);
             MinAbstandCrossTeilMinuten = 30;
+
+            //LAN-Abgleich
+            LanAbgleichAktiv = true;
+            LanDiscoveryPort = 47800;
+            LanSyncPort = 47801;
         }
 
         public string Veranstaltungsort { get; set; }
@@ -79,6 +84,11 @@ namespace BWB_Auswertung.Models
         public DateTime StartBeginnATeil { get; set; }
         public DateTime StartBeginnBTeil { get; set; }
         public int MinAbstandCrossTeilMinuten { get; set; }
+
+        //LAN-Abgleich (4-Augen-Prinzip)
+        public bool LanAbgleichAktiv { get; set; }
+        public int LanDiscoveryPort { get; set; }
+        public int LanSyncPort { get; set; }
 
 
         public int Vorgabezeit

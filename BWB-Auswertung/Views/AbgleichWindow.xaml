@@ -1,0 +1,162 @@
+<mah:MetroWindow x:Class="BWB_Auswertung.Views.AbgleichWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 mc:Ignorable="d"
+                 Title="LAN-Abgleich (4-Augen-Prinzip)"
+                 Height="720"
+                 Width="1200"
+                 WindowStartupLocation="CenterScreen"
+                 GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
+                 ResizeMode="CanResizeWithGrip">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="200" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Peer Auswahl -->
+        <GroupBox Grid.Row="0"
+                  Header="Erkannte Partner-PCs im LAN"
+                  Margin="0 0 0 8">
+            <Grid Margin="6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ListBox x:Name="PeerListBox"
+                         Height="80"
+                         DisplayMemberPath="Anzeige"
+                         SelectionChanged="PeerListBox_SelectionChanged" />
+                <StackPanel Grid.Column="1"
+                            Orientation="Vertical"
+                            Margin="8 0 0 0">
+                    <Button x:Name="AbgleichButton"
+                            Content="Abgleich starten"
+                            Padding="10 6"
+                            Margin="0 0 0 4"
+                            IsEnabled="False"
+                            Click="AbgleichButton_Click" />
+                    <Button x:Name="ManualConnectButton"
+                            Content="Manuell verbinden..."
+                            Padding="10 6"
+                            Click="ManualConnectButton_Click" />
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+
+        <!-- Status / Filter -->
+        <Grid Grid.Row="1"
+              Margin="0 0 0 6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="StatusText"
+                       VerticalAlignment="Center"
+                       Text="Bitte Partner-PC auswählen und Abgleich starten." />
+            <CheckBox Grid.Column="1"
+                      x:Name="NurAbweichungenCheckBox"
+                      Content="Nur Abweichungen anzeigen"
+                      VerticalAlignment="Center"
+                      Checked="FilterChanged"
+                      Unchecked="FilterChanged" />
+        </Grid>
+
+        <!-- Vergleichs-DataGrid -->
+        <DataGrid Grid.Row="2"
+                  x:Name="VergleichGrid"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  SelectionUnit="FullRow"
+                  HeadersVisibility="Column"
+                  AlternatingRowBackground="#F4F4F4"
+                  SelectionChanged="VergleichGrid_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="StartNr"
+                                    Binding="{Binding StartNr}"
+                                    Width="70" />
+                <DataGridTextColumn Header="Feuerwehr"
+                                    Binding="{Binding Feuerwehr}"
+                                    Width="*" />
+                <DataGridTextColumn Header="Gruppe"
+                                    Binding="{Binding GruppenName}"
+                                    Width="*" />
+                <DataGridTextColumn Header="Status"
+                                    Binding="{Binding StatusAnzeige}"
+                                    Width="160" />
+            </DataGrid.Columns>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Status}"
+                                     Value="Abweichend">
+                            <Setter Property="Background"
+                                    Value="#FFE0B0" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}"
+                                     Value="NurLokal">
+                            <Setter Property="Background"
+                                    Value="#FFD0D0" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}"
+                                     Value="NurPartner">
+                            <Setter Property="Background"
+                                    Value="#D0E0FF" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}"
+                                     Value="Identisch">
+                            <Setter Property="Background"
+                                    Value="#D8F5D8" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+        </DataGrid>
+
+        <!-- Detail Panel -->
+        <GroupBox Grid.Row="3"
+                  Header="Details zur ausgewählten Gruppe"
+                  Margin="0 8 0 0">
+            <DataGrid x:Name="DetailGrid"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      HeadersVisibility="Column">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Eigenschaft"
+                                        Binding="{Binding Property}"
+                                        Width="*" />
+                    <DataGridTextColumn Header="Lokal"
+                                        Binding="{Binding LokalWert}"
+                                        Width="*" />
+                    <DataGridTextColumn Header="Partner"
+                                        Binding="{Binding PartnerWert}"
+                                        Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="4"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0 10 0 0">
+            <Button Content="Aktualisieren"
+                    x:Name="AktualisierenButton"
+                    Padding="10 6"
+                    Margin="0 0 8 0"
+                    IsEnabled="False"
+                    Click="AktualisierenButton_Click" />
+            <Button Content="Schließen"
+                    Padding="10 6"
+                    Click="SchliessenButton_Click" />
+        </StackPanel>
+    </Grid>
+</mah:MetroWindow>

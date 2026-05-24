@@ -1,0 +1,47 @@
+<mah:MetroWindow x:Class="BWB_Auswertung.Views.ManuelleVerbindungDialog"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                 Title="Manuelle Verbindung"
+                 Height="220"
+                 Width="380"
+                 ResizeMode="NoResize"
+                 WindowStartupLocation="CenterOwner">
+    <Grid Margin="14">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Text="IP-Adresse oder Hostname des Partner-PCs:"
+                   Margin="0 0 0 4" />
+        <TextBox x:Name="HostTextBox"
+                 Grid.Row="1"
+                 Margin="0 0 0 10" />
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Port:"
+                       VerticalAlignment="Center" />
+            <TextBox Grid.Column="1"
+                     x:Name="PortTextBox" />
+        </Grid>
+        <StackPanel Grid.Row="4"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Content="Verbinden"
+                    Padding="10 6"
+                    Margin="0 0 8 0"
+                    IsDefault="True"
+                    Click="Ok_Click" />
+            <Button Content="Abbrechen"
+                    Padding="10 6"
+                    IsCancel="True"
+                    Click="Cancel_Click" />
+        </StackPanel>
+    </Grid>
+</mah:MetroWindow>
