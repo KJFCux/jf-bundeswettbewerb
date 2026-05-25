@@ -102,24 +102,20 @@
         <Setter Property="mah:ControlsHelper.CornerRadius" Value="8,8,0,0" />
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Accent}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Accent}" />
-                <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.IdealForeground}" />
-                <Setter Property="mah:HeaderedControlHelper.HeaderForeground" Value="{DynamicResource MahApps.Brushes.IdealForeground}" />
+                <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Accent4}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Accent2}" />
                 <Setter Property="mah:HeaderedControlHelper.HeaderFontWeight" Value="Bold" />
                 <Setter Property="Panel.ZIndex" Value="1" />
             </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Accent3}" />
-                <Setter Property="mah:HeaderedControlHelper.HeaderForeground" Value="{DynamicResource MahApps.Brushes.IdealForeground}" />
             </Trigger>
             <MultiTrigger>
                 <MultiTrigger.Conditions>
                     <Condition Property="IsSelected" Value="True" />
                     <Condition Property="IsMouseOver" Value="True" />
                 </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Accent}" />
-                <Setter Property="mah:HeaderedControlHelper.HeaderForeground" Value="{DynamicResource MahApps.Brushes.IdealForeground}" />
+                <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Accent4}" />
             </MultiTrigger>
         </Style.Triggers>
     </Style>
