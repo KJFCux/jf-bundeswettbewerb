@@ -603,7 +603,7 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="Teilnehmende">
-                    <Grid Background="White"
+                    <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
                           Name="TeilnehmendenGrid">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="1*" />
@@ -1384,7 +1384,7 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="A-Teil">
-                    <Grid Background="White"
+                    <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
                           Name="ATeilGrid">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="1*" />
@@ -1802,7 +1802,7 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="B-Teil">
-                    <Grid Background="White"
+                    <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
                           Name="BTeilGrid">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="1*" />

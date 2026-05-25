@@ -35,6 +35,9 @@ namespace BWB_Auswertung.Views
         private string settingsPath;
         private string? snapshotXml;
         private bool savedAndClosing = false;
+        private readonly ThemePreference initialThemePreference;
+
+        public ThemeService ThemeService => ThemeService.Current;
 
         public SettingsWindow() : this(new MainViewModel())
         {
@@ -49,6 +52,7 @@ namespace BWB_Auswertung.Views
             DirectoryInfo di = Directory.CreateDirectory(settingsPath);
             LoadSettings();
             CaptureSnapshot();
+            initialThemePreference = ThemeService.Current.Preference;
         }
 
         private void CaptureSnapshot()
@@ -101,6 +105,7 @@ namespace BWB_Auswertung.Views
         {
             if (SaveSettings())
             {
+                ThemeService.Current.Persist();
                 savedAndClosing = true;
                 Close();
             }
@@ -108,8 +113,11 @@ namespace BWB_Auswertung.Views
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            bool themeChanged = ThemeService.Current.Preference != initialThemePreference;
+
             if (savedAndClosing) return;
-            if (!HasUnsavedChanges()) return;
+
+            if (!HasUnsavedChanges() && !themeChanged) return;
 
             MessageBoxResult result = MessageBox.Show(
                 "Es gibt ungespeicherte Änderungen. Sollen diese gespeichert werden?",
@@ -122,6 +130,17 @@ namespace BWB_Auswertung.Views
                 if (!SaveSettings())
                 {
                     e.Cancel = true;
+                }
+                else
+                {
+                    ThemeService.Current.Persist();
+                }
+            }
+            else if (result == MessageBoxResult.No)
+            {
+                if (themeChanged)
+                {
+                    ThemeService.Current.Preference = initialThemePreference;
                 }
             }
             else if (result == MessageBoxResult.Cancel)

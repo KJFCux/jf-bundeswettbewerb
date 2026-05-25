@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using BWB_Auswertung.IO;
 using BWB_Auswertung.Models;
+using BWB_Auswertung.Services;
 
 namespace BWB_Auswertung
 {
@@ -25,6 +26,8 @@ namespace BWB_Auswertung
                     Globals.VERBOSE_LOGGING = true;
                 }
             }
+
+            ThemeService.Current.Initialize();
         }
     }
 }

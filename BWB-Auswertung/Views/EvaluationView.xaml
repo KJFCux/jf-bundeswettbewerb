@@ -30,7 +30,7 @@
         </Grid.LayoutTransform>
         <TabControl>
             <TabItem Header="Übersicht">
-                <Grid Background="White"
+                <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
                       x:Name="AuswertungsGrid">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*" />

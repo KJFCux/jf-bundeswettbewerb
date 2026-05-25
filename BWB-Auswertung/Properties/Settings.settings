@@ -23,5 +23,8 @@
     <Setting Name="FriendlyName" Type="System.String" Scope="User">
       <Value Profile="(Default)">Inferno Auswertung</Value>
     </Setting>
+    <Setting Name="ThemePreference" Type="System.String" Scope="User">
+      <Value Profile="(Default)">System</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
