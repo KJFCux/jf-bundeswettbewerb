@@ -7,7 +7,7 @@
     <Nullable>annotations</Nullable>
     <UseWPF>true</UseWPF>
     <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
-    <ApplicationIcon>Resources\Images\Deutsche_Jugendfeuerwehr.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Images\App.ico</ApplicationIcon>
 	<NeutralLanguage>de-DE</NeutralLanguage>
 	<StartupObject>BWB_Auswertung.App</StartupObject>
 	<AssemblyVersion>1.0.16</AssemblyVersion>
@@ -21,6 +21,9 @@
 
   <ItemGroup>
     <Content Include="Resources\Images\Deutsche_Jugendfeuerwehr.ico" />
+    <Content Include="Resources\Images\Logo_Freigestellt_small.png" />
+    <Content Include="Resources\Images\Logo_Freigestellt.png" />
+    <Content Include="Resources\Images\Logo_mit_Rand.png" />
   </ItemGroup>
 
   <ItemGroup>
