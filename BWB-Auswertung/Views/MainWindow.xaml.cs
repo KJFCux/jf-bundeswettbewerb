@@ -19,6 +19,7 @@ using System.IO;
 using Microsoft.Win32;
 using BWB_Auswertung.Views;
 using BWB_Auswertung.Network;
+using BWB_Auswertung.Services;
 using System.Text.Json;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -42,6 +43,9 @@ namespace BWB_Auswertung
         //LAN-Abgleich
         private PeerDiscovery? peerDiscovery;
         private SyncServer? syncServer;
+
+        //Automatische Backups
+        private BackupService? backupService;
 
         public MainWindow()
         {
@@ -84,6 +88,13 @@ namespace BWB_Auswertung
 
             //LAN-Abgleich Dienste starten (UDP-Discovery + TCP-Server)
             StartLanServices();
+
+            //Automatische Backups starten (alle 10 Minuten, max. 30 Dateien)
+            string backupPath = System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                ProgrammName, "Backup");
+            backupService = new BackupService(dataPath, settingsPath, backupPath);
+            backupService.Start();
 
             gruppenListBox.SelectedIndex = 0;
             gruppenListBox.Focus();
@@ -511,6 +522,7 @@ namespace BWB_Auswertung
         {
             try
             {
+                backupService?.Stop();
                 StopLanServices();
                 SaveData(dataPath, true);
             }
