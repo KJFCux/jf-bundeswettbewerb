@@ -14,11 +14,11 @@
     <copyright>$copyright$</copyright>
     <tags>BWB-Auswertung Jugendfeuerwehr Bundeswettbewerb DJF KJF</tags>
     <dependencies>
-      <group targetFramework="net8.0-windows10.0.19041.0" />
+      <group targetFramework="net10.0-windows10.0.19041.0" />
     </dependencies>
   </metadata>
   <files>
-  <file src="bin\Release\net8.0-windows10.0.19041.0\win-x64\**" target="lib\net45"/>
+  <file src="bin\Release\net10.0-windows10.0.19041.0\win-x64\**" target="lib\net45"/>
   <file src="Resources\Images\icon.ico" target="images\" />
   <file src="..\readme.md" target="docs\" />
   </files>

@@ -10,7 +10,7 @@
                  Height="720"
                  Width="1200"
                  WindowStartupLocation="CenterScreen"
-                 GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
+                 GlowColor="{DynamicResource MahApps.Colors.Accent}"
                  ResizeMode="CanResizeWithGrip">
     <Grid Margin="10">
         <Grid.RowDefinitions>

@@ -9,7 +9,7 @@
                  Title="DJF Bundeswettbewerb Auswertungsprogramm"
                  Width="1600"
                  Height="900"
-                 GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
+                 GlowColor="{DynamicResource MahApps.Colors.Accent}"
                  ResizeMode="CanResizeWithGrip"
                  WindowStartupLocation="CenterScreen"
                  WindowState="Maximized"
