@@ -130,7 +130,7 @@ namespace BWB_Auswertung.Views
                 ((Button)sender).IsEnabled = false;
                 string htmlKontrollblaetter_Vorlage = BWB_Auswertung.Properties.Resources.Kontrollblatt;
                 string htmlKontrollblaetterTabellenzeile_Vorlage = BWB_Auswertung.Properties.Resources.KontrollblattTabellenzeile;
-                PDF pDF = new PDF();
+                await using PDF pDF = new PDF();
                 //List<string> pdfKontrollblaetter = new List<string>();
                 List<string> pfade = new List<string>();
 
@@ -237,7 +237,7 @@ namespace BWB_Auswertung.Views
                 List<PersonTeilnehmendenliste> personenMitGeburtstag = viewModel.personenMitGeburtstagBeimWettbewerb();
                 string htmlGeburtstagsliste_Vorlage = BWB_Auswertung.Properties.Resources.GeburtstagsListe;
                 string htmlGeburtstagslisteTabellenzeile_Vorlage = BWB_Auswertung.Properties.Resources.GeburtstagsListeTabellenzeile;
-                PDF pDF = new PDF();
+                await using PDF pDF = new PDF();
                 List<string> pfade = new List<string>();
 
                 Settings einstellungen = viewModel.Einstellungen;
@@ -361,7 +361,7 @@ namespace BWB_Auswertung.Views
             {
                 string htmlPlatzierungsliste_Vorlage = BWB_Auswertung.Properties.Resources.PlatzierungsListe;
                 string htmlPlatzierungslisteTabellenzeile_Vorlage = BWB_Auswertung.Properties.Resources.PlatzierungsListeTabellenzeile;
-                PDF pDF = new PDF();
+                await using PDF pDF = new PDF();
                 List<string> pfade = new List<string>();
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
 
@@ -490,7 +490,7 @@ namespace BWB_Auswertung.Views
             {
                 string htmlVorlage = BWB_Auswertung.Properties.Resources.Startreihenfolge;
                 string htmlZeileVorlage = BWB_Auswertung.Properties.Resources.StartreihenfolgeTabellenzeile;
-                PDF pDF = new PDF();
+                await using PDF pDF = new PDF();
                 List<string> pfade = new List<string>();
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 Settings einstellungen = viewModel.Einstellungen;
@@ -637,7 +637,7 @@ namespace BWB_Auswertung.Views
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 Settings einstellungen = viewModel.Einstellungen;
 
-                PDF pDF = new PDF();
+                await using PDF pDF = new PDF();
                 //Für die Excel Liste die Leere Datei erstellen
                 string excelpath = System.IO.Path.Combine(exportPath, "Urkundenliste.xlsx");
                 WriteFile.ByteArrayToFile(excelpath, BWB_Auswertung.Properties.Resources.Urkundenliste);
@@ -748,7 +748,7 @@ namespace BWB_Auswertung.Views
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 Settings einstellungen = viewModel.Einstellungen;
 
-                PDF pDF = new PDF();
+                await using PDF pDF = new PDF();
 
                 string urkundeOverlayPfad = System.IO.Path.Combine(vorlagenPath, "UrkundeOverlayJuengsteGruppe.html");
                 string urkundeOverlay = string.Empty;

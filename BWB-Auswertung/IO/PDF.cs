@@ -5,22 +5,43 @@ using PuppeteerSharp.Media;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 
 namespace BWB_Auswertung.IO
 {
-    public class PDF
+    public class PDF : IAsyncDisposable
     {
+        private IBrowser _browser;
+
+        private async Task<IBrowser> GetBrowserAsync()
+        {
+            if (_browser != null && _browser.IsConnected)
+            {
+                return _browser;
+            }
+
+            var fetcher = new BrowserFetcher();
+            var installed = fetcher.GetInstalledBrowsers().FirstOrDefault()
+                            ?? await fetcher.DownloadAsync();
+
+            _browser = await Puppeteer.LaunchAsync(new LaunchOptions
+            {
+                Headless = true,
+                ExecutablePath = installed.GetExecutablePath()
+            });
+            return _browser;
+        }
+
         public async Task<bool> ConvertHtmlFileToPdf(string html, string outputPdfPath, bool metadata = false, string titel = "Von Auswertung generiertes Dokument", string subject = "Von Auswertung generiertes Dokument", string author = "Auswertung")
         {
             try
             {
-                await new BrowserFetcher().DownloadAsync();
-                using var browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
+                var browser = await GetBrowserAsync();
                 using var page = await browser.NewPageAsync();
                 await page.SetContentAsync(html);
-                await page.WaitForNetworkIdleAsync();
+                await page.WaitForNetworkIdleAsync(new WaitForNetworkIdleOptions { IdleTime = 100 });
                 var pdfOptions = new PdfOptions
                 {
                     Format = PaperFormat.A4,
@@ -37,6 +58,26 @@ namespace BWB_Auswertung.IO
             {
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 return false;
+            }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (_browser != null)
+            {
+                try
+                {
+                    await _browser.CloseAsync();
+                }
+                catch (Exception ex)
+                {
+                    LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Warning);
+                }
+                finally
+                {
+                    await _browser.DisposeAsync();
+                    _browser = null;
+                }
             }
         }
 
