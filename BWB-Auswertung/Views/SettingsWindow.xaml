@@ -721,6 +721,7 @@
                                                                     Height="24"
                                                                     VerticalAlignment="Center"
                                                                     Margin="0,0,10,0"
+                                                                    Foreground="{DynamicResource MahApps.Brushes.Accent}"
                                                                     Kind="ThemeLightDark" />
                                         <Label Content="Farbschema:"
                                                FontSize="16"

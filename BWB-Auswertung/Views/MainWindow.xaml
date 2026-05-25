@@ -215,7 +215,7 @@
         <Grid Grid.Column="0">
             <TabControl>
                 <TabItem Header="Gruppe">
-                    <Grid Background="white">
+                    <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />

@@ -89,9 +89,43 @@
 
     <!-- TabControl / TabItem  -->
     <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource MahApps.Styles.TabItem}">
-        <Setter Property="mah:HeaderedControlHelper.HeaderFontSize" Value="15" />
+        <Setter Property="mah:HeaderedControlHelper.HeaderFontSize" Value="18" />
+        <Setter Property="mah:HeaderedControlHelper.HeaderFontWeight" Value="SemiBold" />
         <Setter Property="mah:HeaderedControlHelper.HeaderMargin" Value="14,8" />
+        <Setter Property="mah:HeaderedControlHelper.HeaderForeground" Value="{DynamicResource MahApps.Brushes.Text}" />
+        <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Text}" />
         <Setter Property="Padding" Value="14,8" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Gray10}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Gray7}" />
+        <Setter Property="BorderThickness" Value="1,1,1,0" />
+        <Setter Property="mah:ControlsHelper.CornerRadius" Value="8,8,0,0" />
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Accent}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Accent}" />
+                <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.IdealForeground}" />
+                <Setter Property="mah:HeaderedControlHelper.HeaderForeground" Value="{DynamicResource MahApps.Brushes.IdealForeground}" />
+                <Setter Property="mah:HeaderedControlHelper.HeaderFontWeight" Value="Bold" />
+                <Setter Property="Panel.ZIndex" Value="1" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Accent3}" />
+                <Setter Property="mah:HeaderedControlHelper.HeaderForeground" Value="{DynamicResource MahApps.Brushes.IdealForeground}" />
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsSelected" Value="True" />
+                    <Condition Property="IsMouseOver" Value="True" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Accent}" />
+                <Setter Property="mah:HeaderedControlHelper.HeaderForeground" Value="{DynamicResource MahApps.Brushes.IdealForeground}" />
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type TabControl}" BasedOn="{StaticResource MahApps.Styles.TabControl}">
+        <Setter Property="Padding" Value="0,0,4,0" />
     </Style>
 
     <!-- DataGrid -->
