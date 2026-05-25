@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using BWB_Auswertung.IO;
+using BWB_Auswertung.Helpers;
 using System.Windows.Controls;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -127,7 +128,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
-                ((Button)sender).IsEnabled = false;
+                Loading.SetIsBusy((Button)sender, true);
                 string htmlKontrollblaetter_Vorlage = BWB_Auswertung.Properties.Resources.Kontrollblatt;
                 string htmlKontrollblaetterTabellenzeile_Vorlage = BWB_Auswertung.Properties.Resources.KontrollblattTabellenzeile;
                 await using PDF pDF = new PDF();
@@ -136,6 +137,10 @@ namespace BWB_Auswertung.Views
 
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 Settings einstellungen = viewModel.Einstellungen;
+
+                //Fallback-Helper: leerer String, wenn Bahn/Startzeit nicht gesetzt sind
+                static string FormatStartzeit(DateTime z) => z == DateTime.MinValue ? string.Empty : z.ToShortTimeString();
+                static string FormatBahn(int? b) => b?.ToString() ?? string.Empty;
 
                 foreach (Gruppe gruppe in viewModel.Gruppen)
                 {
@@ -160,10 +165,10 @@ namespace BWB_Auswertung.Views
                     kontrollblattGruppe = kontrollblattGruppe.Replace("{ort}", einstellungen.Veranstaltungsort);
                     kontrollblattGruppe = kontrollblattGruppe.Replace("{organisationseinheit}", gruppe.Organisationseinheit);
                     kontrollblattGruppe = kontrollblattGruppe.Replace("{startnummer}", gruppe.StartNr.ToString());
-                    kontrollblattGruppe = kontrollblattGruppe.Replace("{startzeita}", gruppe.StartzeitATeil.ToShortTimeString());
-                    kontrollblattGruppe = kontrollblattGruppe.Replace("{startzeitb}", gruppe.StartzeitBTeil.ToShortTimeString());
-                    kontrollblattGruppe = kontrollblattGruppe.Replace("{bahnnummera}", gruppe.WettbewerbsbahnATeil.ToString());
-                    kontrollblattGruppe = kontrollblattGruppe.Replace("{bahnnummerb}", gruppe.WettbewerbsbahnBTeil.ToString());
+                    kontrollblattGruppe = kontrollblattGruppe.Replace("{startzeita}", FormatStartzeit(gruppe.StartzeitATeil));
+                    kontrollblattGruppe = kontrollblattGruppe.Replace("{startzeitb}", FormatStartzeit(gruppe.StartzeitBTeil));
+                    kontrollblattGruppe = kontrollblattGruppe.Replace("{bahnnummera}", FormatBahn(gruppe.WettbewerbsbahnATeil));
+                    kontrollblattGruppe = kontrollblattGruppe.Replace("{bahnnummerb}", FormatBahn(gruppe.WettbewerbsbahnBTeil));
                     kontrollblattGruppe = kontrollblattGruppe.Replace("{datum_heute}", DateTime.Now.ToString("dd.MM.yyyy HH:mm"));
                     string tabellenzeilen = string.Empty;
                     //Tabellenzeile für die Personen erstellen
@@ -193,6 +198,7 @@ namespace BWB_Auswertung.Views
                     if (!erfolgreich)
                     {
                         MessageBox.Show($"Export der Kontrollblätter fehlgeschlagen!", "Fehler: Export Kontrollblätter", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Loading.SetIsBusy((Button)sender, false);
                         return;
                     }
                     pfade.Add(pfad);
@@ -205,24 +211,86 @@ namespace BWB_Auswertung.Views
                     author: einstellungen.Veranstaltungsleitung);
 
 
+                //Kontrollliste Check-Up-Zelte als PDF (A-Teil und B-Teil getrennt) exportieren
+                string htmlCheckUpZelt_Vorlage = BWB_Auswertung.Properties.Resources.CheckUpZeltHTML;
+
+                //Logo vorbereiten (einmalig, wird für alle Gruppen verwendet)
+                string logoData;
+                if (File.Exists(einstellungen.Logopfad))
+                {
+                    logoData = $"data:image/jpeg;base64,{Bilder.readBase64(einstellungen.Logopfad)}";
+                }
+                else
+                {
+                    logoData = $"data:image/svg+xml;base64,{Convert.ToBase64String(BWB_Auswertung.Properties.Resources.Deutsche_Jugendfeuerwehr)}";
+                }
+
+                foreach (string teil in new[] { "A-Teil", "B-Teil" })
+                {
+                    List<string> pfadeCheckUp = new List<string>();
+                    string schuhwerk = teil == "A-Teil"
+                        ? "Festes Schuhwerk,<br />mit Absatz, ggf. Leiterwandtest"
+                        : "Sportschuhe<br />(KEINE Spikes &amp; Stollenschuhe)";
+
+                    foreach (Gruppe gruppe in viewModel.Gruppen)
+                    {
+                        string checkUpGruppe = htmlCheckUpZelt_Vorlage;
+                        checkUpGruppe = checkUpGruppe.Replace("{logo}", logoData);
+                        checkUpGruppe = checkUpGruppe.Replace("{titelderVeranstaltung}", einstellungen.Veranstaltungstitel);
+                        checkUpGruppe = checkUpGruppe.Replace("{jugendfeuerwehr}", gruppe.Feuerwehr);
+                        checkUpGruppe = checkUpGruppe.Replace("{startnummer}", gruppe.StartNr.ToString());
+                        checkUpGruppe = checkUpGruppe.Replace("{teil}", teil);
+                        checkUpGruppe = checkUpGruppe.Replace("{schuhwerk_bezeichnung}", schuhwerk);
+                        checkUpGruppe = checkUpGruppe.Replace("{bahnnummer}", teil == "A-Teil"
+                            ? FormatBahn(gruppe.WettbewerbsbahnATeil)
+                            : FormatBahn(gruppe.WettbewerbsbahnBTeil));
+                        checkUpGruppe = checkUpGruppe.Replace("{uhrzeit}", teil == "A-Teil"
+                            ? FormatStartzeit(gruppe.StartzeitATeil)
+                            : FormatStartzeit(gruppe.StartzeitBTeil));
+                        checkUpGruppe = checkUpGruppe.Replace("{datum_heute}", DateTime.Now.ToString("dd.MM.yyyy HH:mm"));
+
+                        string pfadCheckUp = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
+                        bool erfolgreichCheckUp = await pDF.ConvertHtmlFileToPdf(checkUpGruppe, pfadCheckUp, false);
+                        if (!erfolgreichCheckUp)
+                        {
+                            MessageBox.Show($"Export der Kontrollliste Check-Up-Zelte ({teil}) fehlgeschlagen!", "Fehler: Export Kontrollliste Check-Up-Zelte", MessageBoxButton.OK, MessageBoxImage.Error);
+                            Loading.SetIsBusy((Button)sender, false);
+                            return;
+                        }
+                        pfadeCheckUp.Add(pfadCheckUp);
+                    }
+
+                    pDF.MergePdfFiles(pfadeCheckUp, System.IO.Path.Combine(exportPath, $"Kontrollliste Check-Up-Zelte {teil}.pdf"), true,
+                        titel: $"Kontrollliste Check-Up-Zelte {teil} - Stand: {DateTime.Now.ToString("dd.MM.yyyy HH:mm")}",
+                        subject: $"Kontrollliste Check-Up-Zelte {teil} für den {einstellungen.Veranstaltungstitel}",
+                        author: einstellungen.Veranstaltungsleitung);
+                }
+
+
                 //Excel Datei für die Checkup Zelte exportieren
                 string excelpath = System.IO.Path.Combine(exportPath, "Kontrolle-Check-Up-Zelt.xlsx");
-                WriteFile.ByteArrayToFile(excelpath, BWB_Auswertung.Properties.Resources.CheckUpZelt);
+                if (!WriteFile.ByteArrayToFile(excelpath, BWB_Auswertung.Properties.Resources.CheckUpZelt))
+                {
+                    MessageBox.Show($"Die Datei\n{excelpath}\nkonnte nicht geschrieben werden.\n\nBitte schließe sie in Excel und versuche es erneut.", "Fehler: Export Check-Up-Zelt Excel", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Loading.SetIsBusy((Button)sender, false);
+                    return;
+                }
 
                 bool erfolgreichExcel = Excel.WriteCheckUpToExcel(excelpath, einstellungen);
                 if (!erfolgreichExcel)
                 {
-                    MessageBox.Show($"Export der Kontrollblätter fehlgeschlagen!", "Fehler: Export Kontrollblätter", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Die Datei\n{excelpath}\nkonnte nicht aktualisiert werden.\n\nBitte schließe sie in Excel und versuche es erneut.", "Fehler: Export Check-Up-Zelt Excel", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Loading.SetIsBusy((Button)sender, false);
                     return;
                 }
 
                 ShowExportMessageBox("Export der Kontrollblätter abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Kontrollblätter", exportPath);
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
             }
             catch (Exception ex)
             {
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Kontrollblätter fehlgeschlagen!\n{ex}", "Fehler: Export Kontrollblätter", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -232,7 +300,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
-                ((Button)sender).IsEnabled = false;
+                Loading.SetIsBusy((Button)sender, true);
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 List<PersonTeilnehmendenliste> personenMitGeburtstag = viewModel.personenMitGeburtstagBeimWettbewerb();
                 string htmlGeburtstagsliste_Vorlage = BWB_Auswertung.Properties.Resources.GeburtstagsListe;
@@ -276,6 +344,7 @@ namespace BWB_Auswertung.Views
                         if (!await pDF.ConvertHtmlFileToPdf(geburtstagslisteHTML, pfadinIf, false))
                         {
                             MessageBox.Show($"Export der Geburtstagsliste fehlgeschlagen!", "Fehler: Export Geburtstagsliste", MessageBoxButton.OK, MessageBoxImage.Error);
+                            Loading.SetIsBusy((Button)sender, false);
                             return;
                         }
                         pfade.Add(pfadinIf);
@@ -306,6 +375,7 @@ namespace BWB_Auswertung.Views
                 if (!erfolgreich)
                 {
                     MessageBox.Show($"Export der Geburtstagsliste fehlgeschlagen!", "Fehler: Export Geburtstagsliste", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Loading.SetIsBusy((Button)sender, false);
                     return;
                 }
                 pfade.Add(pfad);
@@ -314,11 +384,11 @@ namespace BWB_Auswertung.Views
 
                 ShowExportMessageBox("Export der Geburtstagsliste abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Geburtstagsliste", exportPath);
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
             }
             catch (Exception ex)
             {
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Geburtstagsliste fehlgeschlagen!\n{ex}", "Fehler: Export Geburtstagsliste", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -328,7 +398,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
-                ((Button)sender).IsEnabled = false;
+                Loading.SetIsBusy((Button)sender, true);
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
 
                 List<Task<bool>> tasks = new List<Task<bool>>
@@ -343,12 +413,12 @@ namespace BWB_Auswertung.Views
                     ShowExportMessageBox("Export der Platzierungslisten abgeschlossen!\nZielverzeichnis öffnen?",
                         "Export Platzierungslisten", exportPath);
                 }
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
 
             }
             catch (Exception ex)
             {
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Platzierungslisten fehlgeschlagen!\n{ex}", "Fehler: Export Platzierungslisten", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -459,7 +529,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
-                ((Button)sender).IsEnabled = false;
+                Loading.SetIsBusy((Button)sender, true);
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
 
                 List<Task<bool>> tasks = new List<Task<bool>>
@@ -474,11 +544,11 @@ namespace BWB_Auswertung.Views
                     ShowExportMessageBox("Export der Startreihenfolgen abgeschlossen!\nZielverzeichnis öffnen?",
                         "Export Startreihenfolgen", exportPath);
                 }
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
             }
             catch (Exception ex)
             {
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Startreihenfolgen fehlgeschlagen!\n{ex}", "Fehler: Export Startreihenfolgen", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -604,7 +674,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
-                ((Button)sender).IsEnabled = false;
+                Loading.SetIsBusy((Button)sender, true);
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 string excelpath = System.IO.Path.Combine(exportPath, "Platzierungsliste.xlsx");
                 WriteFile.ByteArrayToFile(excelpath, BWB_Auswertung.Properties.Resources.PlatzierungslisteExcel);
@@ -614,16 +684,17 @@ namespace BWB_Auswertung.Views
                 if (!erfolgreichExcel)
                 {
                     MessageBox.Show($"Export der Platzierungsliste fehlgeschlagen!", "Fehler: Export Platzierungsliste", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Loading.SetIsBusy((Button)sender, false);
                     return;
                 }
 
                 ShowExportMessageBox("Export der Platzierungsliste abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Platzierungsliste", exportPath);
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
             }
             catch (Exception ex)
             {
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Excel Platzierungsliste fehlgeschlagen!\n{ex}", "Fehler: Export Platzierungslisten", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -633,7 +704,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
-                ((Button)sender).IsEnabled = false;
+                Loading.SetIsBusy((Button)sender, true);
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 Settings einstellungen = viewModel.Einstellungen;
 
@@ -659,6 +730,7 @@ namespace BWB_Auswertung.Views
                 if (!erfolgreichExcel)
                 {
                     MessageBox.Show($"Export der Urkunden fehlgeschlagen!", "Fehler: Export Urkunde", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Loading.SetIsBusy((Button)sender, false);
                     return;
                 }
 
@@ -720,6 +792,7 @@ namespace BWB_Auswertung.Views
                     if (!erfolgreich)
                     {
                         MessageBox.Show($"Export der Urkunden fehlgeschlagen!", "Fehler: Export Urkunde", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Loading.SetIsBusy((Button)sender, false);
                         return;
                     }
                     pfade.Add(pfad);
@@ -730,11 +803,11 @@ namespace BWB_Auswertung.Views
 
                 ShowExportMessageBox("Export der Urkunden abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Urkunden", exportPath);
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
             }
             catch (Exception ex)
             {
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Urkunden fehlgeschlagen!\n{ex}", "Fehler: Export Urkunden", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -744,7 +817,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
-                ((Button)sender).IsEnabled = false;
+                Loading.SetIsBusy((Button)sender, true);
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 Settings einstellungen = viewModel.Einstellungen;
 
@@ -803,16 +876,17 @@ namespace BWB_Auswertung.Views
                 if (!erfolgreich)
                 {
                     MessageBox.Show($"Export der jüngsten Gruppe fehlgeschlagen!", "Fehler: Export jüngste Gruppe", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Loading.SetIsBusy((Button)sender, false);
                     return;
                 }
 
                 ShowExportMessageBox("Export der jüngsten Gruppe abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Urkunden", exportPath);
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
             }
             catch (Exception ex)
             {
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der jüngsten Gruppe fehlgeschlagen!\n{ex}", "Fehler: Export jüngste Gruppe", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -822,17 +896,17 @@ namespace BWB_Auswertung.Views
         {
             try
             {
-                ((Button)sender).IsEnabled = false;
+                Loading.SetIsBusy((Button)sender, true);
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
                 Excel.ExportExcelGruppen(viewModel.Gruppen.OrderBy(x => x.Platz).ToList(), exportPath);
 
                 ShowExportMessageBox("Export der Gruppen abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Gruppen", exportPath);
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
             }
             catch (Exception ex)
             {
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Gruppen fehlgeschlagen!\n{ex}", "Fehler: Export Gruppendaten", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -842,7 +916,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
-                ((Button)sender).IsEnabled = false;
+                Loading.SetIsBusy((Button)sender, true);
                 string speicherordner = System.IO.Path.Combine(exportPath, "Wettbewerbsordnung");
                 _ = Directory.CreateDirectory(speicherordner);
                 WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "DJF_Wettbewerbsordnung_BWB_2013.pdf"), BWB_Auswertung.Properties.Resources.DJF_Wettbewerbsordnung_BWB_2013);
@@ -852,11 +926,11 @@ namespace BWB_Auswertung.Views
 
                 ShowExportMessageBox("Export der Wettbewerbsordnung abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Wettbewerbsordnung", speicherordner);
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
             }
             catch (Exception ex)
             {
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Wettbewerbsordnung fehlgeschlagen!\n{ex}", "Fehler: Export Wettbewerbsordnung", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -866,7 +940,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
-                ((Button)sender).IsEnabled = false;
+                Loading.SetIsBusy((Button)sender, true);
 
                 _ = Directory.CreateDirectory(vorlagenPath);
                 WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Urkunde_Druckvorlage.pdf"), BWB_Auswertung.Properties.Resources.UrkundeDruckTheme1);
@@ -879,12 +953,12 @@ namespace BWB_Auswertung.Views
 
                 ShowExportMessageBox("Export der Urkundenvorlage abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Urkundenvorlage", vorlagenPath);
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
 
             }
             catch (Exception ex)
             {
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
 
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Urkundenvorlage fehlgeschlagen!\n{ex}", "Fehler: Export Urkundenvorlage", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -895,17 +969,17 @@ namespace BWB_Auswertung.Views
         {
             try
             {
-                ((Button)sender).IsEnabled = false;
+                Loading.SetIsBusy((Button)sender, true);
 
                 WriteFile.ByteArrayToFile(System.IO.Path.Combine(vorlagenPath, "Meldebogen-Blanko.xlsx"), BWB_Auswertung.Properties.Resources.Meldebogen_Blanko);
 
                 ShowExportMessageBox("Export der Meldebogen Vorlage abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Meldebogen Blanko", vorlagenPath);
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
             }
             catch (Exception ex)
             {
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Meldebogenvorlage fehlgeschlagen!\n{ex}", "Fehler: Export Meldebogenvorlage", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -915,7 +989,7 @@ namespace BWB_Auswertung.Views
         {
             try
             {
-                ((Button)sender).IsEnabled = false;
+                Loading.SetIsBusy((Button)sender, true);
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
 
                 _ = Directory.CreateDirectory(wertungsbogenPath);
@@ -923,17 +997,18 @@ namespace BWB_Auswertung.Views
                 if (!erfolgreichExcel)
                 {
                     MessageBox.Show($"Export der Wertungsbögen fehlgeschlagen!", "Fehler: Export Wertungsbögen", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Loading.SetIsBusy((Button)sender, false);
                     return;
                 }
 
                 ShowExportMessageBox("Export der Wertungsbögen abgeschlossen!\nZielverzeichnis öffnen?",
                     "Export Wertungsbögen", exportPath);
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
 
             }
             catch (Exception ex)
             {
-                ((Button)sender).IsEnabled = true;
+                Loading.SetIsBusy((Button)sender, false);
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
                 MessageBox.Show($"Export der Wertungsbögen fehlgeschlagen!\n{ex}", "Fehler: Export Wertungsbögen", MessageBoxButton.OK, MessageBoxImage.Error);
             }

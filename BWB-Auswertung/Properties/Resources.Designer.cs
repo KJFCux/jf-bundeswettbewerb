@@ -91,6 +91,15 @@ namespace BWB_Auswertung.Properties {
         }
 
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge der HTML-Vorlage für die Check-Up-Zelte Kontrollliste.
+        /// </summary>
+        internal static string CheckUpZeltHTML {
+            get {
+                return ResourceManager.GetString("CheckUpZeltHTML", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
         internal static byte[] Blanko_Unterschrift {

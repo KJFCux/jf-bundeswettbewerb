@@ -7,13 +7,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BWB_Auswertung"
         xmlns:local1="clr-namespace:BWB_Auswertung.Views"
+        xmlns:helpers="clr-namespace:BWB_Auswertung.Helpers"
         mc:Ignorable="d"
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="Auswertung"
         Height="800"
-        Width="1020"
+        Width="1080"
         SnapsToDevicePixels="True"
         SizeChanged="Window_SizeChanged">
     <Window.LayoutTransform>
@@ -127,10 +128,12 @@
                                 <Button.ContentTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <iconPacks:PackIconFontAwesome  Width="22"
-                                                                         Height="22"
-                                                                         VerticalAlignment="Center"
-                                                                         Kind="BabyCarriageSolid" />
+                                            <Grid Width="22" Height="22" VerticalAlignment="Center">
+                                                <iconPacks:PackIconFontAwesome Width="22" Height="22" Kind="BabyCarriageSolid"
+                                                                               Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource InverseBoolToVisibility}}" />
+                                                <mah:ProgressRing IsActive="True" Width="22" Height="22"
+                                                                  Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource BoolToVisibility}}" />
+                                            </Grid>
                                             <TextBlock Margin="4 0 0 0"
                                                        VerticalAlignment="Center"
                                                        Text="{Binding}" />
@@ -384,10 +387,12 @@
 							<Button.ContentTemplate>
 								<DataTemplate>
 									<StackPanel Orientation="Horizontal">
-										<iconPacks:PackIconMaterial Width="22"
-                                                                    Height="22"
-                                                                    VerticalAlignment="Center"
-                                                                    Kind="ClockOutline" />
+										<Grid Width="22" Height="22" VerticalAlignment="Center">
+                                                <iconPacks:PackIconMaterial Width="22" Height="22" Kind="ClockOutline"
+                                                                            Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource InverseBoolToVisibility}}" />
+                                                <mah:ProgressRing IsActive="True" Width="22" Height="22"
+                                                                  Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource BoolToVisibility}}" />
+                                            </Grid>
 										<TextBlock Margin="4 0 0 0"
                                                    VerticalAlignment="Center"
                                                    Text="{Binding}" />
@@ -403,10 +408,12 @@
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <iconPacks:PackIconMaterial Width="22"
-                                                                    Height="22"
-                                                                    VerticalAlignment="Center"
-                                                                    Kind="CheckAll" />
+                                        <Grid Width="22" Height="22" VerticalAlignment="Center">
+                                            <iconPacks:PackIconMaterial Width="22" Height="22" Kind="CheckAll"
+                                                                        Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource InverseBoolToVisibility}}" />
+                                            <mah:ProgressRing IsActive="True" Width="22" Height="22"
+                                                              Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
                                         <TextBlock Margin="4 0 0 0"
                                                    VerticalAlignment="Center"
                                                    Text="{Binding}" />
@@ -422,10 +429,12 @@
 							<Button.ContentTemplate>
 								<DataTemplate>
 									<StackPanel Orientation="Horizontal">
-										<iconPacks:PackIconModern Width="22"
-                                                                  Height="22"
-                                                                  VerticalAlignment="Center"
-                                                                  Kind="Trophy" />
+										<Grid Width="22" Height="22" VerticalAlignment="Center">
+                                            <iconPacks:PackIconModern Width="22" Height="22" Kind="Trophy"
+                                                                      Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource InverseBoolToVisibility}}" />
+                                            <mah:ProgressRing IsActive="True" Width="22" Height="22"
+                                                              Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
 										<TextBlock Margin="4 0 0 0"
                                                    VerticalAlignment="Center"
                                                    Text="{Binding}" />
@@ -441,10 +450,12 @@
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <iconPacks:PackIconModern Width="22"
-                                                                  Height="22"
-                                                                  VerticalAlignment="Center"
-                                                                  Kind="Trophy" />
+                                        <Grid Width="22" Height="22" VerticalAlignment="Center">
+                                            <iconPacks:PackIconModern Width="22" Height="22" Kind="Trophy"
+                                                                      Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource InverseBoolToVisibility}}" />
+                                            <mah:ProgressRing IsActive="True" Width="22" Height="22"
+                                                              Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
                                         <TextBlock Margin="4 0 0 0"
                                                    VerticalAlignment="Center"
                                                    Text="{Binding}" />
@@ -460,10 +471,12 @@
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <iconPacks:PackIconMaterial Width="22"
-                                                                    Height="22"
-                                                                    VerticalAlignment="Center"
-                                                                    Kind="Abacus" />
+                                        <Grid Width="22" Height="22" VerticalAlignment="Center">
+                                            <iconPacks:PackIconMaterial Width="22" Height="22" Kind="Abacus"
+                                                                        Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource InverseBoolToVisibility}}" />
+                                            <mah:ProgressRing IsActive="True" Width="22" Height="22"
+                                                              Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
                                         <TextBlock Margin="4 0 0 0"
                                                    VerticalAlignment="Center"
                                                    Text="{Binding}" />
@@ -479,10 +492,12 @@
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <iconPacks:PackIconMaterial  Width="22"
-                                                                     Height="22"
-                                                                     VerticalAlignment="Center"
-                                                                     Kind="MedalOutline" />
+                                        <Grid Width="22" Height="22" VerticalAlignment="Center">
+                                            <iconPacks:PackIconMaterial Width="22" Height="22" Kind="MedalOutline"
+                                                                        Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource InverseBoolToVisibility}}" />
+                                            <mah:ProgressRing IsActive="True" Width="22" Height="22"
+                                                              Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
                                         <TextBlock Margin="4 0 0 0"
                                                    VerticalAlignment="Center"
                                                    Text="{Binding}" />
@@ -498,10 +513,12 @@
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <iconPacks:PackIconModern Width="22"
-                                                                  Height="22"
-                                                                  VerticalAlignment="Center"
-                                                                  Kind="OfficeExcel" />
+                                        <Grid Width="22" Height="22" VerticalAlignment="Center">
+                                            <iconPacks:PackIconModern Width="22" Height="22" Kind="OfficeExcel"
+                                                                      Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource InverseBoolToVisibility}}" />
+                                            <mah:ProgressRing IsActive="True" Width="22" Height="22"
+                                                              Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
                                         <TextBlock Margin="4 0 0 0"
                                                    VerticalAlignment="Center"
                                                    Text="{Binding}" />
@@ -518,10 +535,12 @@
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <iconPacks:PackIconMaterial Width="22"
-                                                                    Height="22"
-                                                                    VerticalAlignment="Center"
-                                                                    Kind="CakeVariant" />
+                                        <Grid Width="22" Height="22" VerticalAlignment="Center">
+                                            <iconPacks:PackIconMaterial Width="22" Height="22" Kind="CakeVariant"
+                                                                        Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource InverseBoolToVisibility}}" />
+                                            <mah:ProgressRing IsActive="True" Width="22" Height="22"
+                                                              Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
                                         <TextBlock Margin="4 0 0 0"
                                                    VerticalAlignment="Center"
                                                    Text="{Binding}" />
@@ -543,10 +562,12 @@
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <iconPacks:PackIconModern Width="22"
-                                                                  Height="22"
-                                                                  VerticalAlignment="Center"
-                                                                  Kind="PageFilePdf" />
+                                        <Grid Width="22" Height="22" VerticalAlignment="Center">
+                                            <iconPacks:PackIconModern Width="22" Height="22" Kind="PageFilePdf"
+                                                                      Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource InverseBoolToVisibility}}" />
+                                            <mah:ProgressRing IsActive="True" Width="22" Height="22"
+                                                              Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
                                         <TextBlock Margin="4 0 0 0"
                                                    VerticalAlignment="Center"
                                                    Text="{Binding}" />
@@ -562,10 +583,12 @@
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <iconPacks:PackIconMaterial Width="22"
-                                                                    Height="22"
-                                                                    VerticalAlignment="Center"
-                                                                    Kind="FileCertificateOutline" />
+                                        <Grid Width="22" Height="22" VerticalAlignment="Center">
+                                            <iconPacks:PackIconMaterial Width="22" Height="22" Kind="FileCertificateOutline"
+                                                                        Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource InverseBoolToVisibility}}" />
+                                            <mah:ProgressRing IsActive="True" Width="22" Height="22"
+                                                              Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
                                         <TextBlock Margin="4 0 0 0"
                                                    VerticalAlignment="Center"
                                                    Text="{Binding}" />
@@ -581,10 +604,12 @@
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <iconPacks:PackIconMaterial Width="22"
-                                                                    Height="22"
-                                                                    VerticalAlignment="Center"
-                                                                    Kind="AccountMultiplePlus" />
+                                        <Grid Width="22" Height="22" VerticalAlignment="Center">
+                                            <iconPacks:PackIconMaterial Width="22" Height="22" Kind="AccountMultiplePlus"
+                                                                        Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource InverseBoolToVisibility}}" />
+                                            <mah:ProgressRing IsActive="True" Width="22" Height="22"
+                                                              Visibility="{Binding Path=(helpers:Loading.IsBusy), RelativeSource={RelativeSource AncestorType=Button}, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
                                         <TextBlock Margin="4 0 0 0"
                                                    VerticalAlignment="Center"
                                                    Text="{Binding}" />

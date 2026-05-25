@@ -177,7 +177,8 @@ namespace BWB_Auswertung
                 //Aktuelle Version nach Start des Programms setzen und auf Updates prüfen
                 System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
                 System.Version versionInfo = assembly.GetName().Version;
-                currentVersion = $"v{versionInfo.Major}.{versionInfo.MajorRevision}.{versionInfo.Build}";
+                Version localVersion = new Version(versionInfo.Major, versionInfo.Minor, versionInfo.Build);
+                currentVersion = $"v{localVersion.Major}.{localVersion.Minor}.{localVersion.Build}";
 
                 // HTTP Client erstellen und den aktuellen ReleaseTag von Github abfragen
                 using (HttpClient client = new HttpClient())
@@ -194,8 +195,16 @@ namespace BWB_Auswertung
                     // Letzten release ermitteln
                     GitHub latestRelease = releases[0];
 
-                    // Mit lokaler Version vergleichen
-                    if (latestRelease.tag_name.CompareTo($"BWB-Auswertung/{currentVersion}") > 0)
+                    // Versionsnummer aus tag_name extrahieren (Format z.B. "BWB-Auswertung/v1.1.1")
+                    Match match = Regex.Match(latestRelease.tag_name ?? "", @"v(\d+(?:\.\d+){1,3})");
+                    if (!match.Success || !Version.TryParse(match.Groups[1].Value, out Version remoteVersion))
+                    {
+                        LOGGING.Write($"Konnte Versionsnummer aus tag_name '{latestRelease.tag_name}' nicht parsen.", System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Warning);
+                        return false;
+                    }
+
+                    // Numerisch vergleichen
+                    if (remoteVersion > localVersion)
                     {
                         // Eine neue Version ist verfügbar. Fragen ob die Datei heruntergeladen werden soll
                         var result = MessageBox.Show($"Es gibt eine neue Version des Auswertungsprogramms!\nMöchtest du die neue Version herunterladen?", "Update verfügbar!", MessageBoxButton.YesNo, MessageBoxImage.Question);
@@ -203,6 +212,7 @@ namespace BWB_Auswertung
                         {
                             Process.Start(new ProcessStartInfo(BWB_Auswertung.Properties.Settings.Default.GithubDownloadURL.Replace("{release}", latestRelease.tag_name)) { UseShellExecute = true });
                         }
+                        return true;
                     }
                 }
             }

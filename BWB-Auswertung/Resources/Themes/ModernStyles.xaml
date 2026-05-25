@@ -1,7 +1,12 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-                    xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro">
+                    xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                    xmlns:helpers="clr-namespace:BWB_Auswertung.Helpers">
+
+    <!-- Converter -->
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    <helpers:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility" />
 
     <!-- Shared values -->
     <CornerRadius x:Key="Modern.CornerRadius.Small">4</CornerRadius>
