@@ -357,11 +357,9 @@ namespace BWB_Auswertung.IO
                     }
                 }
 
-                EnsureFtpDirectoryExists(new SftpClient(settings.Hostname, 22, settings.Username,
-                        settings.Password), $"{settings.Pfad}/Wertungsbögen");
+                EnsureFtpDirectoryExists(SftpFactory.Create(settings), $"{settings.Pfad}/Wertungsbögen");
 
-                using (var sftp = new SftpClient(settings.Hostname, 22, settings.Username,
-                           settings.Password))
+                using (var sftp = SftpFactory.Create(settings))
                 {
                     sftp.Connect();
 

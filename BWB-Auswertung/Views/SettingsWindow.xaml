@@ -413,11 +413,13 @@
                                VerticalAlignment="Center"
                                FontSize="16"
                                FontWeight="Bold" />
-                        <PasswordBox ToolTip="Password zum Verbinden mit dem Server"
+                        <PasswordBox x:Name="SftpPasswordBox"
+                                     ToolTip="Password zum Verbinden mit dem Server"
                                      FontSize="16"
                                      Margin="10,5,10,10"
                                      Height="34"
                                      VerticalAlignment="Center"
+                                     Loaded="SftpPasswordBox_Loaded"
                                      PasswordChanged="PasswordBox_PasswordChanged" />
                         <Button Content="Teste Verbindung"
                                 ToolTip="Verbinde mit dem FTP Server und teste die Verbindung"

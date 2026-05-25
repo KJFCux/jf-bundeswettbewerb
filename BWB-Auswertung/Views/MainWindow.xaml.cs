@@ -671,8 +671,7 @@ namespace BWB_Auswertung
                 // Liste zum Speichern der Dateipfade
                 List<string> filePaths = new();
 
-                using (var sftp = new SftpClient(einstellungen.Hostname, 22, einstellungen.Username,
-                           einstellungen.Password))
+                using (var sftp = SftpFactory.Create(einstellungen))
                 {
                     sftp.Connect();
 
@@ -715,8 +714,7 @@ namespace BWB_Auswertung
                     WriteFile.writeText(Path.Combine(uploadlocalPath, datei), SerializeXML<Gruppe>.Serialize(gruppe));
                     dateienZumUpload.Add(datei);
                 }
-                using (var sftp = new SftpClient(einstellungen.Hostname, 22, einstellungen.Username,
-                           einstellungen.Password))
+                using (var sftp = SftpFactory.Create(einstellungen))
                 {
                     sftp.Connect();
 
@@ -754,8 +752,7 @@ namespace BWB_Auswertung
                 var viewModel = (MainViewModel)DataContext;
                 var einstellungen = viewModel.Einstellungen;
 
-                using (var sftp = new SftpClient(einstellungen.Hostname, 22, einstellungen.Username,
-                           einstellungen.Password))
+                using (var sftp = SftpFactory.Create(einstellungen))
                 {
                     sftp.Connect();
                     if (sftp.IsConnected)

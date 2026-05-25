@@ -319,8 +319,7 @@ namespace BWB_Auswertung.Views
                 var viewModel = (MainViewModel)DataContext;
                 var einstellungen = viewModel.Einstellungen;
 
-                using (var sftp = new SftpClient(einstellungen.Hostname, 22, einstellungen.Username,
-                           einstellungen.Password))
+                using (var sftp = SftpFactory.Create(einstellungen))
                 {
                     sftp.Connect();
                     if (sftp.IsConnected)
@@ -374,8 +373,33 @@ namespace BWB_Auswertung.Views
             return Regex.IsMatch(text, @"^[0-9]*(?:\.[0-9]*)?$");
         }
 
+        private bool _suppressPasswordSync;
+
+        private void SftpPasswordBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            var passwordBox = sender as PasswordBox;
+            if (passwordBox == null) return;
+
+            var viewModel = DataContext as MainViewModel;
+            if (viewModel?.Einstellungen == null) return;
+
+            // Gespeichertes Passwort in die PasswordBox zurückschreiben, ohne
+            // dabei den PasswordChanged-Handler das ViewModel überschreiben zu lassen.
+            _suppressPasswordSync = true;
+            try
+            {
+                passwordBox.Password = viewModel.Einstellungen.Password ?? string.Empty;
+            }
+            finally
+            {
+                _suppressPasswordSync = false;
+            }
+        }
+
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
+            if (_suppressPasswordSync) return;
+
             var passwordBox = sender as PasswordBox;
             if (passwordBox != null)
             {
