@@ -973,7 +973,7 @@ namespace BWB_Auswertung
                     return Brushes.Red; // Farbe Rot für Alter über 18 oder kleiner 10
                 }
             }
-            return Brushes.Black; // Standardfarbe
+            return ThemeForeground();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -981,7 +981,11 @@ namespace BWB_Auswertung
             throw new NotImplementedException();
         }
 
-
+        internal static object ThemeForeground()
+        {
+            return Application.Current?.TryFindResource("MahApps.Brushes.Text") as System.Windows.Media.Brush
+                   ?? Brushes.Black;
+        }
     }
 
     public class BirthdayToColorConverter : IValueConverter
@@ -998,7 +1002,7 @@ namespace BWB_Auswertung
                     return Brushes.Red;
                 }
             }
-            return Brushes.Black;
+            return AgeToColorConverter.ThemeForeground();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

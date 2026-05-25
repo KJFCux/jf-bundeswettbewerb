@@ -106,7 +106,7 @@
                     </MenuItem>
                     <MenuItem x:Name="SyncmitFtp"
                               Header="Sync mit FTP"
-                              ToolTip="Daten von FTP Server laden"
+                              ToolTip="Aktuelle Gruppendaten vom FTP Server laden"
                               Click="SyncmitFtp_Click"
                               Foreground="{DynamicResource MahApps.Brushes.Text}">
                         <MenuItem.Icon>
@@ -132,6 +132,7 @@
                 <MenuItem Header="Auswertung"
                           Background="{DynamicResource MahApps.Brushes.Accent}"
                           Foreground="{DynamicResource MahApps.Brushes.IdealForeground}"
+						  ToolTip="Zeigt das Dashboard für die Auswertung der Gruppen und den Platzierungen"
                           Click="OpenEvaluation_Click">
                     <MenuItem.Icon>
                         <iconPacks:PackIconMaterial Width="22"
@@ -140,25 +141,19 @@
                                                     Kind="ChartBox" />
                     </MenuItem.Icon>
                 </MenuItem>
-            </Menu>
-            <Button x:Name="EinstellungenButton"
-                    Content="Einstellungen"
-                    ToolTip="Einstellungen für das BWB-Auswertungsprogramm"
-                    Click="OpenSettingsButton_Click">
-                <Button.ContentTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconModern Width="22"
-                                                      Height="22"
-                                                      VerticalAlignment="Center"
-                                                      Kind="Settings" />
-                            <TextBlock Margin="4 0 0 0"
-                                       VerticalAlignment="Center"
-                                       Text="{Binding}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </Button.ContentTemplate>
-            </Button>
+				<MenuItem Header="Einstellungen"
+		  Background="{DynamicResource MahApps.Brushes.Accent}"
+		  Foreground="{DynamicResource MahApps.Brushes.IdealForeground}"
+		  ToolTip="Einstellungen für das BWB-Auswertungsprogramm"
+		  Click="OpenSettingsButton_Click">
+					<MenuItem.Icon>
+						<iconPacks:PackIconModern Width="22"
+                                                    Height="22"
+                                                    VerticalAlignment="Center"
+                                                    Kind="Settings" />
+					</MenuItem.Icon>
+				</MenuItem>
+            </Menu>      
             <Menu>
                 <MenuItem Header="Info">
                     <MenuItem.Icon>
@@ -553,6 +548,8 @@
                                             <Button Content=""
                                                     Width="40"
                                                     Height="40"
+                                                    Padding="0"
+                                                    MinHeight="0"
                                                     Margin="10,10,10,10"
                                                     ToolTip="Anmelde URL kopieren"
                                                     Click="AnmeldeURLKopieren_Click">
@@ -573,6 +570,8 @@
                                             <Button Content=""
                                                     Width="40"
                                                     Height="40"
+                                                    Padding="0"
+                                                    MinHeight="0"
                                                     Margin="10,10,10,10"
                                                     ToolTip="Anmeldung öffnen"
                                                     Click="LaunchAnmeldung_Click">

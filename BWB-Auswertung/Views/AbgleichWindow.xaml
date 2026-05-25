@@ -6,7 +6,7 @@
                  xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  mc:Ignorable="d"
-                 Title="LAN-Abgleich (4-Augen-Prinzip)"
+                 Title="LAN-Abgleich der eingetragenen Bewertungen"
                  Height="720"
                  Width="1200"
                  WindowStartupLocation="CenterScreen"
