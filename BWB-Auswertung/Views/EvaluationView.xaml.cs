@@ -229,8 +229,12 @@ namespace BWB_Auswertung.Views
                 {
                     List<string> pfadeCheckUp = new List<string>();
                     string schuhwerk = teil == "A-Teil"
-                        ? "Festes Schuhwerk,<br />mit Absatz, ggf. Leiterwandtest"
-                        : "Sportschuhe<br />(KEINE Spikes &amp; Stollenschuhe)";
+                        ? "Festes Schuhwerk"
+                        : "Sportschuhe";
+                    string schuhwerktext = teil == "A-Teil"
+                        ? "Geschlossener Schuh, der dem Träger einen guten Halt bietet und eng am Fuß sitzt. Zusätzlich muss ein Absatz/Hacken vorhanden sein (\"Leiterwandtest\")"
+                        : "KEINE Spikes oder Stollenschuhe";
+
 
                     foreach (Gruppe gruppe in viewModel.Gruppen)
                     {
@@ -241,6 +245,7 @@ namespace BWB_Auswertung.Views
                         checkUpGruppe = checkUpGruppe.Replace("{startnummer}", gruppe.StartNr.ToString());
                         checkUpGruppe = checkUpGruppe.Replace("{teil}", teil);
                         checkUpGruppe = checkUpGruppe.Replace("{schuhwerk_bezeichnung}", schuhwerk);
+                        checkUpGruppe = checkUpGruppe.Replace("{schuhwerk_text}", schuhwerktext);
                         checkUpGruppe = checkUpGruppe.Replace("{bahnnummer}", teil == "A-Teil"
                             ? FormatBahn(gruppe.WettbewerbsbahnATeil)
                             : FormatBahn(gruppe.WettbewerbsbahnBTeil));

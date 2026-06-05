@@ -53,6 +53,10 @@
             font-size: 12pt;
         }
 
+        small {
+            font-size: 8pt;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -106,19 +110,19 @@
             margin-top: 4mm;
         }
 
-        table.check-table th,
-        table.check-table td {
-            border: 1.5px solid black;
-            padding: 2mm 4mm;
-            font-size: 12pt;
-            vertical-align: middle;
-        }
+            table.check-table th,
+            table.check-table td {
+                border: 1.5px solid black;
+                padding: 2mm 4mm;
+                font-size: 12pt;
+                vertical-align: middle;
+            }
 
-        table.check-table thead th {
-            text-align: center;
-            font-weight: bold;
-            font-size: 14pt;
-        }
+            table.check-table thead th {
+                text-align: center;
+                font-weight: bold;
+                font-size: 14pt;
+            }
 
         .col-bezeichnung {
             width: 60%;
@@ -153,13 +157,13 @@
             margin-top: 4mm;
         }
 
-        .footer-table td {
-            padding: 2mm 4mm;
-            font-size: 12pt;
-            border: 1.5px solid black;
-            font-family: 'Open Sans';
-            vertical-align: middle;
-        }
+            .footer-table td {
+                padding: 2mm 4mm;
+                font-size: 12pt;
+                border: 1.5px solid black;
+                font-family: 'Open Sans';
+                vertical-align: middle;
+            }
 
         .label-right {
             text-align: right;
@@ -247,12 +251,15 @@
                     <td class="col-jn"><span class="circle"></span></td>
                 </tr>
                 <tr>
-                    <td>Schutzhandschuhe nach EN388<br />(oder h&ouml;her)<br />mindestens Schutzstufe 1111</td>
+                    <td>Schutzhandschuhe nach EN388 (oder h&ouml;her)<br />mindestens Schutzstufe 1111<br/>
+                        <small>
+    zus&auml;tz. Verst&auml;rkungen an Daumen, Handinnenfl&auml;che und Handr&uumlcken. Die Farbgestaltung hat nur in den Farben Schwarz, Grau, Blau und/oder Orange zu erfolgen. Reflexstreifen sind opt. m&ouml;glich.
+</small></td>
                     <td class="col-jn"><span class="circle"></span></td>
                     <td class="col-jn"><span class="circle"></span></td>
                 </tr>
                 <tr>
-                    <td>{schuhwerk_bezeichnung}</td>
+                    <td>{schuhwerk_bezeichnung}<br /><small>{schuhwerk_text}</small></td>
                     <td class="col-jn"><span class="circle"></span></td>
                     <td class="col-jn"><span class="circle"></span></td>
                 </tr>
