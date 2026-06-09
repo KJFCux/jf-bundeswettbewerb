@@ -630,17 +630,21 @@ namespace BWB_Auswertung
                 //Schauen ob bereits vorhanden und alten Eintrag löschen
                 if (ueberrschreiben)
                 {
-                    var gefundeneGruppen = viewModel.Gruppen.Where(x => x.GruppenName.Equals(gruppe.GruppenName)).ToList();
+                    // Abgleich über die AnmeldungUID (aus der URL), nicht über den Namen.
+                    // So wird die gleiche Anmeldung auch nach einer lokalen Umbenennung erkannt
+                    // und es entstehen keine Dubletten.
+                    var gefundeneGruppen = viewModel.Gruppen.Where(x => x.AnmeldungUID.Equals(gruppe.AnmeldungUID)).ToList();
 
                     foreach (var gefundeneGruppe in gefundeneGruppen)
                     {
                         // Verhindern, dass vorhandene Bewertungen oder Startzeiten überschrieben werden.
-                        // Nur die Personen und Namen werden aus dem Import übernommen
+                        // Nur die Personen werden aus dem Import übernommen.
+                        // Der lokale GruppenName bleibt erhalten, damit lokale Umbenennungen
+                        // beim Upload an den Server übertragen werden (statt überschrieben zu werden).
 
                         Gruppe gruppeTemp = gefundeneGruppe;
                         gruppeTemp.Persons = gruppe.Persons;
                         gruppeTemp.Feuerwehr = gruppe.Feuerwehr;
-                        gruppeTemp.GruppenName = gruppe.GruppenName;
                         gruppeTemp.Organisationseinheit = gruppe.Organisationseinheit;
 
                         gruppe = gruppeTemp;

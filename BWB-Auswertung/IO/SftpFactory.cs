@@ -34,5 +34,29 @@ namespace BWB_Auswertung.IO
             return new ConnectionInfo(settings.Hostname, port, settings.Username,
                 passwordAuth, keyboardAuth);
         }
+
+        /// <summary>
+        /// Prüft, ob eine Datei auf dem SFTP-Server existiert.
+        /// </summary>
+        public static bool FileExists(Settings settings, string remotePath)
+        {
+            using var sftp = Create(settings);
+            sftp.Connect();
+            bool exists = sftp.Exists(remotePath);
+            sftp.Disconnect();
+            return exists;
+        }
+
+        /// <summary>
+        /// Löscht eine Datei auf dem SFTP-Server, falls sie existiert.
+        /// </summary>
+        public static void DeleteFile(Settings settings, string remotePath)
+        {
+            using var sftp = Create(settings);
+            sftp.Connect();
+            if (sftp.Exists(remotePath))
+                sftp.DeleteFile(remotePath);
+            sftp.Disconnect();
+        }
     }
 }

@@ -245,6 +245,9 @@ public class MainViewModel : INotifyPropertyChanged
             if (result == MessageBoxResult.OK)
             {
                 Gruppen.Remove(gruppe);
+
+                // Falls die Gruppe auch online (FTP) verknüpft ist, anbieten sie dort zu löschen.
+                PruefeUndLoescheGruppeOnline(gruppe);
             }
         }
         else
@@ -252,6 +255,44 @@ public class MainViewModel : INotifyPropertyChanged
             Gruppen.Remove(gruppe);
         }
 
+    }
+
+    /// <summary>
+    /// Prüft, ob für die gelöschte Gruppe online verknüpfte FTP-Daten existieren
+    /// (Datei {AnmeldungUID}.xml). Falls ja, wird gefragt, ob diese ebenfalls
+    /// auf dem Server gelöscht werden soll. Fehler beim Serverzugriff blockieren
+    /// das lokale Löschen nicht.
+    /// </summary>
+    private void PruefeUndLoescheGruppeOnline(Gruppe gruppe)
+    {
+        // Nur Gruppen mit echter Anmelde-URL haben eine stabile, serverseitige UID.
+        if (string.IsNullOrWhiteSpace(gruppe.UrlderAnmeldung))
+            return;
+
+        // Nur wenn FTP überhaupt konfiguriert ist.
+        if (string.IsNullOrWhiteSpace(Einstellungen?.Hostname))
+            return;
+
+        try
+        {
+            string remotePath = $"{Einstellungen.Pfad}/{gruppe.AnmeldungUID}.xml";
+
+            if (!SftpFactory.FileExists(Einstellungen, remotePath))
+                return;
+
+            MessageBoxResult result = MessageBox.Show(
+                $"Die Gruppe \"{gruppe.GruppenName}\" wurde auch online gefunden.\nSoll sie auch auf dem Server gelöscht werden?",
+                "Online löschen?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                SftpFactory.DeleteFile(Einstellungen, remotePath);
+            }
+        }
+        catch (Exception ex)
+        {
+            LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+        }
     }
 
     public void switchBoxTeilnehmer(int zielIndex, Gruppe gruppe)
