@@ -784,8 +784,15 @@ namespace BWB_Auswertung.Views
                 }
 
 
+                // Sortierung der Urkunden:
+                // - Mit eingeblendeter Platzierung: nach Platz absteigend.
+                // - Ohne Platzierung: alphabetisch nach Gruppenname.
+                IEnumerable<Gruppe> sortierteGruppen = resultPlatz == MessageBoxResult.Yes
+                    ? viewModel.Gruppen.OrderByDescending(x => x.Platz)
+                    : viewModel.Gruppen.OrderBy(x => x.GruppenName);
+
                 List<string> pfade = new List<string>();
-                foreach (Gruppe gruppe in viewModel.Gruppen.OrderByDescending(x => x.StartzeitATeil))
+                foreach (Gruppe gruppe in sortierteGruppen)
                 {
                     string aktuelleUrkunde = urkundeOverlay;
 
