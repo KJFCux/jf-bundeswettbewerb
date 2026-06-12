@@ -43,8 +43,18 @@ namespace BWB_Auswertung.Services
             int minAbstandMin = Math.Max(0, einstellungen.MinAbstandCrossTeilMinuten);
             TimeSpan minAbstand = TimeSpan.FromMinutes(minAbstandMin);
 
-            AssignTeil(gruppen, einstellungen, reihenfolge, Teil.A, minAbstand, result);
-            AssignTeil(gruppen, einstellungen, reihenfolge, Teil.B, minAbstand, result);
+            //Mittagspause auf das Veranstaltungsdatum normieren. Dauer 0 = keine Pause.
+            DateTime pauseStart = default;
+            DateTime pauseEnde = default;
+            int pauseDauerMin = Math.Max(0, einstellungen.MittagspauseDauerMinuten);
+            if (pauseDauerMin > 0)
+            {
+                pauseStart = einstellungen.Veranstaltungsdatum.Date.Add(einstellungen.MittagspauseStart.TimeOfDay);
+                pauseEnde = pauseStart.AddMinutes(pauseDauerMin);
+            }
+
+            AssignTeil(gruppen, einstellungen, reihenfolge, Teil.A, minAbstand, pauseStart, pauseEnde, result);
+            AssignTeil(gruppen, einstellungen, reihenfolge, Teil.B, minAbstand, pauseStart, pauseEnde, result);
 
             return result;
         }
@@ -55,6 +65,8 @@ namespace BWB_Auswertung.Services
             AutoStartReihenfolge reihenfolge,
             Teil teil,
             TimeSpan minAbstand,
+            DateTime pauseStart,
+            DateTime pauseEnde,
             AutoStartResult result)
         {
             int anzahlBahnen = teil == Teil.A ? einstellungen.AnzahlBahnenATeil : einstellungen.AnzahlBahnenBTeil;
@@ -106,7 +118,7 @@ namespace BWB_Auswertung.Services
 
             foreach (var g in kandidaten.ToList())
             {
-                if (TryFindSlot(g, gruppen, teil, beginn, intervall, anzahlBahnen, minAbstand, besetzteSlots,
+                if (TryFindSlot(g, gruppen, teil, beginn, intervall, anzahlBahnen, minAbstand, pauseStart, pauseEnde, besetzteSlots,
                                 out DateTime zeit, out int bahn))
                 {
                     SetStartzeit(g, teil, zeit);
@@ -135,6 +147,8 @@ namespace BWB_Auswertung.Services
             TimeSpan intervall,
             int anzahlBahnen,
             TimeSpan minAbstand,
+            DateTime pauseStart,
+            DateTime pauseEnde,
             Dictionary<int, HashSet<DateTime>> besetzteSlots,
             out DateTime zeit,
             out int bahn)
@@ -145,6 +159,10 @@ namespace BWB_Auswertung.Services
             for (int i = 0; i < MAX_SLOT_ITERATIONEN; i++)
             {
                 DateTime kandidatZeit = beginn + TimeSpan.FromTicks(intervall.Ticks * i);
+
+                //Während der Mittagspause werden keine Startzeiten vergeben.
+                if (pauseEnde > pauseStart && kandidatZeit >= pauseStart && kandidatZeit < pauseEnde)
+                    continue;
 
                 IEnumerable<int> bahnen = fixeBahn.HasValue
                     ? new[] { fixeBahn.Value }

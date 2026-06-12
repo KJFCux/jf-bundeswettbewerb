@@ -630,6 +630,29 @@
 
                             <StackPanel Orientation="Horizontal"
                                         HorizontalAlignment="Center"
+                                        Margin="0,0,0,10">
+                                <Label Content="Mittagspause ab:"
+                                       ToolTip="In diesem Zeitraum werden bei der automatischen Vergabe keine Startzeiten verteilt. Dauer 0 = keine Pause."
+                                       FontSize="16"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,10,0" />
+                                <mah:TimePicker MinWidth="120"
+                                                FontSize="16"
+                                                SelectedDateTime="{Binding Einstellungen.MittagspauseStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <Label Content="Dauer (Min):"
+                                       ToolTip="Dauer der Mittagspause in Minuten. 0 = keine Pause."
+                                       FontSize="16"
+                                       VerticalAlignment="Center"
+                                       Margin="20,0,10,0" />
+                                <mah:NumericUpDown Minimum="0"
+                                                   Maximum="240"
+                                                   MinWidth="120"
+                                                   FontSize="16"
+                                                   Value="{Binding Einstellungen.MittagspauseDauerMinuten, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
                                         Margin="0,10,0,10">
                                 <Button Content="Startzeiten automatisch vergeben"
                                         ToolTip="Vergibt für alle Gruppen ohne Startzeit automatisch eine Startzeit und Bahn. Manuell gesetzte Werte bleiben erhalten."

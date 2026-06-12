@@ -40,6 +40,8 @@ namespace BWB_Auswertung.Models
             StartBeginnATeil = DateTime.Today.AddHours(9);
             StartBeginnBTeil = DateTime.Today.AddHours(9);
             MinAbstandCrossTeilMinuten = 30;
+            MittagspauseStart = DateTime.Today.AddHours(12);
+            MittagspauseDauerMinuten = 60;
 
             //LAN-Abgleich
             LanAbgleichAktiv = true;
@@ -84,6 +86,11 @@ namespace BWB_Auswertung.Models
         public DateTime StartBeginnATeil { get; set; }
         public DateTime StartBeginnBTeil { get; set; }
         public int MinAbstandCrossTeilMinuten { get; set; }
+
+        // Mittagspause: In diesem Zeitraum werden keine Startzeiten vergeben.
+        // Dauer 0 = keine Pause.
+        public DateTime MittagspauseStart { get; set; }
+        public int MittagspauseDauerMinuten { get; set; }
 
         //LAN-Abgleich (4-Augen-Prinzip)
         public bool LanAbgleichAktiv { get; set; }
