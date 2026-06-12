@@ -10,8 +10,8 @@
     <ApplicationIcon>Resources\Images\App.ico</ApplicationIcon>
 	<NeutralLanguage>de-DE</NeutralLanguage>
 	<StartupObject>BWB_Auswertung.App</StartupObject>
-	<AssemblyVersion>1.1.2</AssemblyVersion>
-	<FileVersion>1.1.2</FileVersion>
+	<AssemblyVersion>1.1.3</AssemblyVersion>
+	<FileVersion>1.1.3</FileVersion>
 	<AcceptNPOIOSMFLicense>true</AcceptNPOIOSMFLicense>
   </PropertyGroup>
 
@@ -90,7 +90,7 @@
 		<NugetTools>$(PkgNuGet_CommandLine)\tools</NugetTools>
 		<SquirrelTools>$(Pkgsquirrel_windows)\tools</SquirrelTools>
 
-		<Version>1.1.2</Version>
+		<Version>1.1.3</Version>
 
 		<NuspecFile>$(ProjectDir)ReleaseSpec.nuspec</NuspecFile>
 	</PropertyGroup>
