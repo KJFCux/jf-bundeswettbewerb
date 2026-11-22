@@ -347,7 +347,7 @@
                                                  Margin="80,10,20,10"
                                                  Width="40"
                                                  FontSize="24"
-                                                 ToolTip="Für den Fall einer Punktgleichheit, auch nach den Entscheidungskriterien der Wettbewerbsordnung, kann hier ein vorgenommener Losentscheid eingetragen werden. Wird hier nichts eingetragen wird bei Punktgleichheit nach Auswertung aller anderen Kriterien automatisch ein Losentscheid vorgenommen."
+                                                 ToolTip="Für den Fall einer Punktgleichheit, auch nach den Entscheidungskriterien der Wettbewerbsordnung, kann hier ein vorgenommener Losentscheid eingetragen werden. Kleinere Zahl = besserer Platz. Wird nichts eingetragen, wird bei weiterhin bestehender Punktgleichheit nach Startnummer sortiert. In diesem Fall bitte einen Losentscheid durchführen und hier eintragen."
                                                  Height="40" />
                                         <Label Content="Losentscheid"
                                                HorizontalAlignment="Center"

@@ -73,23 +73,24 @@ namespace BWB_Auswertung.Models
             }
         }
 
-        public int Alter
-        {
-            get
-            {
-                int age = Globals.VERANSTALTUNGSDATUM.Year - Geburtsdatum.Year;
+        public int Alter => BerechneAlter(Geburtsdatum);
 
-                //Nur wenn noch nicht 10 soll das genaue Alter berechnet werden. Sonst der Jahrgang
-                if (Geburtsdatum.Date > Globals.VERANSTALTUNGSDATUM.AddYears(-age))
-                {
-                    if (age == 10)
-                    {
-                        age--;
-                    }
-                }
-                    
-                return age;
+        /// <summary>
+        /// Alter für die Wettbewerbswertung. Grundsätzlich zählt der Jahrgang
+        /// (Wettbewerbsordnung 2.3: Stichtag 31. Dezember des laufenden Jahres).
+        /// Nur wer noch nicht 10 ist, wird mit dem taggenauen Alter (9) geführt.
+        /// </summary>
+        public static int BerechneAlter(DateTime geburtsdatum)
+        {
+            int age = Globals.VERANSTALTUNGSDATUM.Year - geburtsdatum.Year;
+
+            //Nur wenn noch nicht 10 soll das genaue Alter berechnet werden. Sonst der Jahrgang
+            if (age == 10 && geburtsdatum.Date > Globals.VERANSTALTUNGSDATUM.Date.AddYears(-age))
+            {
+                age--;
             }
+
+            return age;
         }
 
         public Person()
