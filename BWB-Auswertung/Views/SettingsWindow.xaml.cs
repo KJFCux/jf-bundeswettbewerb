@@ -358,6 +358,90 @@ namespace BWB_Auswertung.Views
             }
         }
 
+        private bool SftpKonfiguriert(Settings einstellungen)
+        {
+            if (string.IsNullOrWhiteSpace(einstellungen.Hostname) || string.IsNullOrWhiteSpace(einstellungen.Username))
+            {
+                MessageBox.Show("Bitte zuerst Server, Pfad, Benutzername und Passwort eintragen.", "Einstellungen teilen",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return false;
+            }
+            return true;
+        }
+
+        private void EinstellungenHochladen_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var viewModel = (MainViewModel)DataContext;
+                if (!SftpKonfiguriert(viewModel.Einstellungen)) return;
+
+                Mouse.OverrideCursor = Cursors.Wait;
+                try
+                {
+                    EinstellungenSync.Hochladen(viewModel.Einstellungen);
+                }
+                finally
+                {
+                    Mouse.OverrideCursor = null;
+                }
+                MessageBox.Show("Die Einstellungen wurden auf den Server hochgeladen.\nAuf den anderen Rechnern: SFTP-Zugang eintragen und \"Einstellungen vom Server laden\" klicken.",
+                    "Einstellungen teilen", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
+                MessageBox.Show($"Hochladen der Einstellungen fehlgeschlagen\n{ex.Message}", "Fehler: Einstellungen teilen",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void EinstellungenHerunterladen_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var viewModel = (MainViewModel)DataContext;
+                if (!SftpKonfiguriert(viewModel.Einstellungen)) return;
+
+                if (MessageBox.Show("Die aktuellen Einstellungen werden durch die Einstellungen vom Server ersetzt und gespeichert.\nSFTP-Zugangsdaten und Unterschriften bleiben erhalten.\n\nFortfahren?",
+                        "Einstellungen vom Server laden", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                {
+                    return;
+                }
+
+                Settings? neu;
+                Mouse.OverrideCursor = Cursors.Wait;
+                try
+                {
+                    neu = EinstellungenSync.Herunterladen(viewModel.Einstellungen, settingsPath);
+                }
+                finally
+                {
+                    Mouse.OverrideCursor = null;
+                }
+
+                if (neu == null)
+                {
+                    MessageBox.Show("Auf dem Server wurden noch keine Einstellungen gefunden.\nBitte zuerst an einem anderen Rechner \"Einstellungen hochladen\" ausführen.",
+                        "Einstellungen vom Server laden", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                viewModel.OverrideSettings(neu);
+                if (SaveSettings())
+                {
+                    MessageBox.Show("Die Einstellungen wurden vom Server übernommen und gespeichert.", "Einstellungen vom Server laden",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
+                MessageBox.Show($"Laden der Einstellungen fehlgeschlagen\n{ex.Message}", "Fehler: Einstellungen teilen",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         //Fenster Skalieren
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {

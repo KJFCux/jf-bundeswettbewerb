@@ -31,11 +31,12 @@ Die Berechnung folgt der *Wettbewerbsordnung für den Bundeswettbewerb der DJF (
 - **Gruppen- und Teilnehmendenverwaltung**
   - 9 Teilnehmende plus 1 Ersatzperson pro Gruppe, Ersatzperson per Auswahlfeld einwechseln.
   - Automatische Prüfung des Alters (10 bis 18 Jahre, Stichtag 31.12.). Unzulässige Werte werden rot markiert.
+  - Schnelle Datumseingabe: `03.05.2014`, `3.5.14`, `03052014` oder `030514` werden erkannt (übernommen beim Verlassen des Feldes oder mit Enter).
   - Automatische Berechnung von Gesamtalter und Sollzeit für den B-Teil.
 - **Schnelle Eingabe der Wertungsbögen**
   - Zeiten beider Zeitnehmer, Knotenzeit, Eindruck und Fehlerpunkte je Wertungsrichter für A- und B-Teil.
   - Disqualifikation je Teil, „Gruppe ohne Wertung“ und Losentscheid.
-  - Option „Fertige Gruppen ausblenden“, damit nur noch offene Gruppen in der Liste stehen.
+  - Option „Fertige Gruppen ausblenden“, damit nur noch offene Gruppen in der Liste stehen. Gruppen ohne Wertung gelten als fertig, bei Disqualifikation eines Teils muss nur der andere Teil erfasst sein.
 - **Automatische Auswertung und Platzierung**
   - Platzierung inklusive aller Entscheidungskriterien bei Punktgleichheit (siehe [unten](#berechnung-der-punkte)).
   - Übersicht über den Wettbewerbsfortschritt, jüngste/älteste Gruppe, bester bzw. schnellster A- und B-Teil, schnellste Knotenzeit.
@@ -44,7 +45,9 @@ Die Berechnung folgt der *Wettbewerbsordnung für den Bundeswettbewerb der DJF (
 - **Exporte (PDF/Excel)**
   - Urkunden (inkl. Urkunde „Jüngste Gruppe“, eigene HTML-Vorlagen möglich), Platzierungslisten (PDF und Excel), Startreihenfolge A/B, Kontrollblätter, Kontrollliste Check-Up-Zelte, Geburtstagsliste, ausgefüllte Wertungsbögen als Excel inkl. Gesamtübersicht, Gruppendaten als Excel.
 - **LAN-Abgleich (4-Augen-Prinzip)**
-  - Zwei Rechner im gleichen Netzwerk finden sich automatisch und vergleichen alle wertungsrelevanten Eingaben. Abweichungen werden übersichtlich angezeigt.
+  - Zwei Rechner im gleichen Netzwerk finden sich automatisch und vergleichen alle wertungsrelevanten Eingaben sowie die Teilnehmenden (Name, Geschlecht, Geburtsdatum je Position). Abweichungen werden übersichtlich angezeigt.
+- **Einstellungen teilen per SFTP**
+  - Ein Rechner lädt die Einstellungen hoch (Einstellungen → SFTP), die anderen übernehmen sie mit einem Klick. SFTP-Zugangsdaten und Unterschriften werden dabei nicht übertragen, das Logo schon.
 - **Automatische Backups** alle 10 Minuten
 - **Helles und dunkles Farbschema** (oder automatisch nach Windows-Einstellung)
 
@@ -111,6 +114,7 @@ Ausführliche Anleitungen findet ihr auf unserer Webseite:
 | Gruppendaten (eine XML-Datei je Gruppe) | `Dokumente\BWB-Auswertung\Gruppendaten` |
 | Nicht lesbare Gruppendateien | `Dokumente\BWB-Auswertung\Gruppendaten\Fehlerhaft` |
 | Einstellungen | `Dokumente\BWB-Auswertung\Einstellungen\settings.xml` |
+| Geteilte Einstellungen auf dem Server | `<SFTP-Pfad>/Einstellungen/einstellungen.xml` (+ Logo) |
 | Automatische Backups (ZIP, alle 10 Min., die letzten 30) | `Dokumente\BWB-Auswertung\Backup` |
 | Exporte (PDF, Excel) | `Dokumente\BWB-Auswertung` |
 | Eigene Urkundenvorlagen | `Dokumente\BWB-Auswertung\Vorlagen` |

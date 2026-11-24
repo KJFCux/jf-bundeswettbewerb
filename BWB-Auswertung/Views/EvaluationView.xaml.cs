@@ -35,17 +35,7 @@ namespace BWB_Auswertung.Views
                 double grundwert = mainViewModel.Gruppen.Count();
                 try
                 {
-                    double prozentwert = mainViewModel.Gruppen.Where(x =>
-                    ((x.ATeilGesamteindruck > 0)
-                    && (x.BTeilGesamteindruck > 0)
-                    && (x.PunkteBTeil > 0)
-                    && (x.DurchschnittszeitBTeil > 0)
-                    && (x.DurchschnittszeitATeil > 0)
-                    && (x.DurchschnittszeitKnotenATeil > 0)
-                    && (x.SollZeitBTeilInSekunden > 0))
-                    ||
-                    x.OhneWertung == true
-                    ).ToList().Count();
+                    double prozentwert = mainViewModel.Gruppen.Count(x => x.IstFertig);
                     double prozentsatz = prozentwert / grundwert * 100d;
                     Wettbewerbsfortschritt.Value = prozentsatz;
                     AnzahlFehlenderGruppen.Content = grundwert - prozentwert;
