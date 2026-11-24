@@ -69,7 +69,7 @@ namespace BWB_Auswertung
             dataPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ProgrammName, "Gruppendaten");
             _ = Directory.CreateDirectory(dataPath);
 
-            LOGGING.Write(dataPath, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+            LOGGING.Write(dataPath, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Information);
 
 
             //Speicherort für Logdateien und evtl. Ordner erstellen
@@ -287,7 +287,14 @@ namespace BWB_Auswertung
                 {
                     foreach (string file in openFileDialog.FileNames)
                     {
-                        OpenDeserializerForFile(file, true);
+                        try
+                        {
+                            OpenDeserializerForFile(file, true);
+                        }
+                        catch (InvalidDataException exDatei)
+                        {
+                            MessageBox.Show(exDatei.Message, "Fehler: Import", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
                     }
                 }
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
@@ -495,18 +502,48 @@ namespace BWB_Auswertung
                     {
 
                         var gruppe = Excel.ImportExcelGruppe(file);
-                        if (gruppe != null)
+                        if (gruppe == null)
                         {
-
-                            //Alte überschreiben
-                            var gefundeneGruppen = viewModel.Gruppen.Where(x => x.GruppenName.Equals(gruppe.GruppenName)).ToList();
-
-                            foreach (var gefundeneGruppe in gefundeneGruppen)
-                            {
-                                viewModel.RemoveSelectedGroup(gefundeneGruppe, false);
-                            }
-                            viewModel.AddGroup(gruppe);
+                            MessageBox.Show($"Der Meldebogen\n{file}\nkonnte nicht gelesen werden.", "Fehler: Import", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            continue;
                         }
+
+                        //Gibt es schon eine Gruppe mit gleichem Namen? Nicht mehr ungefragt überschreiben:
+                        //Der Meldebogen enthält keinen eigenen Gruppennamen (GruppenName = Jugendfeuerwehr),
+                        //daher würde sonst z.B. die zweite Gruppe derselben Jugendfeuerwehr die erste löschen.
+                        var gefundeneGruppen = viewModel.Gruppen.Where(x => string.Equals(x.GruppenName, gruppe.GruppenName, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                        if (gefundeneGruppen.Count > 0)
+                        {
+                            MessageBoxResult auswahl = MessageBox.Show(
+                                $"Die Gruppe \"{gruppe.GruppenName}\" ist bereits vorhanden.\n\n" +
+                                "Ja = vorhandene Gruppe überschreiben (Wertungen gehen verloren)\n" +
+                                "Nein = zusätzlich als weitere Gruppe anlegen\n" +
+                                "Abbrechen = diesen Meldebogen überspringen",
+                                "Gruppe bereits vorhanden", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+
+                            if (auswahl == MessageBoxResult.Cancel)
+                            {
+                                continue;
+                            }
+                            if (auswahl == MessageBoxResult.Yes)
+                            {
+                                foreach (var gefundeneGruppe in gefundeneGruppen)
+                                {
+                                    viewModel.RemoveSelectedGroup(gefundeneGruppe, false);
+                                }
+                            }
+                            else
+                            {
+                                int nr = 2;
+                                string basisName = gruppe.GruppenName;
+                                while (viewModel.Gruppen.Any(x => string.Equals(x.GruppenName, $"{basisName} {nr}", StringComparison.CurrentCultureIgnoreCase)))
+                                {
+                                    nr++;
+                                }
+                                gruppe.GruppenName = $"{basisName} {nr}";
+                            }
+                        }
+                        viewModel.AddGroup(gruppe);
 
 
                     }
@@ -568,20 +605,41 @@ namespace BWB_Auswertung
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(savePath))
+                {
+                    //z.B. Ordnerauswahl beim Export abgebrochen
+                    return;
+                }
+
                 List<string> aktuelleDateien = new List<string>();
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
+                bool allesGespeichert = true;
 
                 foreach (var gruppe in viewModel.Gruppen)
                 {
-                    string datei = System.IO.Path.Combine($"{gruppe.FeuerwehrOhneSonderzeichen} - {gruppe.GruppennameOhneSonderzeichen}.xml");
-                    WriteFile.writeText(System.IO.Path.Combine(savePath, datei), SerializeXML<Gruppe>.Serialize(gruppe));
+                    //Eindeutigen Dateinamen sicherstellen. Zwei Gruppen mit gleichem Namen (z.B. zweimal
+                    //"Neue Gruppe") haben sich sonst gegenseitig überschrieben -> nach Neustart fehlte eine Gruppe.
+                    string basisName = $"{gruppe.FeuerwehrOhneSonderzeichen} - {gruppe.GruppennameOhneSonderzeichen}";
+                    string datei = $"{basisName}.xml";
+                    int nr = 2;
+                    while (aktuelleDateien.Contains(datei, StringComparer.OrdinalIgnoreCase))
+                    {
+                        datei = $"{basisName} ({nr++}).xml";
+                    }
+
+                    string xml = SerializeXML<Gruppe>.Serialize(gruppe);
+                    if (string.IsNullOrEmpty(xml) || !WriteFile.writeTextAtomic(System.IO.Path.Combine(savePath, datei), xml))
+                    {
+                        allesGespeichert = false;
+                    }
 
                     //Dateinamen merken um alte löschen zu können
                     aktuelleDateien.Add(datei);
                 }
 
-                // Nicht mehr benötigte Dateien löschen
-                if (deleteOld)
+                // Nicht mehr benötigte Dateien löschen. Nur wenn alles fehlerfrei gespeichert wurde,
+                // damit bei einem Schreibfehler keine (alten) Daten verloren gehen.
+                if (deleteOld && allesGespeichert)
                 {
                     DeleteFiles.DeleteFilesExcept(aktuelleDateien, savePath);
                 }
@@ -600,8 +658,39 @@ namespace BWB_Auswertung
                 string[] xmlFiles = Directory.GetFiles(dataPath, "*.xml");
                 foreach (string file in xmlFiles)
                 {
-                    OpenDeserializerForFile(file);
+                    //Jede Datei einzeln behandeln: Eine defekte Datei darf nicht dazu führen, dass die
+                    //restlichen Gruppen nicht geladen werden (und beim nächsten Speichern gelöscht würden).
+                    try
+                    {
+                        OpenDeserializerForFile(file);
+                    }
+                    catch (Exception exDatei)
+                    {
+                        LOGGING.Write($"{file}: {exDatei.Message}", System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                        DefekteDateiSichern(file);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+            }
+        }
+
+        /// <summary>
+        /// Verschiebt eine nicht lesbare Gruppendatei in den Unterordner "Fehlerhaft",
+        /// damit sie beim nächsten Speichern nicht gelöscht wird und manuell geprüft werden kann.
+        /// </summary>
+        private void DefekteDateiSichern(string file)
+        {
+            try
+            {
+                string zielOrdner = System.IO.Path.Combine(dataPath, "Fehlerhaft");
+                _ = Directory.CreateDirectory(zielOrdner);
+                string ziel = System.IO.Path.Combine(zielOrdner, $"{System.IO.Path.GetFileNameWithoutExtension(file)}_{DateTime.Now:yyyyMMdd-HHmmss}.xml");
+                File.Move(file, ziel);
+                MessageBox.Show($"Die Gruppendatei\n{System.IO.Path.GetFileName(file)}\nkonnte nicht gelesen werden und wurde nach\n{ziel}\nverschoben.\n\nÄltere Stände findest du im Backup-Ordner.",
+                    "Gruppendatei fehlerhaft", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             catch (Exception ex)
             {
@@ -619,11 +708,8 @@ namespace BWB_Auswertung
                 Gruppe gruppe = DeserializeXML<Gruppe>.Deserialize<Gruppe>(file);
                 if (gruppe == null)
                 {
-                    LOGGING.Write("Die Datei konnte nicht korrekt geparst werden. Überprüfen Sie die Struktur und den Inhalt der XML-Datei.", MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
-                    MessageBox.Show($"Die Datei konnte nicht korrekt geparst werden. Überprüfen Sie die Struktur und den Inhalt der XML-Datei.", "Fehler: SFTP Sync", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-
-                    throw new InvalidDataException("Die Datei konnte nicht korrekt geparst werden. Überprüfen Sie die Struktur und den Inhalt der XML-Datei.");
+                    LOGGING.Write($"Die Datei {file} konnte nicht korrekt geparst werden.", MethodBase.GetCurrentMethod().Name, EventLogEntryType.Error);
+                    throw new InvalidDataException($"Die Datei {System.IO.Path.GetFileName(file)} konnte nicht korrekt geparst werden. Überprüfen Sie die Struktur und den Inhalt der XML-Datei.");
                 }
 
 
@@ -726,17 +812,30 @@ namespace BWB_Auswertung
 
                 // Heruntergeladene Daten importieren.
                 //Hier wird auch sichergestellt das immer nur die neuesten Werte aus beiden Anmeldungen behalten werden.
-                foreach (var file in filePaths) OpenDeserializerForFile(file, true, false);
+                List<string> fehlerhafteDownloads = new List<string>();
+                foreach (var file in filePaths)
+                {
+                    try
+                    {
+                        OpenDeserializerForFile(file, true, false);
+                    }
+                    catch (InvalidDataException)
+                    {
+                        fehlerhafteDownloads.Add(Path.GetFileName(file));
+                    }
+                }
+                if (fehlerhafteDownloads.Count > 0)
+                {
+                    MessageBox.Show($"Folgende Dateien vom Server konnten nicht gelesen werden und wurden übersprungen:\n{string.Join("\n", fehlerhafteDownloads)}",
+                        "SFTP Sync", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
                 // Alle Dateien zum Server hochladen 
                 List<string> dateienZumUpload = new List<string>();
                 foreach (var gruppe in viewModel.Gruppen)
                 {
-                    string dateiname = gruppe.FeuerwehrOhneSonderzeichen;
-                    string extracted = gruppe.AnmeldungUID;
-                    if (extracted != "")
-                        dateiname = extracted;
-
-                    var datei = Path.Combine($"{dateiname}.xml");
+                    //AnmeldungUID ist jetzt dauerhaft stabil (auch für lokal angelegte Gruppen)
+                    var datei = $"{gruppe.AnmeldungUID}.xml";
                     WriteFile.writeText(Path.Combine(uploadlocalPath, datei), SerializeXML<Gruppe>.Serialize(gruppe));
                     dateienZumUpload.Add(datei);
                 }
@@ -747,8 +846,10 @@ namespace BWB_Auswertung
                     //Alle Dateien hochladen
                     foreach (var datei in dateienZumUpload)
                     {
-                        sftp.UploadFile(File.OpenRead(Path.Combine(uploadlocalPath, datei)),
-                           $"{einstellungen.Pfad}/{datei}", true);
+                        using (var uploadStream = File.OpenRead(Path.Combine(uploadlocalPath, datei)))
+                        {
+                            sftp.UploadFile(uploadStream, $"{einstellungen.Pfad}/{datei}", true);
+                        }
                     }
                     sftp.Disconnect();
 
@@ -1008,9 +1109,10 @@ namespace BWB_Auswertung
         {
             if (value is DateTime birthday)
             {
-                var age = Globals.VERANSTALTUNGSDATUM.Year - birthday.Year;
-                if (birthday.Date > Globals.VERANSTALTUNGSDATUM.AddYears(-age)) age--;
-                // Überprüfen, ob das Geburtsdatum vor dem Veranstaltungsdatum -10 Jahre liegt
+                //Gleiche Berechnung wie in der Spalte "Alter" (Stichtag 31.12., Wettbewerbsordnung 2.3).
+                //Vorher wurde hier das taggenaue Alter verwendet, wodurch z.B. ein 19-Jähriger (Jahrgang)
+                //beim Geburtsdatum nicht rot markiert wurde, in der Alters-Spalte aber schon.
+                int age = Person.BerechneAlter(birthday);
                 if (age > 18 || age < 10)
                 {
                     return Brushes.Red;

@@ -183,8 +183,12 @@ public class MainViewModel : INotifyPropertyChanged
                 .ThenBy(gruppe => (gruppe.DurchschnittszeitKnotenATeil + gruppe.FehlerA + gruppe.FehlerW)) //Kriterium 5 => Besserer Zeittakt + Fehlerpunkte A und W.
                                                                                                            //Hinweis: BWB Ordnung sagt "Summe der Fehlerpunkte gemäß Wertungsbögen während des Zeittaktes für den Angriffstrupp und den Wassertrupp"
                                                                                                            //Leider ist dies Technisch nicht umsetzbar da die Beschränkung auf den Zeittakt bei den Fehlern nicht eingetragen wird, sondern nur die Gesamtfehler
-                .ThenBy(gruppe => gruppe.Losentscheid) //Sortierung nach Losentscheid wenn eingegeben
-                .ThenBy(gruppe => Guid.NewGuid()) //Final eine Random Sortierung
+                .ThenBy(gruppe => gruppe.Losentscheid ?? int.MaxValue) //Kriterium 6 => Losentscheid (wenn eingegeben). Gruppen ohne Eintrag dahinter.
+                //Ohne Losentscheid deterministisch sortieren. Früher wurde hier zufällig sortiert (Guid.NewGuid()),
+                //dadurch haben punktgleiche Gruppen bei jedem Neusortieren (z.B. Klick in der Gruppenliste)
+                //und zwischen zwei Exporten ihren Platz getauscht.
+                .ThenBy(gruppe => gruppe.StartNr ?? int.MaxValue)
+                .ThenBy(gruppe => gruppe.GruppenName, StringComparer.CurrentCulture)
                 .ToList();
             for (int i = 0; i < sortedGruppen.Count; i++)
             {
@@ -259,16 +263,13 @@ public class MainViewModel : INotifyPropertyChanged
 
     /// <summary>
     /// Prüft, ob für die gelöschte Gruppe online verknüpfte FTP-Daten existieren
-    /// (Datei {AnmeldungUID}.xml). Falls ja, wird gefragt, ob diese ebenfalls
+    /// (Datei {AnmeldungUID}.xml). Gilt auch für lokal angelegte Gruppen, da diese beim
+    /// SFTP-Sync mit ihrer dauerhaften LokaleUID hochgeladen werden. Falls ja, wird gefragt, ob diese ebenfalls
     /// auf dem Server gelöscht werden soll. Fehler beim Serverzugriff blockieren
     /// das lokale Löschen nicht.
     /// </summary>
     private void PruefeUndLoescheGruppeOnline(Gruppe gruppe)
     {
-        // Nur Gruppen mit echter Anmelde-URL haben eine stabile, serverseitige UID.
-        if (string.IsNullOrWhiteSpace(gruppe.UrlderAnmeldung))
-            return;
-
         // Nur wenn FTP überhaupt konfiguriert ist.
         if (string.IsNullOrWhiteSpace(Einstellungen?.Hostname))
             return;

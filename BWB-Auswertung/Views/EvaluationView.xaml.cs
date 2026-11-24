@@ -81,8 +81,8 @@ namespace BWB_Auswertung.Views
                     //Schnellster A-Teil
                     var schnellsterATeilGruppe = mainViewModel.Gruppen.Where(x => x.DurchschnittszeitATeil > 0).OrderBy(x => x.DurchschnittszeitATeil).First();
                     SchnellsterATeilGruppe.Content = schnellsterATeilGruppe.GruppenName;
-                    TimeSpan ateil = new TimeSpan(0, 0, Convert.ToInt32(schnellsterATeilGruppe.DurchschnittszeitATeil));
-                    SchnellsterATeilGruppeZeit.Content = $"{ateil.Minutes}:{ateil.Seconds}";
+                    TimeSpan ateil = TimeSpan.FromSeconds(schnellsterATeilGruppe.DurchschnittszeitATeil);
+                    SchnellsterATeilGruppeZeit.Content = ateil.ToString(@"m\:ss");
 
                     //Schnellste Knotenzeit
                     var schnellsteKnotenZeitGruppe = mainViewModel.Gruppen.Where(x => x.DurchschnittszeitKnotenATeil > 0).OrderBy(x => x.DurchschnittszeitKnotenATeil).First();
@@ -97,8 +97,8 @@ namespace BWB_Auswertung.Views
                     //Schnellster B-Teil
                     var schnellsterBTeilGruppe = mainViewModel.Gruppen.Where(x => x.DurchschnittszeitBTeil > 0).OrderBy(x => x.DurchschnittszeitBTeil).First();
                     SchnellsterBTeilGruppe.Content = schnellsterBTeilGruppe.GruppenName;
-                    TimeSpan bteil = new TimeSpan(0, 0, Convert.ToInt32(schnellsterBTeilGruppe.DurchschnittszeitBTeil));
-                    SchnellsterBTeilGruppeZeit.Content = $"{bteil.Minutes}:{bteil.Seconds}";
+                    TimeSpan bteil = TimeSpan.FromSeconds(schnellsterBTeilGruppe.DurchschnittszeitBTeil);
+                    SchnellsterBTeilGruppeZeit.Content = bteil.ToString(@"m\:ss");
                 }
                 catch (Exception ex)
                 {
@@ -335,17 +335,19 @@ namespace BWB_Auswertung.Views
                 int anzahlSeiten = 1;
                 int maxProSeite = 26;//26 Passen auf eine Seite
                 int seitenindex = 1;
-                int alleSeiten = Convert.ToInt32(Math.Ceiling(personenMitGeburtstag.Count() / (float)maxProSeite));
+                int alleSeiten = Math.Max(1, Convert.ToInt32(Math.Ceiling(personenMitGeburtstag.Count() / (float)maxProSeite)));
 
                 foreach (PersonTeilnehmendenliste person in personenMitGeburtstag)
                 {
-                    if (seitenindex >= maxProSeite)
+                    //">" statt ">=": sonst passten nur 25 statt 26 Einträge auf eine Seite und die
+                    //Gesamtseitenzahl ("Seite x von y") stimmte nicht.
+                    if (seitenindex > maxProSeite)
                     {
                         string geburtstagslisteHTML = htmlGeburtstagsliste_Vorlage;
                         geburtstagslisteHTML = geburtstagslisteHTML.Replace("{tabellenzeile}", tabelle);
                         geburtstagslisteHTML = geburtstagslisteHTML.Replace("{akt_seite}", anzahlSeiten.ToString());
                         geburtstagslisteHTML = geburtstagslisteHTML.Replace("{alle_seiten}", alleSeiten.ToString());
-                        string pfadinIf = System.IO.Path.Combine(exportPath, $"{Guid.NewGuid()}.pdf");
+                        string pfadinIf = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
                         if (!await pDF.ConvertHtmlFileToPdf(geburtstagslisteHTML, pfadinIf, false))
                         {
                             MessageBox.Show($"Export der Geburtstagsliste fehlgeschlagen!", "Fehler: Export Geburtstagsliste", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -932,7 +934,7 @@ namespace BWB_Auswertung.Views
                 string speicherordner = System.IO.Path.Combine(exportPath, "Wettbewerbsordnung");
                 _ = Directory.CreateDirectory(speicherordner);
                 WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "DJF_Wettbewerbsordnung_BWB_2013.pdf"), BWB_Auswertung.Properties.Resources.DJF_Wettbewerbsordnung_BWB_2013);
-                WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "Aktuelles_BWB_2016.pdf"), BWB_Auswertung.Properties.Resources.Aktuelles_BWB_2016);
+                WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "Aktuelles_BWB_2026.pdf"), BWB_Auswertung.Properties.Resources.Aktuelles_BWB_2026);
                 WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "Wettbewerbsinfo.pdf"), BWB_Auswertung.Properties.Resources.Wettbewerbsinfo);
                 WriteFile.ByteArrayToFile(System.IO.Path.Combine(speicherordner, "Wettbewerbsrichtlinien.pdf"), BWB_Auswertung.Properties.Resources.Wettbewerbsrichtlinien);
 
@@ -1005,12 +1007,16 @@ namespace BWB_Auswertung.Views
                 MainViewModel viewModel = (MainViewModel)this.DataContext;
 
                 _ = Directory.CreateDirectory(wertungsbogenPath);
-                bool erfolgreichExcel = Excel.WriteWertungsbogenToExcel(wertungsbogenPath, viewModel.Gruppen.OrderByDescending(x => x.Platz).ToList(), viewModel.Einstellungen);
+                bool erfolgreichExcel = Excel.WriteWertungsbogenToExcel(wertungsbogenPath, viewModel.Gruppen.OrderByDescending(x => x.Platz).ToList(), viewModel.Einstellungen, out string? uploadFehler);
                 if (!erfolgreichExcel)
                 {
                     MessageBox.Show($"Export der Wertungsbögen fehlgeschlagen!", "Fehler: Export Wertungsbögen", MessageBoxButton.OK, MessageBoxImage.Error);
                     Loading.SetIsBusy((Button)sender, false);
                     return;
+                }
+                if (uploadFehler != null)
+                {
+                    MessageBox.Show($"Die Wertungsbögen wurden lokal gespeichert, der Upload auf den SFTP-Server ist aber fehlgeschlagen:\n{uploadFehler}", "Export Wertungsbögen", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
 
                 ShowExportMessageBox("Export der Wertungsbögen abgeschlossen!\nZielverzeichnis öffnen?",

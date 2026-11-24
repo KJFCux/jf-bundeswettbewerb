@@ -30,18 +30,35 @@ namespace BWB_Auswertung.Models
         public DateTime StartzeitBTeil { get; set; }
 
         public string? UrlderAnmeldung { get; set; }
+
+        /// <summary>
+        /// Dauerhafte ID für Gruppen ohne Online-Anmeldung (z.B. manuell angelegt oder per Excel importiert).
+        /// Wird mit der Gruppe gespeichert, damit die ID über Neustarts und SFTP-/LAN-Abgleiche stabil bleibt.
+        /// </summary>
+        public string? LokaleUID { get; set; }
+
+        /// <summary>
+        /// Eindeutige ID der Gruppe. Bei Online-Anmeldungen der Parameter "anmeldung" aus der URL,
+        /// sonst die dauerhaft gespeicherte <see cref="LokaleUID"/>.
+        /// Früher wurde hier bei jedem Zugriff eine neue Guid erzeugt. Dadurch wurden lokal angelegte
+        /// Gruppen beim SFTP-Sync bei jedem Abgleich dupliziert.
+        /// </summary>
         public string AnmeldungUID
         {
             get
             {
-                if (UrlderAnmeldung != null)
+                if (!string.IsNullOrWhiteSpace(UrlderAnmeldung)
+                    && Uri.TryCreate(UrlderAnmeldung, UriKind.Absolute, out Uri? uri))
                 {
-                    var uri = new Uri(UrlderAnmeldung);
-                    var query = HttpUtility.ParseQueryString(uri.Query);
-                    return query["anmeldung"] ?? Guid.NewGuid().ToString();
+                    string? aid = HttpUtility.ParseQueryString(uri.Query)["anmeldung"];
+                    if (!string.IsNullOrWhiteSpace(aid))
+                    {
+                        return aid;
+                    }
                 }
 
-                return Guid.NewGuid().ToString();
+                LokaleUID ??= Guid.NewGuid().ToString();
+                return LokaleUID;
             }
         }
 
@@ -451,74 +468,53 @@ namespace BWB_Auswertung.Models
         //ZEITEN ANFANG
         public int? ZeitATeil1Minuten { get; set; }
         public int? ZeitATeil1Sekunden { get; set; }
-        public double? ZeitATeil1
-        {
-            get
-            {
-                return new TimeSpan(0, ZeitATeil1Minuten ?? 0, ZeitATeil1Sekunden ?? 0).TotalSeconds;
-            }
-        }
+        public double? ZeitATeil1 => ZeitInSekunden(ZeitATeil1Minuten, ZeitATeil1Sekunden);
 
         public int? ZeitATeil2Minuten { get; set; }
         public int? ZeitATeil2Sekunden { get; set; }
-        public double? ZeitATeil2
-        {
-            get
-            {
-                return new TimeSpan(0, ZeitATeil2Minuten ?? 0, ZeitATeil2Sekunden ?? 0).TotalSeconds;
-            }
-        }
+        public double? ZeitATeil2 => ZeitInSekunden(ZeitATeil2Minuten, ZeitATeil2Sekunden);
 
         public int? ZeitKnoten1 { get; set; }
         public int? ZeitKnoten2 { get; set; }
 
         public int? ZeitBTeil1Minuten { get; set; }
         public int? ZeitBTeil1Sekunden { get; set; }
-        public double? ZeitBTeil1
-        {
-            get
-            {
-                return new TimeSpan(0, ZeitBTeil1Minuten ?? 0, ZeitBTeil1Sekunden ?? 0).TotalSeconds;
-            }
-        }
+        public double? ZeitBTeil1 => ZeitInSekunden(ZeitBTeil1Minuten, ZeitBTeil1Sekunden);
 
         public int? ZeitBTeil2Minuten { get; set; }
         public int? ZeitBTeil2Sekunden { get; set; }
-        public double? ZeitBTeil2
+        public double? ZeitBTeil2 => ZeitInSekunden(ZeitBTeil2Minuten, ZeitBTeil2Sekunden);
+
+        // Wettbewerbsordnung 3.6 / 4.6 / 5.6: "Als Übungszeit bzw. Zeittakt gilt die Durchschnittszeit
+        // der jeweiligen beiden Zeitnehmer. Die Sekunden werden kaufmännisch gerundet."
+        public double DurchschnittszeitBTeil => DurchschnittszeitZeitnehmer(ZeitBTeil1, ZeitBTeil2);
+
+        public double DurchschnittszeitATeil => DurchschnittszeitZeitnehmer(ZeitATeil1, ZeitATeil2);
+
+        public double DurchschnittszeitKnotenATeil => DurchschnittszeitZeitnehmer(ZeitKnoten1, ZeitKnoten2);
+
+        private static double? ZeitInSekunden(int? minuten, int? sekunden)
         {
-            get
+            if (minuten == null && sekunden == null)
             {
-                return new TimeSpan(0, ZeitBTeil2Minuten ?? 0, ZeitBTeil2Sekunden ?? 0).TotalSeconds;
+                return null;
             }
-        }
-        public double DurchschnittszeitBTeil
-        {
-            get
-            {
-                List<double?> zeitBteil = new List<double?> { ZeitBTeil1, ZeitBTeil2 };
-                double average = zeitBteil.Average() ?? 0;
-                return Math.Round(average, 2);
-            }
+            return new TimeSpan(0, minuten ?? 0, sekunden ?? 0).TotalSeconds;
         }
 
-        public double DurchschnittszeitATeil
+        /// <summary>
+        /// Mittelwert der Zeitnehmer, kaufmännisch auf volle Sekunden gerundet.
+        /// Nicht eingetragene Zeiten (leer oder 0) werden ignoriert, damit eine einzelne
+        /// eingetragene Zeit nicht halbiert wird.
+        /// </summary>
+        internal static double DurchschnittszeitZeitnehmer(params double?[] zeiten)
         {
-            get
+            var gueltig = zeiten.Where(z => z.HasValue && z.Value > 0).Select(z => z!.Value).ToList();
+            if (gueltig.Count == 0)
             {
-                List<double?> zeitAteil = new List<double?> { ZeitATeil1, ZeitATeil2 };
-                double average = zeitAteil.Average() ?? 0;
-                return Math.Round(average, 2);
+                return 0;
             }
-        }
-        public double DurchschnittszeitKnotenATeil
-        {
-            get
-            {
-                List<int?> zeittakt = new List<int?> { ZeitKnoten1, ZeitKnoten2 };
-                double average = zeittakt.Average() ?? 0;
-
-                return Math.Round(average, 2);
-            }
+            return Math.Round(gueltig.Average(), 0, MidpointRounding.AwayFromZero);
         }
         //ZEITEN ENDE
         public int GesamtAlter
@@ -592,7 +588,8 @@ namespace BWB_Auswertung.Models
                 List<int?> gesamteindruck = new List<int?> { EindruckGfMe, EindruckMa, EindruckA, EindruckW, EindruckS, EindruckLauefer1, EindruckLauefer2, EindruckLauefer3, EindruckLauefer4, EindruckLauefer5, EindruckLauefer6, EindruckLauefer7, EindruckLauefer8, EindruckLauefer9 };
                 double average = gesamteindruck.Average() ?? 0;
 
-                return Math.Round(average, 2);
+                // Wettbewerbsordnung 2.4: "Dieser Wert mit einer Dezimalstelle wird als Minuspunkte verrechnet."
+                return Math.Round(average, 1, MidpointRounding.AwayFromZero);
             }
         }
 
@@ -604,7 +601,9 @@ namespace BWB_Auswertung.Models
                 bool disqualifikationABool = DisqualifikationA ?? false;
                 bool ohneWertungBool = OhneWertung ?? false;
 
-                if (disqualifikationABool || ohneWertungBool)
+                //Ohne eingetragene Zeit noch nicht werten (wie im B-Teil). Sonst hatte eine Gruppe,
+                //die noch gar nicht gestartet ist, volle 1000 Punkte und war z.B. "Bester A-Teil".
+                if (disqualifikationABool || ohneWertungBool || DurchschnittszeitATeil <= 0)
                 {
                     return 0m;
                 }
@@ -684,6 +683,9 @@ namespace BWB_Auswertung.Models
                 }
             }
         }
+        private static readonly Regex NichtAlphanumerisch = new Regex("[^a-zA-Z0-9]", RegexOptions.Compiled);
+        private static readonly Regex NichtAlphanumerischMitUmlauten = new Regex("[^a-zA-Z0-9öäüÄÜÖß ]", RegexOptions.Compiled);
+
         public string GruppennameOhneSonderzeichen
         {
             get
@@ -699,22 +701,20 @@ namespace BWB_Auswertung.Models
                    { "ß", "ss" }
                };
 
-                string result = GruppenName;
+                string result = GruppenName ?? string.Empty;
                 foreach (var replacement in replacements)
                 {
                     result = result.Replace(replacement.Key, replacement.Value);
                 }
 
-                Regex rgx = new Regex("[^a-zA-Z0-9]");
-                return rgx.Replace(result, "");
+                return NichtAlphanumerisch.Replace(result, "");
             }
         }
         public string FeuerwehrOhneSonderzeichen
         {
             get
             {
-                Regex rgx = new Regex("[^a-zA-Z0-9öäüÄÜÖß ]");
-                return rgx.Replace(Feuerwehr, "");
+                return NichtAlphanumerischMitUmlauten.Replace(Feuerwehr ?? string.Empty, "");
             }
         }
 
@@ -742,7 +742,6 @@ namespace BWB_Auswertung.Models
             {
 
                 return PunkteATeil + PunkteBTeil - Convert.ToDecimal(Gesamteindruck);
-                ;
             }
         }
 

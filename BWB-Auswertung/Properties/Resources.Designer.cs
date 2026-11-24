@@ -63,9 +63,9 @@ namespace BWB_Auswertung.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
-        internal static byte[] Aktuelles_BWB_2016 {
+        internal static byte[] Aktuelles_BWB_2026 {
             get {
-                object obj = ResourceManager.GetObject("Aktuelles_BWB_2016", resourceCulture);
+                object obj = ResourceManager.GetObject("Aktuelles_BWB_2026", resourceCulture);
                 return ((byte[])(obj));
             }
         }

@@ -31,6 +31,28 @@ namespace BWB_Auswertung.IO
                 LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
             }
         }
+        /// <summary>
+        /// Schreibt den Text zuerst in eine temporäre Datei und ersetzt dann die Zieldatei.
+        /// So bleibt bei einem Absturz/Stromausfall während des Schreibens immer eine
+        /// vollständige Datei (alt oder neu) erhalten.
+        /// </summary>
+        public static bool writeTextAtomic(string filepath, string text)
+        {
+            string tmp = filepath + ".tmp";
+            try
+            {
+                File.WriteAllText(tmp, text, Encoding.Unicode);
+                File.Move(tmp, filepath, overwrite: true);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LOGGING.Write($"{filepath}: {ex.Message}", System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
+                try { if (File.Exists(tmp)) File.Delete(tmp); } catch { /* ignore */ }
+                return false;
+            }
+        }
+
         public static bool ByteArrayToFile(string fileName, byte[] byteArray)
         {
             try

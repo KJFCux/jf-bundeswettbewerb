@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Markup;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-using Windows.Networking;
 
 namespace BWB_Auswertung.Models
 {

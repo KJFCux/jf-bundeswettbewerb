@@ -236,8 +236,9 @@ namespace BWB_Auswertung.IO
             }
         }
 
-        public static bool WriteWertungsbogenToExcel(string filePath, List<Gruppe> gruppen, Settings settings)
+        public static bool WriteWertungsbogenToExcel(string filePath, List<Gruppe> gruppen, Settings settings, out string? uploadFehler)
         {
+            uploadFehler = null;
             try
             {
                 List<string> excelPfade = new();
@@ -257,8 +258,15 @@ namespace BWB_Auswertung.IO
                 {
                     string filename = $"{gruppe.GruppennameOhneSonderzeichen}-Wertungsbogen";
                     string excelpath = Path.Combine(filePath, $"{filename}.xlsx");
-                    string excelpathFTP = Path.Combine(uploadlocalPath, $"{gruppe.AnmeldungUID}.xlsx");
-                    uploadFiles.Add(gruppe.AnmeldungUID, excelpathFTP);
+                    //Gleicher Gruppenname -> nicht gegenseitig überschreiben
+                    int nr = 2;
+                    while (excelPfade.Contains(excelpath, StringComparer.OrdinalIgnoreCase))
+                    {
+                        excelpath = Path.Combine(filePath, $"{filename} ({nr++}).xlsx");
+                    }
+                    string uid = gruppe.AnmeldungUID;
+                    string excelpathFTP = Path.Combine(uploadlocalPath, $"{uid}.xlsx");
+                    uploadFiles[uid] = excelpathFTP;
 
                     excelPfade.Add(excelpath);
                     WriteFile.ByteArrayToFile(excelpath, BWB_Auswertung.Properties.Resources.Auswertungsbogen);
@@ -357,23 +365,38 @@ namespace BWB_Auswertung.IO
                     }
                 }
 
-                EnsureFtpDirectoryExists(SftpFactory.Create(settings), $"{settings.Pfad}/Wertungsbögen");
-
-                using (var sftp = SftpFactory.Create(settings))
+                //Upload nur, wenn SFTP konfiguriert ist. Ein fehlgeschlagener Upload darf den
+                //lokalen Export (inkl. Gesamtübersicht) nicht verhindern.
+                if (!string.IsNullOrWhiteSpace(settings.Hostname))
                 {
-                    sftp.Connect();
-
-                    //Alle Dateien hochladen
-
-                    foreach (var uploadFile in uploadFiles)
+                    try
                     {
-                        using (var fileStream = File.OpenRead(uploadFile.Value))
+                        using (var sftp = SftpFactory.Create(settings))
                         {
-                            sftp.UploadFile(fileStream, $"{settings.Pfad}/Wertungsbögen/{uploadFile.Key}.xlsx", true);
+                            sftp.Connect();
+
+                            string remoteOrdner = $"{settings.Pfad}/Wertungsbögen";
+                            if (!sftp.Exists(remoteOrdner))
+                            {
+                                sftp.CreateDirectory(remoteOrdner);
+                            }
+
+                            //Alle Dateien hochladen
+                            foreach (var uploadFile in uploadFiles)
+                            {
+                                using (var fileStream = File.OpenRead(uploadFile.Value))
+                                {
+                                    sftp.UploadFile(fileStream, $"{remoteOrdner}/{uploadFile.Key}.xlsx", true);
+                                }
+                            }
+                            sftp.Disconnect();
                         }
                     }
-                    sftp.Disconnect();
-
+                    catch (Exception exUpload)
+                    {
+                        uploadFehler = exUpload.Message;
+                        LOGGING.Write($"Upload der Wertungsbögen fehlgeschlagen: {exUpload.Message}", System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Warning);
+                    }
                 }
 
                 //Zusammenführen der Excel Dateien
@@ -389,23 +412,5 @@ namespace BWB_Auswertung.IO
             }
         }
 
-        private static void EnsureFtpDirectoryExists(SftpClient sftp, string directoryPath)
-        {
-            try
-            {
-                sftp.Connect();
-
-                if (!sftp.Exists(directoryPath))
-                {
-                    sftp.CreateDirectory(directoryPath);
-                }
-                sftp.Disconnect();
-            }
-            catch (Exception ex)
-            {
-                LOGGING.Write(ex.Message, System.Reflection.MethodBase.GetCurrentMethod().Name, System.Diagnostics.EventLogEntryType.Error);
-                throw;
-            }
-        }
     }
 }
