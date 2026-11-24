@@ -593,6 +593,27 @@ namespace BWB_Auswertung.Models
             }
         }
 
+        /// <summary>
+        /// A-Teil vollständig erfasst: disqualifiziert oder Zeit, Knotenzeit und Eindruck eingetragen.
+        /// </summary>
+        public bool ATeilFertig =>
+            (DisqualifikationA ?? false)
+            || (DurchschnittszeitATeil > 0 && DurchschnittszeitKnotenATeil > 0 && ATeilGesamteindruck > 0);
+
+        /// <summary>
+        /// B-Teil vollständig erfasst: disqualifiziert oder Zeit und Eindruck eingetragen
+        /// und eine gültige Sollzeit (Gesamtalter im zulässigen Bereich).
+        /// </summary>
+        public bool BTeilFertig =>
+            (DisqualifikationB ?? false)
+            || (DurchschnittszeitBTeil > 0 && BTeilGesamteindruck > 0 && SollZeitBTeilInSekunden > 0);
+
+        /// <summary>
+        /// Gruppe vollständig ausgewertet. Gruppen ohne Wertung gelten immer als fertig,
+        /// bei Disqualifikation eines Teils muss nur der andere Teil erfasst sein.
+        /// </summary>
+        public bool IstFertig => (OhneWertung ?? false) || (ATeilFertig && BTeilFertig);
+
         public decimal PunkteATeil
         {
             get

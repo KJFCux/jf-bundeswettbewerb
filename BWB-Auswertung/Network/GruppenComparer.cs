@@ -45,7 +45,9 @@ namespace BWB_Auswertung.Network
 
     public static class GruppenComparer
     {
-        //Score-relevante Properties (Eindrücke, Fehler, Zeiten, Knoten, Disqualifikation, Losentscheid, OhneWertung)
+        //Score-relevante Properties (Eindrücke, Fehler, Zeiten, Knoten, Disqualifikation, Losentscheid, OhneWertung).
+        //Zusätzlich werden die Teilnehmenden verglichen (siehe DiffPersonen), da sie das Gesamtalter
+        //und damit die Sollzeit im B-Teil bestimmen.
         private static readonly string[] VergleichsProperties = new[]
         {
             //A-Teil Eindruck
@@ -175,6 +177,49 @@ namespace BWB_Auswertung.Network
                         PartnerWert = Format(vb)
                     });
                 }
+            }
+
+            diffs.AddRange(DiffPersonen(a.Persons, b.Persons));
+            return diffs;
+        }
+
+        /// <summary>
+        /// Vergleicht die Teilnehmenden positionsweise (Position 1-9 und Ersatzperson).
+        /// Die Position ist relevant, weil sie die Läufernummer im B-Teil bestimmt.
+        /// </summary>
+        private static List<PropertyDifferenz> DiffPersonen(List<Person>? lokal, List<Person>? partner)
+        {
+            var diffs = new List<PropertyDifferenz>();
+            lokal ??= new List<Person>();
+            partner ??= new List<Person>();
+
+            int anzahl = Math.Max(lokal.Count, partner.Count);
+            for (int i = 0; i < anzahl; i++)
+            {
+                Person? l = i < lokal.Count ? lokal[i] : null;
+                Person? p = i < partner.Count ? partner[i] : null;
+                string position = i == 9 ? "Ersatz" : $"Teilnehmende {i + 1}";
+
+                void Vergleiche(string feld, string? wertLokal, string? wertPartner)
+                {
+                    string lw = (wertLokal ?? string.Empty).Trim();
+                    string pw = (wertPartner ?? string.Empty).Trim();
+                    if (!string.Equals(lw, pw, StringComparison.Ordinal))
+                    {
+                        diffs.Add(new PropertyDifferenz
+                        {
+                            Property = $"{position}: {feld}",
+                            LokalWert = lw.Length == 0 ? "—" : lw,
+                            PartnerWert = pw.Length == 0 ? "—" : pw
+                        });
+                    }
+                }
+
+                Vergleiche("Vorname", l?.Vorname, p?.Vorname);
+                Vergleiche("Nachname", l?.Nachname, p?.Nachname);
+                Vergleiche("Geschlecht", l?.Geschlecht.ToString(), p?.Geschlecht.ToString());
+                //Nur das Datum vergleichen (Uhrzeit/DateTimeKind können sich durch XML/JSON unterscheiden)
+                Vergleiche("Geburtsdatum", l?.Geburtsdatum.ToString("dd.MM.yyyy"), p?.Geburtsdatum.ToString("dd.MM.yyyy"));
             }
             return diffs;
         }

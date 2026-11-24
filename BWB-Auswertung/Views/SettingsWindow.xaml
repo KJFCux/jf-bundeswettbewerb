@@ -441,6 +441,54 @@
                             </Button.ContentTemplate>
                         </Button>
 
+                        <Label Content="Einstellungen teilen"
+                               HorizontalAlignment="Center"
+                               Margin="10,25,10,5"
+                               FontSize="20"
+                               FontWeight="Bold" />
+                        <TextBlock TextWrapping="Wrap"
+                                   TextAlignment="Center"
+                                   Margin="10,0,10,5"
+                                   FontSize="13"
+                                   Foreground="{DynamicResource MahApps.Brushes.Gray1}"
+                                   Text="Veranstaltungsdaten, Startzeiten-Einstellungen und Logo über den SFTP-Server mit anderen Rechnern teilen. SFTP-Zugangsdaten und Unterschriften werden nicht übertragen." />
+                        <Button Content="Einstellungen hochladen"
+                                ToolTip="Aktuelle Einstellungen (ohne Zugangsdaten und Unterschriften) auf den SFTP-Server hochladen"
+                                Click="EinstellungenHochladen_Click"
+                                Margin="10,10,10,5">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Width="22"
+                                                                    Height="22"
+                                                                    VerticalAlignment="Center"
+                                                                    Kind="CloudUpload" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button Content="Einstellungen vom Server laden"
+                                ToolTip="Einstellungen vom SFTP-Server übernehmen. Zugangsdaten und Unterschriften bleiben unverändert."
+                                Click="EinstellungenHerunterladen_Click"
+                                Margin="10,5,10,10">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Width="22"
+                                                                    Height="22"
+                                                                    VerticalAlignment="Center"
+                                                                    Kind="CloudDownload" />
+                                        <TextBlock Margin="4 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+
                     </StackPanel>
                     </ScrollViewer>
                 </DockPanel>

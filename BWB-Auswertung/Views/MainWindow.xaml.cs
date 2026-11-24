@@ -973,13 +973,9 @@ namespace BWB_Auswertung
                     {
                         if (item is Gruppe gruppe)
                         {
-                            return ((gruppe.ATeilGesamteindruck < 1)
-                                     || (gruppe.BTeilGesamteindruck < 1)
-                                     || (gruppe.PunkteBTeil < 1)
-                                     || (gruppe.DurchschnittszeitKnotenATeil < 1)
-                                     || (gruppe.DurchschnittszeitBTeil < 1)
-                                     || (gruppe.DurchschnittszeitATeil < 1)
-                                     );
+                            //Gleiche Definition wie im Fortschritt der Auswertung (berücksichtigt
+                            //"Gruppe ohne Wertung" und Disqualifikation eines Teils)
+                            return !gruppe.IstFertig;
                         }
                         return false;
                     };
@@ -1057,6 +1053,17 @@ namespace BWB_Auswertung
         {
             // Verwenden Sie Regex, um nur Zahlen und Dezimaltrennzeichen zuzulassen
             return Regex.IsMatch(text, @"^[0-9]*(?:\.[0-9]*)?$");
+        }
+
+        //Geburtsdatum: Mit Enter sofort übernehmen (die Bindung aktualisiert sonst erst beim Verlassen des Feldes)
+        private void DatumTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && sender is TextBox textBox)
+            {
+                textBox.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+                textBox.SelectAll();
+                e.Handled = true;
+            }
         }
 
         private bool _focusedByPointer;
